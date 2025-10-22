@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [
     "testserver",
     ".vercel.app",  # Allow all Vercel subdomains
     ".savvyindians.com",  # Your custom domain if any
+    ".pythonanywhere.com",  # PythonAnywhere hosting
+    "priyanshu705.pythonanywhere.com",  # Your specific PythonAnywhere site
 ]
 
 # CSRF Protection Settings
@@ -41,6 +43,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "https://*.vercel.app",
     "https://*.savvyindians.com",
+    "https://*.pythonanywhere.com",
+    "https://priyanshu705.pythonanywhere.com",
 ]
 
 # Add wildcard for development
@@ -97,6 +101,7 @@ EXTRA_THIRD_PARTY_APPS = [
     "django_filters",
     # Crispy forms if templates rely on it
     "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 # Combine all apps
@@ -252,9 +257,9 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_FROM_ADDRESS = config("EMAIL_FROM_ADDRESS", default="")
 EMAIL_USE_SSL = False
 
-# crispy config - disabled for minimal deployment
-# CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-# CRISPY_TEMPLATE_PACK = "bootstrap5"
+# Crispy Forms Configuration
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -350,6 +355,9 @@ SOCIALACCOUNT_PROVIDERS = {
 LOGIN_REDIRECT_URL = "/course/user_course_list/"  # Redirect to student dashboard
 ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Redirect to student login
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# Allauth logout configuration
+ACCOUNT_LOGOUT_ON_GET = True  # Allow GET method for logout (not just POST)
 
 # Static files storage - disabled WhiteNoise for development
 # STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
