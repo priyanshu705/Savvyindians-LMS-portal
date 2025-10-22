@@ -357,7 +357,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Redirect to student 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Allauth logout configuration
-ACCOUNT_LOGOUT_ON_GET = True  # Allow GET method for logout (not just POST)
+ACCOUNT_LOGOUT_ON_GET = False  # Require POST for logout (security best practice)
 
 # Static files storage - disabled WhiteNoise for development
 # STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
