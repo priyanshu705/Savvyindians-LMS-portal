@@ -295,13 +295,52 @@ small {
 .table tbody td {
     border-color: var(--border-color) !important;
     color: var(--text-secondary) !important;
+    background: var(--secondary-black) !important;
+}
+
+.table tbody tr {
+    background: var(--secondary-black) !important;
+}
+
+/* Force dark background for all table rows */
+.table tr,
+.table tbody tr,
+table tr,
+table tbody tr {
+    background: var(--secondary-black) !important;
+}
+
+/* Force dark background for all table cells */
+.table td,
+.table th,
+table td,
+table th {
+    background: var(--secondary-black) !important;
+    color: var(--primary-gold) !important;
+}
+
+/* Override any white/light backgrounds in tables */
+.table tr[style*="background"],
+.table td[style*="background"],
+.table tbody tr[style*="background"],
+table tr[style*="background"],
+table td[style*="background"] {
+    background: var(--secondary-black) !important;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
     background: rgba(255, 215, 0, 0.05) !important;
 }
 
+.table-striped tbody tr:nth-of-type(odd) td {
+    background: var(--tertiary-black) !important;
+}
+
 .table-hover tbody tr:hover {
+    background: rgba(255, 215, 0, 0.1) !important;
+}
+
+.table-hover tbody tr:hover td {
     background: rgba(255, 215, 0, 0.1) !important;
 }
 
