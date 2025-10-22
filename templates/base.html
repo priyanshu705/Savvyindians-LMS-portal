@@ -1,0 +1,569 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="SavvyIndians - Create Smarter with AI. Join our bootcamps and masterclasses to learn cutting-edge technology.">
+    <meta name="keywords" content="SavvyIndians, AI Bootcamp, Tech Masterclass, Online Learning, AI Education">
+    <meta name="author" content="SavvyIndians">
+
+    <title>{% block title %}SavvyIndians - Create Smarter with AI{% endblock title %}</title>
+
+    <link rel="shortcut icon" href="{% static 'img/savvyindians-logo.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'img/savvyindians-logo.png' %}">
+
+    <!-- Fontawesome icons -->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/fontawesome-6.5.1/css/all.min.css' %}">
+
+    <!-- Bootstrap5 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap-5.3.2/css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.min.css' %}">
+    
+    <!-- SavvyIndians Unified Theme -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/savvyindians-theme.css' %}">
+
+    <!-- Override sidebar padding since sidebar is removed -->
+    <style>
+        /* ========================================
+           GLOBAL SAVVYINDIANS THEME - BLACK + GOLD
+           Applied to all pages for consistency
+           ======================================== */
+        
+        /* Base Colors */
+        :root {
+            --primary-black: #000000;
+            --secondary-black: #111111;
+            --tertiary-black: #1a1a1a;
+            --primary-gold: #ffd700;
+            --hover-gold: #ffed4e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-tertiary: #888888;
+            --border-color: #333333;
+        }
+        
+        /* Body Background */
+        body {
+            background: var(--primary-black) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        /* Remove left padding from main content (was 300px for sidebar) */
+        #main {
+            padding-left: 0 !important;
+            padding-top: 80px !important;
+        }
+        
+        /* Ensure container takes full width */
+        #main-content {
+            max-width: 100%;
+            padding: 0;
+            background: var(--primary-black) !important;
+        }
+        
+        /* Remove any sidebar-related spacing */
+        .container-fluid {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        /* Cards and Containers */
+        .card {
+            background: var(--secondary-black) !important;
+            border: 2px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .card-header {
+            background: var(--tertiary-black) !important;
+            border-bottom: 1px solid var(--primary-gold) !important;
+            color: var(--primary-gold) !important;
+        }
+        
+        .card-body {
+            background: var(--secondary-black) !important;
+            color: var(--text-secondary) !important;
+        }
+        
+        /* Forms */
+        .form-control {
+            background: var(--secondary-black) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .form-control:focus {
+            background: var(--tertiary-black) !important;
+            border-color: var(--primary-gold) !important;
+            box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-tertiary) !important;
+        }
+        
+        .form-label {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-gold) !important;
+            border-color: var(--primary-gold) !important;
+            color: var(--primary-black) !important;
+            font-weight: 700;
+        }
+        
+        .btn-primary:hover {
+            background: var(--hover-gold) !important;
+            border-color: var(--hover-gold) !important;
+            color: var(--primary-black) !important;
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--primary-gold) !important;
+            color: var(--primary-gold) !important;
+            background: transparent !important;
+            font-weight: 600;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-gold) !important;
+            color: var(--primary-black) !important;
+            border-color: var(--primary-gold) !important;
+        }
+        
+        /* Tables */
+        .table {
+            color: var(--text-secondary) !important;
+            background: var(--secondary-black) !important;
+        }
+        
+        .table thead th {
+            background: var(--tertiary-black) !important;
+            color: var(--primary-gold) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        .table tbody td {
+            border-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background: rgba(255, 215, 0, 0.05) !important;
+        }
+        
+        /* Links */
+        a {
+            color: var(--primary-gold) !important;
+        }
+        
+        a:hover {
+            color: var(--hover-gold) !important;
+        }
+        
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary) !important;
+        }
+        
+        /* Alerts */
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2) !important;
+            border-color: #28a745 !important;
+            color: #28a745 !important;
+        }
+        
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.2) !important;
+            border-color: #dc3545 !important;
+            color: #dc3545 !important;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 215, 0, 0.2) !important;
+            border-color: var(--primary-gold) !important;
+            color: var(--primary-gold) !important;
+        }
+        
+        .alert-info {
+            background: rgba(23, 162, 184, 0.2) !important;
+            border-color: #17a2b8 !important;
+            color: #17a2b8 !important;
+        }
+        
+        /* Badges */
+        .badge {
+            background: var(--primary-gold) !important;
+            color: var(--primary-black) !important;
+        }
+        
+        /* Pagination */
+        .pagination .page-link {
+            background: var(--secondary-black) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        
+        .pagination .page-link:hover {
+            background: var(--primary-gold) !important;
+            border-color: var(--primary-gold) !important;
+            color: var(--primary-black) !important;
+        }
+        
+        .pagination .active .page-link {
+            background: var(--primary-gold) !important;
+            border-color: var(--primary-gold) !important;
+            color: var(--primary-black) !important;
+        }
+        
+        /* Modals */
+        .modal-content {
+            background: var(--secondary-black) !important;
+            border: 2px solid var(--border-color) !important;
+        }
+        
+        .modal-header {
+            background: var(--tertiary-black) !important;
+            border-bottom: 1px solid var(--primary-gold) !important;
+        }
+        
+        .modal-title {
+            color: var(--primary-gold) !important;
+        }
+        
+        .modal-body {
+            color: var(--text-secondary) !important;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--border-color) !important;
+        }
+        
+        /* Dropdown Menus */
+        .dropdown-menu {
+            background: var(--secondary-black) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        
+        .dropdown-item {
+            color: var(--text-secondary) !important;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1) !important;
+            color: var(--primary-gold) !important;
+        }
+        
+        /* List Groups */
+        .list-group-item {
+            background: var(--secondary-black) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        
+        .list-group-item:hover {
+            background: rgba(255, 215, 0, 0.1) !important;
+        }
+        
+        /* Navs and Tabs */
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-secondary) !important;
+            border-color: transparent !important;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-gold) !important;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: var(--secondary-black) !important;
+            border-color: var(--border-color) var(--border-color) transparent !important;
+            color: var(--primary-gold) !important;
+        }
+        
+        /* Progress Bars */
+        .progress {
+            background: var(--tertiary-black) !important;
+        }
+        
+        .progress-bar {
+            background: var(--primary-gold) !important;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            background: var(--secondary-black) !important;
+        }
+        
+        .breadcrumb-item {
+            color: var(--text-secondary) !important;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--primary-gold) !important;
+        }
+        
+        .breadcrumb-item a {
+            color: var(--text-secondary) !important;
+        }
+        
+        .breadcrumb-item a:hover {
+            color: var(--primary-gold) !important;
+        }
+        
+        /* Footer Styles - Black + Gold Theme */
+        .site-footer {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #cccccc;
+            padding: 4rem 0 0;
+            margin-top: 4rem;
+            border-top: 2px solid #ffd700;
+        }
+        
+        .footer-heading {
+            color: #ffd700;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: #ffd700;
+        }
+        
+        .footer-text {
+            color: #cccccc;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            color: #ffd700;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: #ffd700;
+            color: #000000;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .footer-links a i {
+            font-size: 0.7rem;
+            color: #ffd700;
+        }
+        
+        .footer-links a:hover {
+            color: #ffd700;
+            padding-left: 0.5rem;
+        }
+        
+        .footer-contact {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-contact li {
+            color: #cccccc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .footer-contact i {
+            color: #ffd700;
+            width: 20px;
+        }
+        
+        .footer-bottom {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .copyright {
+            color: #888888;
+            margin: 0;
+        }
+        
+        .footer-link {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: #ffd700;
+        }
+        
+        .footer-divider {
+            color: #888888;
+            margin: 0 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .site-footer {
+                padding: 3rem 0 0;
+            }
+            
+            .footer-bottom .col-md-6:last-child {
+                text-align: left !important;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+
+    <!-- <script src="https://js.stripe.com/v3/"></script> -->
+    {% block header %}{% endblock %}
+</head>
+
+<body>
+    {% block maincontent %}
+    <div id="main">
+        {% block topbar %}
+            {% include 'navbar.html' %}
+        {% endblock %}
+
+        <div class="container-fluid" id="main-content">
+            {% block content %}{% endblock content %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <h4 class="footer-heading">About SavvyIndians</h4>
+                        <p class="footer-text">
+                            Empowering learners worldwide with cutting-edge AI and technology bootcamps. 
+                            Learn from industry experts and transform your career.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h4 class="footer-heading">Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'home' %}"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="{% url 'programs' %}?type=bootcamp"><i class="fas fa-chevron-right"></i> Bootcamps</a></li>
+                            <li><a href="{% url 'programs' %}?type=masterclass"><i class="fas fa-chevron-right"></i> Masterclasses</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <h4 class="footer-heading">Student Zone</h4>
+                        <ul class="footer-links">
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'user_course_list' %}"><i class="fas fa-chevron-right"></i> My Courses</a></li>
+                                <li><a href="{% url 'student_progress_dashboard' %}"><i class="fas fa-chevron-right"></i> Progress</a></li>
+                                <li><a href="{% url 'profile' %}"><i class="fas fa-chevron-right"></i> Profile</a></li>
+                            {% else %}
+                                <li><a href="{% url 'student_login' %}"><i class="fas fa-chevron-right"></i> Student Login</a></li>
+                                <li><a href="{% url 'student_register' %}"><i class="fas fa-chevron-right"></i> Register</a></li>
+                            {% endif %}
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <h4 class="footer-heading">Contact Info</h4>
+                        <ul class="footer-contact">
+                            <li><i class="fas fa-envelope"></i> contact@savvyindians.com</li>
+                            <li><i class="fas fa-phone"></i> +91 XXX XXX XXXX</li>
+                            <li><i class="fas fa-map-marker-alt"></i> India</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <p class="copyright">&copy; 2025 SavvyIndians. All Rights Reserved.</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <a href="#" class="footer-link">Privacy Policy</a>
+                            <span class="footer-divider">|</span>
+                            <a href="#" class="footer-link">Terms of Service</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    {% endblock %}
+    <!-- JavaScript Catalog removed - English only platform -->
+    <script type="text/javascript" src="{% static 'vendor/jquery-3.7.1/jquery-3.7.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/bootstrap-5.3.2/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+    {% block js %}
+    {% endblock js %}
+</body>
+
+</html>

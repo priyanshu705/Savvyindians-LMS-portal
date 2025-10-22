@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ video.title }} | {% trans 'Learning management system' %}{% endblock title %}
+{% load static %}
+
+{% block content %}
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'programs' %}">{% trans 'Programs' %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'program_detail' video.course.program.id %}">{{ video.course.program }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'course_detail' video.course.slug %}">{{ video.course }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ video.title }}</li>
+    </ol>
+</nav>
+    
+<p class="title-1">{{ video.title }}</p>
+<br><br>
+
+<style>
+    .video-container {
+        max-width: 100%;
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.16), 0px 2px 10px 0px rgba(0,0,0,0.12);
+    }
+    
+    .video-container iframe, 
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    .video-download-protection {
+        position: relative;
+        pointer-events: auto;
+    }
+    
+    .video-download-protection::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    /* Disable right-click context menu on video */
+    .video-container {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+</style>
+
+<div class="col-md-10 mx-auto d-block">
+    <div class="video-container video-download-protection">
+        {% if video.is_youtube_video and video.youtube_url %}
+            <!-- YouTube Video Embed with Download Protection -->
+            <iframe 
+                src="{{ video.get_youtube_embed_url }}"
+                title="{{ video.title }}"
+                style="border: none;"
+                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        {% elif video.video %}
+            <!-- Regular Video File -->
+            <video 
+                controls 
+                controlsList="nodownload"
+                disablePictureInPicture
+                preload="metadata">
+                <source src="{{ video.video.url }}" type="video/mp4">
+                <!-- Add subtitle track if available -->
+                {% comment %}
+                <track kind="subtitles" src="path/to/subtitles.vtt" srclang="en" label="English" default>
+                {% endcomment %}
+                {% trans 'Your browser does not support the video tag.' %}
+            </video>
+        {% else %}
+            <div class="alert alert-warning">
+                {% trans 'No video available for this lecture.' %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="mt-3">
+        <!-- Video Progress Indicator -->
+        {% if request.user.is_student %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-chart-line"></i> {% trans 'Your Progress' %}
+                </h6>
+                <div class="progress mb-2" style="height: 20px;">
+                    <div 
+                        id="video-progress-bar"
+                        class="progress-bar bg-gradient-primary" 
+                        role="progressbar" 
+                        style="width: 0%;" 
+                        aria-valuenow="0" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100">
+                        <span id="video-progress-text">0% watched</span>
+                    </div>
+                </div>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i> 
+                    {% trans 'Your progress is automatically saved and synced across devices' %}
+                </small>
+            </div>
+        </div>
+        {% endif %}
+        
+        <p><i class="fas fa-calendar"></i> {{ video.timestamp|timesince }} {% trans 'ago' %}</p>
+        
+        {% if video.is_youtube_video %}
+            <div class="alert alert-info">
+                <i class="fab fa-youtube text-danger"></i> 
+                {% trans 'This video is hosted on YouTube for optimal streaming performance.' %}
+            </div>
+        {% endif %}
+        
+        {% if video.summary %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> {% trans 'Video Description' %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ video.summary }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">{% trans 'No video description available.' %}</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Video Progress Tracking System
+let progressTracker = null;
+let lastProgressUpdate = 0;
+const PROGRESS_UPDATE_INTERVAL = 10000; // 10 seconds
+const VIDEO_ID = {{ video.id }};
+
+class VideoProgressTracker {
+    constructor(videoId) {
+        this.videoId = videoId;
+        this.videoElement = null;
+        this.progressInterval = null;
+        this.isTracking = false;
+        this.lastPosition = 0;
+        this.totalDuration = 0;
+        this.resumePosition = 0;
+        
+        this.init();
+    }
+    
+    async init() {
+        // Initialize video tracking
+        await this.loadExistingProgress();
+        this.setupVideoTracking();
+        this.startProgressTracking();
+    }
+    
+    async loadExistingProgress() {
+        try {
+            const response = await fetch(`/course/api/video/${this.videoId}/progress/`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.progress) {
+                    this.resumePosition = data.progress.last_position || 0;
+                    this.totalDuration = data.progress.total_duration || 0;
+                    
+                    // Show progress info to user
+                    this.showProgressInfo(data.progress);
+                }
+            }
+        } catch (error) {
+            console.log('Could not load existing progress:', error);
+        }
+    }
+    
+    setupVideoTracking() {
+        const iframe = document.querySelector('.video-container iframe');
+        const video = document.querySelector('.video-container video');
+        
+        if (video) {
+            // For HTML5 video
+            this.videoElement = video;
+            this.setupHTML5VideoTracking();
+        } else if (iframe) {
+            // For YouTube iframe
+            this.setupYouTubeTracking();
+        }
+    }
+    
+    setupHTML5VideoTracking() {
+        const video = this.videoElement;
+        
+        video.addEventListener('loadedmetadata', () => {
+            this.totalDuration = Math.floor(video.duration);
+            
+            // Resume from last position if available
+            if (this.resumePosition > 0 && this.resumePosition < this.totalDuration) {
+                video.currentTime = this.resumePosition;
+                this.showResumeNotification();
+            }
+        });
+        
+        video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(video.currentTime);
+            if (Math.abs(currentTime - this.lastPosition) >= 5) { // Update every 5 seconds of playback
+                this.lastPosition = currentTime;
+                this.updateProgress(currentTime, this.totalDuration);
+            }
+        });
+        
+        video.addEventListener('ended', () => {
+            this.updateProgress(this.totalDuration, this.totalDuration);
+        });
+    }
+    
+    setupYouTubeTracking() {
+        // For YouTube videos, we'll track using postMessage API
+        console.log('YouTube tracking initialized (limited due to iframe restrictions)');
+        
+        // Start periodic progress updates for YouTube videos
+        // Note: Due to iframe restrictions, we can't get exact timing from YouTube
+        // This is a simplified approach
+        this.startPeriodicTracking();
+    }
+    
+    startPeriodicTracking() {
+        // For YouTube videos, estimate progress based on time spent on page
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        // Check if user is actively viewing the video
+        let isVisible = true;
+        document.addEventListener('visibilitychange', () => {
+            isVisible = !document.hidden;
+        });
+        
+        this.progressInterval = setInterval(() => {
+            if (isVisible && hasStarted) {
+                const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+                // Estimate that user watched most of the time they were on the page
+                this.updateProgress(timeSpent, this.totalDuration || timeSpent + 60);
+            }
+        }, PROGRESS_UPDATE_INTERVAL);
+        
+        // Start tracking after a short delay (assume user started watching)
+        setTimeout(() => {
+            hasStarted = true;
+        }, 3000);
+    }
+    
+    startProgressTracking() {
+        this.isTracking = true;
+    }
+    
+    async updateProgress(currentTime, duration) {
+        if (!this.isTracking || Date.now() - lastProgressUpdate < 5000) {
+            return; // Don't spam the server
+        }
+        
+        try {
+            const response = await fetch('/course/api/video/progress/update/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken(),
+                },
+                body: JSON.stringify({
+                    video_id: this.videoId,
+                    current_time: currentTime,
+                    duration: duration
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    lastProgressUpdate = Date.now();
+                    this.updateProgressUI(data.progress);
+                }
+            }
+        } catch (error) {
+            console.log('Progress update failed:', error);
+        }
+    }
+    
+    updateProgressUI(progress) {
+        // Update progress bar if it exists
+        const progressBar = document.getElementById('video-progress-bar');
+        if (progressBar) {
+            progressBar.style.width = `${progress.completion_percentage}%`;
+            progressBar.setAttribute('aria-valuenow', progress.completion_percentage);
+        }
+        
+        // Update progress text
+        const progressText = document.getElementById('video-progress-text');
+        if (progressText) {
+            progressText.textContent = `${progress.completion_percentage.toFixed(1)}% watched`;
+        }
+        
+        // Show completion badge
+        if (progress.is_completed) {
+            this.showCompletionBadge();
+        }
+    }
+    
+    showProgressInfo(progress) {
+        if (progress.completion_percentage > 0) {
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'alert alert-info mt-3';
+            infoDiv.innerHTML = `
+                <i class="fas fa-play-circle"></i> 
+                Progress: ${progress.progress_display} watched 
+                ${progress.is_completed ? '<span class="badge bg-success ms-2">Completed</span>' : ''}
+            `;
+            
+            const videoContainer = document.querySelector('.video-container');
+            videoContainer.parentNode.insertBefore(infoDiv, videoContainer.nextSibling);
+        }
+    }
+    
+    showResumeNotification() {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success alert-dismissible fade show mt-3';
+        notification.innerHTML = `
+            <i class="fas fa-play"></i> 
+            Resumed from where you left off (${Math.floor(this.resumePosition / 60)}:${(this.resumePosition % 60).toString().padStart(2, '0')})
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const videoContainer = document.querySelector('.video-container');
+        videoContainer.parentNode.insertBefore(notification, videoContainer.nextSibling);
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
+    showCompletionBadge() {
+        if (document.getElementById('completion-badge')) return; // Already shown
+        
+        const badge = document.createElement('div');
+        badge.id = 'completion-badge';
+        badge.className = 'alert alert-success mt-3';
+        badge.innerHTML = `
+            <i class="fas fa-check-circle"></i> 
+            <strong>Completed!</strong> You have finished watching this video.
+        `;
+        
+        const videoContainer = document.querySelector('.video-container');
+        videoContainer.parentNode.insertBefore(badge, videoContainer.nextSibling);
+    }
+    
+    getCSRFToken() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                return value;
+            }
+        }
+        return '';
+    }
+}
+
+// Initialize progress tracking when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Original download protection code
+    const videoContainer = document.querySelector('.video-container');
+    if (videoContainer) {
+        videoContainer.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    }
+    
+    // Additional protection for YouTube iframes
+    const iframe = videoContainer?.querySelector('iframe');
+    if (iframe) {
+        iframe.addEventListener('load', function() {
+            try {
+                iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+            } catch (e) {
+                console.log('Additional security measures applied');
+            }
+        });
+    }
+    
+    // Initialize progress tracking only for students
+    {% if request.user.is_student %}
+    progressTracker = new VideoProgressTracker(VIDEO_ID);
+    {% endif %}
+});
+
+// Ensure progress is saved when user leaves the page
+window.addEventListener('beforeunload', function() {
+    if (progressTracker && progressTracker.videoElement) {
+        const currentTime = Math.floor(progressTracker.videoElement.currentTime);
+        const duration = Math.floor(progressTracker.videoElement.duration);
+        
+        // Use sendBeacon for reliable data transmission on page unload
+        if (navigator.sendBeacon) {
+            const formData = new FormData();
+            formData.append('video_id', VIDEO_ID);
+            formData.append('current_time', currentTime);
+            formData.append('duration', duration);
+            
+            navigator.sendBeacon('/course/api/video/progress/update/', formData);
+        }
+    }
+});
+</script>
+
+{% endblock content %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ title }} | {% trans 'Learning management system' %}{% endblock title %}
+{% load static %}
+
+{% block content %}
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
+        {% if request.user.is_student %}
+        <li class="breadcrumb-item"><a href="{% url 'user_course_list' %}">{% trans 'My courses' %}</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'programs' %}">{% trans 'Programs' %}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item"><a href="{% url 'program_detail' course.program.id %}">{{ course.program }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ course }}</li>
+    </ol>
+</nav>
+
+<!-- Course Header Actions - Simplified for Students -->
+<div class="text-center mb-4">
+    <a class="btn modern-btn" href="{% url 'user_course_list' %}">
+        <i class="fas fa-arrow-left me-2"></i>{% trans 'Back to My Courses' %}
+    </a>
+</div>
+
+<div class="title-1">{{ course }}</div>
+<p class="small text-muted">{{ course.summary }}</p>
+
+{% include 'snippets/messages.html' %}
+
+<div class="container">
+
+    <div class="row mb-5">
+        <div class="col-md-12 p-0">
+            <p class="form-title m-0">{% trans 'Video Tutorials' %}</p>
+            <div class="table-responsive">
+                <table class="table table-shadow table-light table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{% trans 'Video Title' %}</th>
+                            <th>{% trans 'Uploaded Date' %}</th>
+                            <th>{% trans 'Watch Video' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for video in videos %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="{{ video.get_absolute_url }}" title="{{ video }}" class="d-flex align-items-center">
+                                    <i class="fas fa-video me-1"></i> {{ video.title|title }}
+                                    {% if request.user.is_student and video.progress %}
+                                        {% if video.progress.is_completed %}
+                                            <span class="badge bg-success ms-2">
+                                                <i class="fas fa-check"></i> {% trans 'Completed' %}
+                                            </span>
+                                        {% elif video.progress.completion_percentage > 0 %}
+                                            <span class="badge bg-warning ms-2">
+                                                <i class="fas fa-play"></i> {{ video.progress.completion_percentage|floatformat:1 }}%
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                                {% if request.user.is_student and video.progress and video.progress.completion_percentage > 0 %}
+                                <div class="progress mt-1" style="height: 4px;">
+                                    <div class="progress-bar bg-{% if video.progress.is_completed %}success{% else %}primary{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {{ video.progress.completion_percentage }}%"
+                                         aria-valuenow="{{ video.progress.completion_percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ video.timestamp|date }}</td>
+                            <th>
+                                <div>
+                                    <a class="btn btn-sm modern-btn" href="{{ video.get_absolute_url }}">
+                                        {% if request.user.is_student and video.progress and video.progress.completion_percentage > 0 %}
+                                            <i class="fas fa-play me-1"></i>{% trans 'Continue' %}
+                                        {% else %}
+                                            <i class="fas fa-play me-1"></i>{% trans 'Watch Now' %}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </th>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                    <h5 class="empty-state-title">{% trans 'No Videos Available' %}</h5>
+                                    <p class="empty-state-text">{% trans 'Video lectures will appear here when they are uploaded.' %}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Files section removed - focusing only on video lectures -->
+
+</div>
+
+    <!-- Lecturer section removed for simplified student-focused interface -->
+
+{% endblock content %}

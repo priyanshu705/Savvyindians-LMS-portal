@@ -1,0 +1,462 @@
+<!-- Notification Bell Dropdown Component -->
+<div class="notification-dropdown" style="position: relative; display: inline-block;">
+    <!-- Notification Bell Button -->
+    <button 
+        class="btn btn-link position-relative p-2 notification-bell" 
+        type="button" 
+        id="notificationDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false"
+        onclick="loadNotifications()"
+        style="color: rgba(255,255,255,0.8); border: none; background: transparent;"
+    >
+        <i class="fas fa-bell fs-5"></i>
+        <!-- Notification Badge -->
+        <span 
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" 
+            id="notificationCount" 
+            style="font-size: 0.6rem; display: none;"
+        >
+            0
+        </span>
+    </button>
+
+    <!-- Notification Dropdown Menu -->
+    <div 
+        class="dropdown-menu dropdown-menu-end notification-dropdown-menu" 
+        aria-labelledby="notificationDropdown"
+        style="
+            width: 380px; 
+            max-height: 500px; 
+            overflow-y: auto;
+            border: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            margin-top: 10px;
+        "
+    >
+        <!-- Notification Header -->
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+            <h6 class="mb-0 fw-bold text-primary">
+                <i class="fas fa-bell me-2"></i>Notifications
+            </h6>
+            <div class="btn-group btn-group-sm" role="group">
+                <button 
+                    type="button" 
+                    class="btn btn-outline-primary btn-sm" 
+                    onclick="markAllAsRead()"
+                    title="Mark all as read"
+                >
+                    <i class="fas fa-check-double"></i>
+                </button>
+                <a 
+                    href="{% url 'notifications:notification_list' %}" 
+                    class="btn btn-outline-secondary btn-sm"
+                    title="View all notifications"
+                >
+                    <i class="fas fa-list"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="notificationLoading" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2 text-muted small">Loading notifications...</div>
+        </div>
+
+        <!-- Notifications List -->
+        <div id="notificationsList" style="display: none;">
+            <!-- Notifications will be loaded here dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="notificationsEmpty" class="text-center py-4" style="display: none;">
+            <i class="fas fa-bell-slash text-muted mb-2" style="font-size: 2rem; opacity: 0.5;"></i>
+            <div class="text-muted">No notifications yet</div>
+            <small class="text-muted">You'll see notifications here when you have updates</small>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-top px-3 py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    <span id="notificationSummary">Loading...</span>
+                </small>
+                <a 
+                    href="{% url 'notifications:notification_preferences' %}" 
+                    class="btn btn-sm btn-outline-secondary"
+                    style="font-size: 0.75rem;"
+                >
+                    <i class="fas fa-cog me-1"></i>Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Styles -->
+<style>
+.notification-dropdown-menu {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-bell:hover {
+    color: rgba(255,255,255,1) !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+.notification-item {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background: rgba(0,123,255,0.05);
+}
+
+.notification-item.unread {
+    background: rgba(0,123,255,0.02);
+    border-left: 3px solid #007bff;
+}
+
+.notification-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.notification-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.priority-badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+</style>
+
+<!-- Notification JavaScript -->
+<script>
+let notificationData = {
+    notifications: [],
+    unreadCount: 0,
+    isLoading: false
+};
+
+// Load notifications from API
+async function loadNotifications() {
+    if (notificationData.isLoading) return;
+    
+    notificationData.isLoading = true;
+    
+    try {
+        const response = await fetch('/notifications/api/list/?per_page=10');
+        const data = await response.json();
+        
+        notificationData.notifications = data.notifications;
+        notificationData.unreadCount = data.unread_count;
+        
+        renderNotifications();
+        updateNotificationBadge();
+        
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        showNotificationError();
+    } finally {
+        notificationData.isLoading = false;
+    }
+}
+
+// Render notifications in dropdown
+function renderNotifications() {
+    const loadingEl = document.getElementById('notificationLoading');
+    const listEl = document.getElementById('notificationsList');
+    const emptyEl = document.getElementById('notificationsEmpty');
+    
+    loadingEl.style.display = 'none';
+    
+    if (notificationData.notifications.length === 0) {
+        listEl.style.display = 'none';
+        emptyEl.style.display = 'block';
+        updateNotificationSummary('No notifications');
+        return;
+    }
+    
+    emptyEl.style.display = 'none';
+    listEl.style.display = 'block';
+    
+    const notificationsHtml = notificationData.notifications.map(notification => {
+        const iconClass = getNotificationIconClass(notification.type);
+        const colorClass = getNotificationColorClass(notification.color);
+        const priorityBadge = getPriorityBadge(notification.priority);
+        
+        return `
+            <div class="notification-item p-3 ${!notification.is_read ? 'unread' : ''}" 
+                 onclick="handleNotificationClick(${notification.id}, '${notification.action_url || ''}')"
+                 data-notification-id="${notification.id}">
+                <div class="d-flex align-items-start">
+                    <div class="notification-icon bg-${colorClass} text-white me-3">
+                        <i class="fas fa-${iconClass}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="mb-0 fw-semibold" style="font-size: 0.9rem; line-height: 1.3;">
+                                ${notification.title}
+                            </h6>
+                            <div class="d-flex align-items-center ms-2">
+                                ${priorityBadge}
+                                ${!notification.is_read ? '<div class="bg-primary rounded-circle" style="width: 8px; height: 8px;"></div>' : ''}
+                            </div>
+                        </div>
+                        <p class="mb-1 text-muted small" style="font-size: 0.8rem; line-height: 1.4;">
+                            ${notification.message}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted" style="font-size: 0.7rem;">
+                                <i class="fas fa-clock me-1"></i>${notification.time_since}
+                            </small>
+                            ${notification.related_course ? `
+                                <small class="text-primary" style="font-size: 0.7rem;">
+                                    <i class="fas fa-graduation-cap me-1"></i>${notification.related_course.title}
+                                </small>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    listEl.innerHTML = notificationsHtml;
+    
+    updateNotificationSummary(`${notificationData.unreadCount} unread of ${notificationData.notifications.length}`);
+}
+
+// Update notification badge count
+function updateNotificationBadge() {
+    const badge = document.getElementById('notificationCount');
+    
+    if (notificationData.unreadCount > 0) {
+        badge.textContent = notificationData.unreadCount > 99 ? '99+' : notificationData.unreadCount;
+        badge.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// Handle notification click
+async function handleNotificationClick(notificationId, actionUrl) {
+    try {
+        // Mark as read
+        await fetch(`/notifications/api/mark-read/${notificationId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        });
+        
+        // Update UI
+        const notificationEl = document.querySelector(`[data-notification-id="${notificationId}"]`);
+        if (notificationEl) {
+            notificationEl.classList.remove('unread');
+            notificationData.unreadCount = Math.max(0, notificationData.unreadCount - 1);
+            updateNotificationBadge();
+        }
+        
+        // Navigate to action URL if provided
+        if (actionUrl && actionUrl !== 'None') {
+            window.location.href = actionUrl;
+        }
+        
+    } catch (error) {
+        console.error('Error handling notification click:', error);
+    }
+}
+
+// Mark all notifications as read
+async function markAllAsRead() {
+    try {
+        const response = await fetch('/notifications/api/mark-all-read/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        });
+        
+        if (response.ok) {
+            // Update UI
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+            
+            notificationData.unreadCount = 0;
+            updateNotificationBadge();
+            updateNotificationSummary(`All notifications read`);
+            
+            // Show success message
+            showNotificationToast('All notifications marked as read', 'success');
+        }
+        
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error);
+        showNotificationToast('Error marking notifications as read', 'error');
+    }
+}
+
+// Update notification summary text
+function updateNotificationSummary(text) {
+    const summaryEl = document.getElementById('notificationSummary');
+    if (summaryEl) {
+        summaryEl.textContent = text;
+    }
+}
+
+// Show error state
+function showNotificationError() {
+    const loadingEl = document.getElementById('notificationLoading');
+    const listEl = document.getElementById('notificationsList');
+    const emptyEl = document.getElementById('notificationsEmpty');
+    
+    loadingEl.style.display = 'none';
+    listEl.style.display = 'none';
+    emptyEl.innerHTML = `
+        <i class="fas fa-exclamation-triangle text-warning mb-2" style="font-size: 2rem;"></i>
+        <div class="text-muted">Error loading notifications</div>
+        <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadNotifications()">
+            <i class="fas fa-redo me-1"></i>Try Again
+        </button>
+    `;
+    emptyEl.style.display = 'block';
+}
+
+// Utility functions
+function getNotificationIconClass(type) {
+    const icons = {
+        'progress_update': 'chart-line',
+        'course_completion': 'graduation-cap',
+        'video_completion': 'play-circle',
+        'achievement': 'trophy',
+        'announcement': 'bullhorn',
+        'reminder': 'clock',
+        'milestone': 'flag',
+        'welcome': 'hand-wave'
+    };
+    return icons[type] || 'bell';
+}
+
+function getNotificationColorClass(color) {
+    const colors = {
+        'primary': 'primary',
+        'success': 'success',
+        'info': 'info',
+        'warning': 'warning',
+        'danger': 'danger',
+        'secondary': 'secondary'
+    };
+    return colors[color] || 'primary';
+}
+
+function getPriorityBadge(priority) {
+    const badges = {
+        'low': '<span class="badge bg-secondary priority-badge">Low</span>',
+        'medium': '<span class="badge bg-primary priority-badge">Medium</span>',
+        'high': '<span class="badge bg-warning priority-badge">High</span>',
+        'urgent': '<span class="badge bg-danger priority-badge">Urgent</span>'
+    };
+    return badges[priority] || '';
+}
+
+function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+}
+
+function showNotificationToast(message, type = 'info') {
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${type} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    // Add to page
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+    
+    toastContainer.appendChild(toast);
+    
+    // Show toast
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove after hiding
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
+// Auto-refresh notifications every 30 seconds
+setInterval(() => {
+    fetch('/notifications/api/count/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.unread_count !== notificationData.unreadCount) {
+                notificationData.unreadCount = data.unread_count;
+                updateNotificationBadge();
+            }
+        })
+        .catch(console.error);
+}, 30000);
+
+// Load initial notification count
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/notifications/api/count/')
+        .then(response => response.json())
+        .then(data => {
+            notificationData.unreadCount = data.unread_count;
+            updateNotificationBadge();
+        })
+        .catch(console.error);
+});
+</script>

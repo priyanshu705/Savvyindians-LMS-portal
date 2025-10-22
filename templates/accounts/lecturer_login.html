@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card">
+                    <!-- Logo and Header -->
+                    <div class="login-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="login-logo">
+                        </div>
+                        <h2 class="login-title">{% trans 'Lecturer Portal' %}</h2>
+                        <p class="login-subtitle">{% trans 'Sign in to manage your courses' %}</p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form method="post" class="login-form" id="lecturer-login-form">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="form-floating mb-3">
+                            <input type="text" 
+                                   name="username" 
+                                   id="id_username" 
+                                   class="form-control" 
+                                   placeholder="Username"
+                                   required
+                                   autofocus>
+                            <label for="id_username">
+                                <i class="fas fa-user me-2"></i>{% trans 'Username' %}
+                            </label>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-floating mb-3 position-relative">
+                            <input type="password" 
+                                   name="password" 
+                                   id="id_password" 
+                                   class="form-control" 
+                                   placeholder="Password"
+                                   required>
+                            <label for="id_password">
+                                <i class="fas fa-lock me-2"></i>{% trans 'Password' %}
+                            </label>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="password-toggle-icon"></i>
+                            </button>
+                        </div>
+
+                        <!-- Forgot Password -->
+                        <div class="d-flex justify-content-end mb-4">
+                            <a href="{% url 'password_reset' %}" class="forgot-password">
+                                {% trans 'Forgot Password?' %}
+                            </a>
+                        </div>
+
+                        <!-- Messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn login-btn w-100 mb-3" id="login-submit-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span id="login-btn-text">{% trans 'Sign In' %}</span>
+                        </button>
+
+                        <!-- Info -->
+                        <div class="text-center mt-3">
+                            <p class="text-muted small">
+                                <i class="fas fa-info-circle me-1"></i>
+                                {% trans 'For lecturers and instructors only' %}
+                            </p>
+                        </div>
+                    </form>
+
+                    <!-- Features -->
+                    <div class="login-features mt-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-chalkboard-teacher text-primary"></i>
+                                    <small>{% trans 'Manage Courses' %}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-users text-success"></i>
+                                    <small>{% trans 'Track Students' %}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-chart-bar text-info"></i>
+                                    <small>{% trans 'View Analytics' %}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Login Card Styles */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4A90E2, #357ABD);
+}
+
+/* Logo and Header */
+.login-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.login-title {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.login-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Form Styling */
+.form-floating {
+    position: relative;
+}
+
+.form-floating input {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.form-floating input:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    background: white;
+}
+
+.form-floating label {
+    color: #718096;
+    font-weight: 500;
+    padding-left: 3rem;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label {
+    color: #4A90E2;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #718096;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: #4A90E2;
+    background: rgba(74, 144, 226, 0.1);
+}
+
+/* Forgot Password Link */
+.forgot-password {
+    color: #4A90E2;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+    color: #357ABD;
+    text-decoration: underline;
+}
+
+/* Login Button */
+.login-btn {
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+/* Features */
+.login-features {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+}
+
+.feature-item {
+    padding: 0.5rem;
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.feature-item small {
+    display: block;
+    color: #718096;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert-danger, .alert-error {
+    background: linear-gradient(135deg, #feb2b2 0%, #fed7d7 100%);
+    color: #c53030;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #9ae6b4 0%, #c6f6d5 100%);
+    color: #276749;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #90cdf4 0%, #bee3f8 100%);
+    color: #2c5282;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .login-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 1.5rem;
+    }
+    
+    .login-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation */
+.login-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('lecturer-login-form');
+    const submitBtn = document.getElementById('login-submit-btn');
+    const btnText = document.getElementById('login-btn-text');
+    const usernameField = document.getElementById('id_username');
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        btnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Signing In..." %}';
+        
+        // Re-enable button after 5 seconds as fallback
+        setTimeout(function() {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+            btnText.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>{% trans "Sign In" %}';
+        }, 5000);
+    });
+    
+    // Auto-focus on username field
+    usernameField.focus();
+});
+
+function togglePassword() {
+    const passwordField = document.getElementById('id_password');
+    const toggleIcon = document.getElementById('password-toggle-icon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// Add ripple effect to buttons
+document.querySelectorAll('.login-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+</script>
+{% endblock content %}

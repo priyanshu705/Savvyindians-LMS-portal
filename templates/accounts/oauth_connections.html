@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}{{ title }} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="page-header mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'profile' %}">{% trans 'Profile' %}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                    </ol>
+                </nav>
+                <h2 class="page-title">
+                    <i class="fas fa-link me-3"></i>{{ title }}
+                </h2>
+                <p class="page-subtitle">{% trans 'Manage your connected social accounts and authentication methods' %}</p>
+            </div>
+
+            <!-- Messages -->
+            {% include 'snippets/messages.html' %}
+
+            <div class="row">
+                <!-- Connected Accounts Section -->
+                <div class="col-lg-8">
+                    <div class="connection-card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                <i class="fas fa-users-cog me-2"></i>
+                                {% trans 'Connected Accounts' %}
+                            </h4>
+                            <p class="card-subtitle">{% trans 'Social accounts linked to your student profile' %}</p>
+                        </div>
+
+                        <div class="card-body">
+                            {% if social_accounts %}
+                                <div class="connected-accounts">
+                                    {% for account in social_accounts %}
+                                        <div class="account-item">
+                                            <div class="account-info">
+                                                <div class="account-icon">
+                                                    {% if account.provider == 'google' %}
+                                                        <svg width="32" height="32" viewBox="0 0 24 24">
+                                                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                                        </svg>
+                                                    {% else %}
+                                                        <i class="fas fa-user-circle"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="account-details">
+                                                    <h6>{{ account.provider|title }} Account</h6>
+                                                    <p class="account-email">{{ account.extra_data.email|default:account.uid }}</p>
+                                                    <small class="account-date">
+                                                        {% trans 'Connected on' %} {{ account.date_joined|date:"M d, Y" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="account-status">
+                                                <span class="status-badge active">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    {% trans 'Active' %}
+                                                </span>
+                                            </div>
+                                            <div class="account-actions">
+                                                <a href="{% provider_login_url account.provider next='/accounts/oauth/connections/' %}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-sync-alt me-1"></i>
+                                                    {% trans 'Refresh' %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="no-connections">
+                                    <div class="no-connections-icon">
+                                        <i class="fas fa-unlink"></i>
+                                    </div>
+                                    <h5>{% trans 'No Connected Accounts' %}</h5>
+                                    <p>{% trans 'You haven\'t connected any social accounts yet. Connect your Google account for easier sign-in.' %}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Connections Section -->
+                <div class="col-lg-4">
+                    <div class="connection-card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                {% trans 'Connect Account' %}
+                            </h4>
+                            <p class="card-subtitle">{% trans 'Add new social account connections' %}</p>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="available-providers">
+                                <!-- Google Provider -->
+                                {% if not has_google_account %}
+                                    <div class="provider-option">
+                                        <div class="provider-info">
+                                            <div class="provider-icon">
+                                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="provider-details">
+                                                <h6>Google</h6>
+                                                <p>{% trans 'Connect your Google account for easy sign-in' %}</p>
+                                            </div>
+                                        </div>
+                                        <a href="{% provider_login_url 'google' next='/accounts/oauth/connections/' %}" 
+                                           class="btn btn-connect">
+                                            <i class="fas fa-link me-2"></i>
+                                            {% trans 'Connect' %}
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="provider-connected">
+                                        <div class="provider-info">
+                                            <div class="provider-icon">
+                                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="provider-details">
+                                                <h6>Google</h6>
+                                                <p>{% trans 'Already connected' %}</p>
+                                            </div>
+                                        </div>
+                                        <span class="btn btn-connected disabled">
+                                            <i class="fas fa-check me-2"></i>
+                                            {% trans 'Connected' %}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="connection-card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                {% trans 'Security & Privacy' %}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="security-info">
+                                <div class="security-item">
+                                    <i class="fas fa-lock text-success me-2"></i>
+                                    <small>{% trans 'All connections use secure OAuth 2.0 authentication' %}</small>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-eye-slash text-success me-2"></i>
+                                    <small>{% trans 'We only access basic profile information' %}</small>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-user-shield text-success me-2"></i>
+                                    <small>{% trans 'You can disconnect accounts anytime' %}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Connection Card Styles */
+.connection-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.connection-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.connection-card .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.connection-card .card-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.connection-card .card-body {
+    padding: 1.5rem;
+}
+
+/* Page Header */
+.page-header .page-title {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.page-header .page-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Connected Accounts */
+.connected-accounts .account-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.connected-accounts .account-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.account-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.account-icon {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.account-details h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.account-details .account-email {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.account-details .account-date {
+    color: #718096;
+    font-size: 0.8rem;
+}
+
+.account-status .status-badge {
+    background: #c6f6d5;
+    color: #2f855a;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.account-actions .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+}
+
+/* No Connections */
+.no-connections {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.no-connections-icon {
+    font-size: 3rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+}
+
+.no-connections h5 {
+    color: #2d3748;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.no-connections p {
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+/* Provider Options */
+.provider-option, .provider-connected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.provider-option:hover {
+    border-color: #4285f4;
+    background: rgba(66, 133, 244, 0.02);
+}
+
+.provider-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.provider-icon {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.provider-details h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.provider-details p {
+    color: #718096;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.btn-connect {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-connect:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+    color: white;
+}
+
+.btn-connected {
+    background: #e2e8f0;
+    color: #718096;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: not-allowed;
+}
+
+/* Security Info */
+.security-info {
+    padding: 1rem 0;
+}
+
+.security-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: #4a5568;
+}
+
+.security-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .account-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .account-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .account-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .provider-option, .provider-connected {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .provider-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .provider-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-item a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: #4a5568;
+}
+</style>
+{% endblock content %}

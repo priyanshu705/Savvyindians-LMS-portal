@@ -1,0 +1,235 @@
+{% load static %}
+
+<style>
+	/* Modern Sidebar Styles - Closed by default */
+	#side-nav {
+		transform: translateX(-100%);
+		transition: transform 0.3s ease;
+	}
+	
+	#side-nav.active {
+		transform: translateX(0);
+	}
+	
+	.top-side {
+		background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+		background-size: cover;
+		background-position: top center;
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.top-side::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(10px);
+	}
+	
+	.logo-container {
+		position: relative;
+		z-index: 2;
+	}
+	
+	.logo-container img {
+		filter: brightness(1.1) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+		transition: transform 0.3s ease;
+	}
+	
+	.logo-container img:hover {
+		transform: scale(1.05);
+	}
+	
+	.user-role-badge {
+		display: inline-block;
+		background: rgba(255, 255, 255, 0.9);
+		color: #667eea;
+		padding: 0.5rem 1rem;
+		border-radius: 20px;
+		font-weight: 600;
+		font-size: 0.9rem;
+		margin-top: 1rem;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+	}
+	
+	.user-role-badge i {
+		color: #667eea;
+		margin-right: 0.5rem;
+	}
+	
+	.desktop-hide .toggle-btn {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: none;
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		z-index: 3;
+	}
+	
+	.desktop-hide .toggle-btn:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: scale(1.1);
+	}
+	
+	/* Enhanced Navigation Menu */
+	#side-nav ul li a {
+		display: flex;
+		align-items: center;
+		padding: 1rem 1.5rem;
+		color: #4a5568;
+		border-radius: 0 25px 25px 0;
+		transition: all 0.3s ease;
+		font-weight: 500;
+		position: relative;
+		margin: 0.2rem 0;
+	}
+	
+	#side-nav ul li a i {
+		width: 20px;
+		height: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 1rem;
+		font-size: 1rem;
+		background: none;
+		border-radius: 8px;
+		transition: all 0.3s ease;
+	}
+	
+	#side-nav ul li a:hover {
+		color: #667eea;
+		background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+		transform: translateX(5px);
+	}
+	
+	#side-nav ul li a:hover i {
+		background: rgba(102, 126, 234, 0.2);
+		color: #667eea;
+		transform: scale(1.1);
+	}
+	
+	#side-nav ul li.active a {
+		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+		color: white;
+		box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+	}
+	
+	#side-nav ul li.active a i {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+	}
+	
+	/* Section Divider */
+	.menu-section {
+		color: #718096;
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		padding: 1rem 1.5rem 0.5rem;
+		margin-top: 1rem;
+		position: relative;
+	}
+	
+	.menu-section::before {
+		content: '';
+		position: absolute;
+		top: 0.5rem;
+		left: 1.5rem;
+		right: 1.5rem;
+		height: 1px;
+		background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+	}
+</style>
+
+<div id="side-nav">
+	<div class="main-menu">
+		<div class="top-side text-center py-4">
+			<div class="desktop-hide">
+				<button class="toggle-btn" onclick="toggleSidebar()" aria-label="Close sidebar">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<div class="logo-container">
+				<a href="/">
+					<img src="{% static 'img/dj-lms.png' %}" width="110px" alt="Logo Django LMS">
+				</a>
+				<div class="user-role-badge">
+					<i class="fas fa-user-circle"></i>
+					{{ request.user.get_user_role }}
+				</div>
+			</div>
+		</div>
+		{% url 'home' as hom %} {% url 'dashboard' as dash %} {% url 'profile' as prof %}
+		{% url 'lecturer_list' as lec %}
+		{% url 'student_list' as stu %} {% url 'course_allocation_view' as cav %}
+		{% url 'programs' as pro %} {% url 'session_list' as sess %} {% url 'semester_list' as sem %}
+		{% url 'add_score' as ascore %} {% url 'grade_results' as vr %}{% url 'ass_results' as ar %}
+		{% url 'course_registration' as cr %} {% url 'edit_profile' as ep %} {% url 'change_password' as cp %}
+		{% url 'quiz_progress' as qpr %} {% url 'quiz_marking' as qce %} {% url 'user_course_list' as ucl %}
+		{% url 'admin_panel' as admin_p %}
+		
+
+
+		<ul>
+			<!-- Main Navigation -->
+			<li class="{% if request.path == hom %}active{% endif %}">
+				<a href="{% url 'home' %}"><i class="fas fa-home"></i>Home</a>
+			</li>
+			<li class="{% if request.path == prof %}active{% endif %}">
+				<a href="{% url 'profile' %}"><i class="fas fa-user"></i>Profile</a>
+			</li>
+
+			<!-- Courses & Videos Section -->
+			<div class="menu-section">Learning</div>
+			<li class="{% if request.path == ucl %}active{% endif %}">
+				<a href="{% url 'user_course_list' %}"><i class="fas fa-book"></i>My Courses</a>
+			</li>
+			<li class="{% if request.path == pro %}active{% endif %}">
+				<a href="{% url 'programs' %}"><i class="fas fa-play-circle"></i>Video Lectures</a>
+			</li>
+			{% if request.user.is_student %}
+			<li class="{% if 'progress/dashboard' in request.path %}active{% endif %}">
+				<a href="{% url 'student_progress_dashboard' %}"><i class="fas fa-chart-line"></i>My Progress</a>
+			</li>
+			{% endif %}
+
+			<!-- Account Settings -->
+			<div class="menu-section">Account</div>
+			<li class="{% if request.path == ep %}active{% endif %}">
+				<a href="{% url 'edit_profile' %}"><i class="fas fa-cogs"></i>Settings</a>
+			</li>
+			<li class="{% if request.path == cp %}active{% endif %}">
+				<a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a>
+			</li>
+		</ul>
+	</div>
+
+	<footer class="card-footer mt-5 pt-3 pb-5 px-2">
+		<div class="col-12">
+			<p class="small m-0 text-center">
+				<a href="#" class="text-muted">Privacy Policy</a> | <a href="#" class="text-muted">Terms of Use</a>
+				<br />SavvyIndians Bootcamp &copy; <script>document.write(new Date().getFullYear());</script>
+				<br />
+			</p>
+		</div>
+	</footer>
+</div>
+
+{% block js %}
+{% endblock js %}

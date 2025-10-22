@@ -1,0 +1,580 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="auth-card-dark">
+                    <!-- Header -->
+                    <div class="register-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="register-logo">
+                        </div>
+                        <h2 class="text-white fw-bold fs-2 mb-2">{% trans 'Join Our Learning Community' %}</h2>
+                        <p class="text-gold mb-0">{% trans 'Create your student account to access courses' %}</p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form method="post" class="register-form" id="student-register-form">
+                        {% csrf_token %}
+                        
+                        <!-- Progress Indicator -->
+                        <div class="progress-indicator mb-4">
+                            <div class="step active" data-step="1">
+                                <span class="step-number">1</span>
+                                <span class="step-text">{% trans 'Personal Info' %}</span>
+                            </div>
+                            <div class="step" data-step="2">
+                                <span class="step-number">2</span>
+                                <span class="step-text">{% trans 'Academic Details' %}</span>
+                            </div>
+                            <div class="step" data-step="3">
+                                <span class="step-number">3</span>
+                                <span class="step-text">{% trans 'Account Setup' %}</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Personal Information -->
+                        <div class="form-step active" id="step-1">
+                            <h4 class="step-title">{% trans 'Personal Information' %}</h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.first_name }}
+                                        <label for="{{ form.first_name.id_for_label }}">
+                                            <i class="fas fa-user me-2"></i>{{ form.first_name.label }}
+                                        </label>
+                                        {% if form.first_name.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.last_name }}
+                                        <label for="{{ form.last_name.id_for_label }}">
+                                            <i class="fas fa-user me-2"></i>{{ form.last_name.label }}
+                                        </label>
+                                        {% if form.last_name.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    {{ form.email }}
+                                    <label for="{{ form.email.id_for_label }}">
+                                        <i class="fas fa-envelope me-2"></i>{{ form.email.label }}
+                                    </label>
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.phone }}
+                                        <label for="{{ form.phone.id_for_label }}">
+                                            <i class="fas fa-phone me-2"></i>{{ form.phone.label }}
+                                        </label>
+                                        {% if form.phone.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.gender }}
+                                        <label for="{{ form.gender.id_for_label }}">
+                                            <i class="fas fa-venus-mars me-2"></i>{{ form.gender.label }}
+                                        </label>
+                                        {% if form.gender.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.gender.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    {{ form.address }}
+                                    <label for="{{ form.address.id_for_label }}">
+                                        <i class="fas fa-map-marker-alt me-2"></i>{{ form.address.label }}
+                                    </label>
+                                    {% if form.address.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Academic Details -->
+                        <div class="form-step" id="step-2">
+                            <h4 class="step-title">{% trans 'Academic Details' %}</h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.level }}
+                                        <label for="{{ form.level.id_for_label }}">
+                                            <i class="fas fa-graduation-cap me-2"></i>{{ form.level.label }}
+                                        </label>
+                                        {% if form.level.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.program }}
+                                        <label for="{{ form.program.id_for_label }}">
+                                            <i class="fas fa-book me-2"></i>{{ form.program.label }}
+                                        </label>
+                                        {% if form.program.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Account Setup -->
+                        <div class="form-step" id="step-3">
+                            <h4 class="step-title">{% trans 'Account Setup' %}</h4>
+                            
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    {{ form.username }}
+                                    <label for="{{ form.username.id_for_label }}">
+                                        <i class="fas fa-id-card me-2"></i>{{ form.username.label }}
+                                    </label>
+                                    <div class="form-text">{{ form.username.help_text }}</div>
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.password1 }}
+                                        <label for="{{ form.password1.id_for_label }}">
+                                            <i class="fas fa-lock me-2"></i>{{ form.password1.label }}
+                                        </label>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('{{ form.password1.id_for_label }}', 'toggle1')">
+                                            <i class="fas fa-eye" id="toggle1"></i>
+                                        </button>
+                                        <div class="form-text">{{ form.password1.help_text }}</div>
+                                        {% if form.password1.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        {{ form.password2 }}
+                                        <label for="{{ form.password2.id_for_label }}">
+                                            <i class="fas fa-lock me-2"></i>{{ form.password2.label }}
+                                        </label>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('{{ form.password2.id_for_label }}', 'toggle2')">
+                                            <i class="fas fa-eye" id="toggle2"></i>
+                                        </button>
+                                        {% if form.password2.errors %}
+                                            <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check terms-check">
+                                    {{ form.terms_accepted }}
+                                    <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
+                                        {{ form.terms_accepted.label }}
+                                        <a href="#" class="terms-link">{% trans 'terms and conditions' %}</a>
+                                    </label>
+                                    {% if form.terms_accepted.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Navigation Buttons -->
+                        <div class="form-navigation d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-gold" id="prev-btn" onclick="previousStep()" style="display: none;">
+                                <i class="fas fa-arrow-left me-2"></i>{% trans 'Previous' %}
+                            </button>
+                            <button type="button" class="btn btn-gold" id="next-btn" onclick="nextStep()">
+                                {% trans 'Next' %}<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            <button type="submit" class="btn btn-gold register-btn" id="submit-btn" style="display: none;">
+                                <i class="fas fa-user-plus me-2"></i>
+                                <span id="submit-btn-text">{% trans 'Create Account' %}</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Login Link -->
+                    <div class="text-center mt-4">
+                        <p class="text-secondary mb-0">
+                            {% trans "Already have an account?" %}
+                            <a href="{% url 'student_login' %}" class="text-gold text-decoration-none fw-semibold">
+                                {% trans 'Sign in here' %}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional Register Page Specific Styles */
+.register-logo {
+    width: 70px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--dark-gray);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-color);
+}
+
+.step.active .step-number {
+    background: var(--primary-gold);
+    color: var(--primary-black);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.step.completed .step-number {
+    background: var(--primary-gold);
+    color: var(--primary-black);
+    border-color: var(--primary-gold);
+}
+
+.step.completed .step-number::after {
+    content: '✓';
+    position: absolute;
+}
+
+.step-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.step.active .step-text {
+    color: var(--primary-gold);
+}
+
+/* Form Steps */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.step-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+/* Form Styling */
+.form-floating input,
+.form-floating select {
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+}
+
+.form-floating label {
+    padding-left: 3rem;
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-gold);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+/* Terms and Conditions */
+.terms-check {
+    background: var(--dark-gray);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.terms-link {
+    color: var(--primary-gold) !important;
+    text-decoration: none;
+}
+
+.terms-link:hover {
+    text-decoration: underline;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-gold);
+    border-color: var(--primary-gold);
+}
+
+/* Navigation Buttons */
+.form-navigation {
+    margin-top: 2rem;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-card-dark {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .progress-indicator {
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-text {
+        font-size: 0.7rem;
+    }
+    
+    .step-number {
+        width: 35px;
+        height: 35px;
+    }
+}
+</style>
+
+<script>
+let currentStep = 1;
+const totalSteps = 3;
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateStepDisplay();
+});
+
+function nextStep() {
+    if (validateCurrentStep()) {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateStepDisplay();
+        }
+    }
+}
+
+function previousStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateStepDisplay();
+    }
+}
+
+function updateStepDisplay() {
+    // Hide all steps
+    document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Show current step
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    
+    // Update progress indicator
+    document.querySelectorAll('.step').forEach((step, index) => {
+        const stepNumber = index + 1;
+        step.classList.remove('active', 'completed');
+        
+        if (stepNumber < currentStep) {
+            step.classList.add('completed');
+        } else if (stepNumber === currentStep) {
+            step.classList.add('active');
+        }
+    });
+    
+    // Update navigation buttons
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+    
+    if (currentStep === totalSteps) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    } else {
+        nextBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+    }
+}
+
+function validateCurrentStep() {
+    const currentStepElement = document.getElementById(`step-${currentStep}`);
+    const inputs = currentStepElement.querySelectorAll('input, select, textarea');
+    let isValid = true;
+    
+    inputs.forEach(input => {
+        // Skip validation for checkboxes and hidden fields
+        if (input.type === 'checkbox' || input.type === 'hidden') {
+            return;
+        }
+        
+        // Basic validation - check if field has value
+        if (input.tagName === 'SELECT' && (!input.value || input.value === '')) {
+            input.classList.add('is-invalid');
+            isValid = false;
+        } else if (input.tagName === 'INPUT' && !input.value.trim()) {
+            input.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+    
+    // For step 3, validate terms checkbox
+    if (currentStep === 3) {
+        const termsCheckbox = document.getElementById('{{ form.terms_accepted.id_for_label }}');
+        if (termsCheckbox && !termsCheckbox.checked) {
+            alert('{% trans "Please accept the terms and conditions to continue" %}');
+            isValid = false;
+        }
+    }
+    
+    return isValid;
+}
+
+function togglePassword(fieldId, iconId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = document.getElementById(iconId);
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// Form submission handling
+document.getElementById('student-register-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('submit-btn-text');
+    
+    submitBtn.disabled = true;
+    btnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Creating Account..." %}';
+    
+    // Re-enable button after 10 seconds as fallback
+    setTimeout(function() {
+        submitBtn.disabled = false;
+        btnText.innerHTML = '{% trans "Create Account" %}';
+    }, 10000);
+});
+
+// Username validation
+document.getElementById('{{ form.username.id_for_label }}').addEventListener('blur', function() {
+    const username = this.value.trim();
+    if (username) {
+        validateUsername(username, this);
+    }
+});
+
+function validateUsername(username, field) {
+    fetch(`/accounts/ajax/validate-username/?username=${encodeURIComponent(username)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.is_taken) {
+            field.classList.add('is-invalid');
+            field.classList.remove('is-valid');
+        } else {
+            field.classList.add('is-valid');
+            field.classList.remove('is-invalid');
+        }
+    })
+    .catch(error => {
+        console.log('Validation error:', error);
+    });
+}
+</script>
+{% endblock content %}

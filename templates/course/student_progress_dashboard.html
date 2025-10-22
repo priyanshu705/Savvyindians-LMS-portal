@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {% trans 'Learning management system' %}{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-chart-line text-primary"></i>
+                    {% trans 'My Learning Progress' %}
+                </h1>
+                <a href="{% url 'user_course_list' %}" class="btn modern-btn">
+                    <i class="fas fa-arrow-left me-2"></i>{% trans 'Back to Courses' %}
+                </a>
+            </div>
+
+            <!-- Overall Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="stats-icon">
+                                <i class="fas fa-video text-primary"></i>
+                            </div>
+                            <h3 class="stats-number">{{ total_videos }}</h3>
+                            <p class="stats-label">{% trans 'Total Videos' %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="stats-icon">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                            <h3 class="stats-number">{{ completed_videos }}</h3>
+                            <p class="stats-label">{% trans 'Completed' %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="stats-icon">
+                                <i class="fas fa-percentage text-info"></i>
+                            </div>
+                            <h3 class="stats-number">{{ overall_completion|floatformat:1 }}%</h3>
+                            <p class="stats-label">{% trans 'Overall Progress' %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="stats-icon">
+                                <i class="fas fa-clock text-warning"></i>
+                            </div>
+                            <h3 class="stats-number">
+                                {% if total_watch_time >= 3600 %}
+                                    {{ total_watch_time|floatformat:0|add:0|div:3600|floatformat:1 }}h
+                                {% elif total_watch_time >= 60 %}
+                                    {{ total_watch_time|floatformat:0|add:0|div:60|floatformat:0 }}m
+                                {% else %}
+                                    {{ total_watch_time }}s
+                                {% endif %}
+                            </h3>
+                            <p class="stats-label">{% trans 'Watch Time' %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress by Course -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        {% trans 'Progress by Course' %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for course_title, course_data in course_progress.items %}
+                    <div class="course-progress-item mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">{{ course_title }}</h6>
+                            <small class="text-muted">
+                                {{ course_data.completed }}/{{ course_data.total }} {% trans 'videos completed' %}
+                            </small>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar bg-gradient-primary" 
+                                 role="progressbar" 
+                                 style="width: {{ course_data.completion_percentage }}%"
+                                 aria-valuenow="{{ course_data.completion_percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-success">
+                                <i class="fas fa-chart-line"></i>
+                                {{ course_data.completion_percentage|floatformat:1 }}% {% trans 'complete' %}
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i>
+                                {% if course_data.total_watch_time >= 3600 %}
+                                    {{ course_data.total_watch_time|floatformat:0|add:0|div:3600|floatformat:1 }}h {% trans 'watched' %}
+                                {% elif course_data.total_watch_time >= 60 %}
+                                    {{ course_data.total_watch_time|floatformat:0|add:0|div:60|floatformat:0 }}m {% trans 'watched' %}
+                                {% else %}
+                                    {{ course_data.total_watch_time }}s {% trans 'watched' %}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h5 class="empty-state-title">{% trans 'No Progress Yet' %}</h5>
+                            <p class="empty-state-text">{% trans 'Start watching videos to see your progress here.' %}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        {% trans 'Recent Activity' %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Video' %}</th>
+                                    <th>{% trans 'Course' %}</th>
+                                    <th>{% trans 'Progress' %}</th>
+                                    <th>{% trans 'Last Watched' %}</th>
+                                    <th>{% trans 'Status' %}</th>
+                                    <th>{% trans 'Action' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for progress in progress_records|slice:":10" %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-video text-primary me-2"></i>
+                                        {{ progress.video.title }}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ progress.video.course.title }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 15px; min-width: 100px;">
+                                            <div class="progress-bar bg-{% if progress.is_completed %}success{% else %}primary{% endif %}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ progress.completion_percentage }}%"
+                                                 aria-valuenow="{{ progress.completion_percentage }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                <small>{{ progress.completion_percentage|floatformat:0 }}%</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ progress.last_watched|timesince }} {% trans 'ago' %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if progress.is_completed %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> {% trans 'Completed' %}
+                                            </span>
+                                        {% elif progress.completion_percentage > 0 %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-play"></i> {% trans 'In Progress' %}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-pause"></i> {% trans 'Not Started' %}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ progress.video.get_absolute_url }}" 
+                                           class="btn btn-sm modern-btn">
+                                            {% if progress.completion_percentage > 0 %}
+                                                <i class="fas fa-play me-1"></i>{% trans 'Continue' %}
+                                            {% else %}
+                                                <i class="fas fa-play me-1"></i>{% trans 'Watch' %}
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">
+                                                <i class="fas fa-video"></i>
+                                            </div>
+                                            <h5 class="empty-state-title">{% trans 'No Activity Yet' %}</h5>
+                                            <p class="empty-state-text">{% trans 'Start watching videos to see your activity here.' %}</p>
+                                            <a href="{% url 'user_course_list' %}" class="btn modern-btn">
+                                                <i class="fas fa-play me-2"></i>{% trans 'Start Learning' %}
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stats-card {
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.stats-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.stats-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.course-progress-item {
+    padding: 1rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.progress {
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state-title {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+    color: #adb5bd;
+    margin-bottom: 1.5rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.modern-btn {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    color: white;
+}
+</style>
+{% endblock content %}

@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Google Sign In' %} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="oauth-card">
+                    <!-- Logo and Header -->
+                    <div class="oauth-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="oauth-logo">
+                        </div>
+                        <h2 class="oauth-title">{% trans 'Continue with Google' %}</h2>
+                        <p class="oauth-subtitle">{% trans 'Sign in to your student account using Google' %}</p>
+                    </div>
+
+                    <!-- Provider Information -->
+                    <div class="provider-info mb-4">
+                        <div class="provider-card">
+                            <div class="provider-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                            </div>
+                            <div class="provider-details">
+                                <h4>Google Account</h4>
+                                <p>{% trans 'Access your courses using your Google account' %}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OAuth Form -->
+                    <form method="post" class="oauth-form">
+                        {% csrf_token %}
+                        
+                        <!-- Success Message -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Continue Button -->
+                        <button type="submit" class="btn oauth-continue-btn w-100 mb-3">
+                            <div class="oauth-btn-content">
+                                <div class="oauth-btn-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                    </svg>
+                                </div>
+                                <span class="oauth-btn-text">{% trans 'Continue with Google' %}</span>
+                                <div class="oauth-btn-loader" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                            </div>
+                        </button>
+
+                        <!-- Back to Login -->
+                        <div class="text-center">
+                            <a href="{% url 'student_login' %}" class="back-to-login">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                {% trans 'Back to Student Login' %}
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Security Notice -->
+                    <div class="security-notice mt-4">
+                        <div class="security-card">
+                            <div class="security-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="security-text">
+                                <h6>{% trans 'Secure Authentication' %}</h6>
+                                <p>{% trans 'Your Google account information is securely handled and we only access basic profile information.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* OAuth Card Styles */
+.oauth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.oauth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4285f4, #34a853, #fbbc05, #ea4335);
+}
+
+/* Logo and Header */
+.oauth-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.oauth-title {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.oauth-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Provider Information */
+.provider-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.provider-card:hover {
+    border-color: #4285f4;
+    background: rgba(66, 133, 244, 0.02);
+}
+
+.provider-icon {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.provider-details h4 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.provider-details p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* OAuth Continue Button */
+.oauth-continue-btn {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.oauth-continue-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.oauth-continue-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.oauth-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.oauth-btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.oauth-btn-text {
+    flex: 1;
+    text-align: center;
+}
+
+.oauth-btn-loader {
+    position: absolute;
+    right: 1rem;
+}
+
+/* Back to Login Link */
+.back-to-login {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-to-login:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Security Notice */
+.security-notice {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+.security-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(34, 197, 94, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(34, 197, 94, 0.1);
+}
+
+.security-icon {
+    color: #22c55e;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.security-text h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.security-text p {
+    color: #718096;
+    font-size: 0.8rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 100%);
+    color: #1e40af;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #bbf7d0 0%, #d1fae5 100%);
+    color: #166534;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fef7cd 100%);
+    color: #92400e;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fecaca 0%, #fed7d7 100%);
+    color: #dc2626;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .oauth-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .oauth-title {
+        font-size: 1.5rem;
+    }
+    
+    .oauth-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .provider-card {
+        padding: 1rem;
+    }
+    
+    .provider-details h4 {
+        font-size: 1rem;
+    }
+    
+    .provider-details p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Loading States */
+.oauth-continue-btn.loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.oauth-continue-btn.loading .oauth-btn-text {
+    opacity: 0.7;
+}
+
+.oauth-continue-btn.loading .oauth-btn-icon {
+    opacity: 0.5;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.oauth-form');
+    const continueBtn = document.querySelector('.oauth-continue-btn');
+    const btnText = document.querySelector('.oauth-btn-text');
+    const btnLoader = document.querySelector('.oauth-btn-loader');
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        continueBtn.disabled = true;
+        continueBtn.classList.add('loading');
+        btnText.textContent = '{% trans "Connecting to Google..." %}';
+        btnLoader.style.display = 'block';
+        
+        // Re-enable button after 10 seconds as fallback
+        setTimeout(function() {
+            continueBtn.disabled = false;
+            continueBtn.classList.remove('loading');
+            btnText.textContent = '{% trans "Continue with Google" %}';
+            btnLoader.style.display = 'none';
+        }, 10000);
+    });
+    
+    // Add ripple effect to continue button
+    continueBtn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+</script>
+{% endblock content %}

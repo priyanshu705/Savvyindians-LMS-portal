@@ -1,0 +1,457 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ title }} | {% trans 'Learning management system' %}{% endblock title %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Modern Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin: -2rem -15px 2rem -15px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("{% static 'img/pattern.svg' %}") repeat;
+        opacity: 0.1;
+        z-index: 1;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Hero Call-to-Action Buttons */
+    .hero-cta {
+        margin-top: 2rem;
+    }
+    
+    .hero-btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .hero-btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-btn-secondary {
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        padding: 1rem 2rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        border: 2px solid transparent;
+    }
+    
+    .hero-btn-secondary:hover {
+        background: white;
+        color: #5a67d8;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin: 0.5rem;
+        min-width: 150px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Enhanced News/Events Cards */
+    .news-events-section {
+        margin-top: 3rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .modern-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .modern-title::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    .color-indicators {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .color-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .indicator-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    
+    .dot-news { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .dot-events { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+
+    /* Enhanced Card Design */
+    .modern-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
+        position: relative;
+    }
+    
+    .modern-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header-modern {
+        padding: 1.5rem;
+        border-bottom: none;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .card-header-modern.news {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .card-header-modern.events {
+        background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    }
+    
+    .card-title {
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-menu {
+        position: relative;
+    }
+    
+    .card-menu .btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card-body-modern {
+        padding: 1.5rem;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #4a5568;
+    }
+    
+    .card-footer-modern {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    
+    .time-icon {
+        color: #667eea;
+    }
+
+    /* Empty State Enhancement */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 20px;
+        margin: 2rem 0;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.5rem;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state-text {
+        color: #718096;
+        font-size: 1rem;
+    }
+
+    /* Action Button Enhancement */
+    .modern-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .modern-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 2rem 0;
+            margin: -1rem -15px 1rem -15px;
+        }
+        
+        .hero-stats {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-card {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .color-indicators {
+            flex-wrap: wrap;
+        }
+        
+        .modern-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<!-- Modern Hero Section -->
+<div class="hero-section">
+    <div class="container hero-content">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold mb-3">{% trans 'Video Learning Platform' %}</h1>
+            <p class="lead mb-4">{% trans 'Access your video lectures anytime, anywhere' %}</p>
+            
+            {% if not request.user.is_authenticated %}
+            <!-- Call to Action for Non-Authenticated Users -->
+            <div class="hero-cta mt-4">
+                <a href="{% url 'student_login' %}" class="btn hero-btn-primary me-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>{% trans 'Student Login' %}
+                </a>
+                <a href="{% url 'student_register' %}" class="btn hero-btn-secondary">
+                    <i class="fas fa-user-plus me-2"></i>{% trans 'Join Now' %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ total_courses|default:"0" }}</span>
+                <span class="stat-label">{% trans 'Video Courses' %}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ total_videos|default:"0" }}</span>
+                <span class="stat-label">{% trans 'Video Lectures' %}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ total_students|default:"0" }}</span>
+                <span class="stat-label">{% trans 'Students' %}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcrumb (keeping it simple and clean) -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb bg-transparent p-0">
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-home me-2"></i>{% trans 'Home' %}
+        </li>
+    </ol>
+</nav>
+
+{% include 'snippets/messages.html' %}
+
+<!-- Quick Access to Courses -->
+<div class="text-center mb-4">
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_student %}
+        <a class="btn modern-btn me-3" href="{% url 'user_course_list' %}">
+            <i class="fas fa-play-circle me-2"></i>{% trans 'My Video Lectures' %}
+        </a>
+        <a class="btn modern-btn" href="{% url 'student_progress_dashboard' %}">
+            <i class="fas fa-chart-line me-2"></i>{% trans 'My Progress' %}
+        </a>
+        {% else %}
+        <a class="btn modern-btn me-3" href="{% url 'user_course_list' %}">
+            <i class="fas fa-play-circle me-2"></i>{% trans 'My Courses' %}
+        </a>
+        <a class="btn modern-btn" href="{% url 'programs' %}">
+            <i class="fas fa-book-open me-2"></i>{% trans 'Browse All Courses' %}
+        </a>
+        {% endif %}
+    {% else %}
+    <div class="guest-access-info">
+        <div class="alert alert-info d-inline-block">
+            <i class="fas fa-info-circle me-2"></i>
+            {% trans 'Please login to access your courses and track your progress' %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Featured Courses Section -->
+<div class="news-events-section">
+    <div class="section-header">
+        <h2 class="modern-title">{% trans 'Featured Video Courses' %}</h2>
+    </div>
+</div>
+
+<div class="container-fluid">
+    {% if featured_courses %}
+    <div class="row">
+        {% for course in featured_courses %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="modern-card">
+                <div class="card-header-modern news">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                </div>
+
+                <div class="card-body-modern">
+                    <p class="mb-2"><strong>{% trans 'Course Code:' %}</strong> {{ course.code }}</p>
+                    <p class="mb-2"><strong>{% trans 'Program:' %}</strong> {{ course.program.title }}</p>
+                    <p class="mb-0">{{ course.summary|default:"No description available." }}</p>
+                </div>
+
+                <div class="card-footer-modern">
+                    <a href="{% url 'course_detail' course.slug %}" class="btn btn-sm modern-btn">
+                        <i class="fas fa-play me-2"></i>{% trans 'Watch Videos' %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-video"></i>
+        </div>
+        <h3 class="empty-state-title">{% trans 'No Courses Available Yet' %}</h3>
+        <p class="empty-state-text">{% trans 'Video courses will appear here when they are published.' %}</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

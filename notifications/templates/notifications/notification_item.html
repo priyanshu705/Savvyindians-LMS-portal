@@ -1,0 +1,152 @@
+<!-- Individual Notification Item Template -->
+<div class="notification-card card {{ notification.is_read|yesno:'read,unread' }}" data-notification-id="{{ notification.id }}">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-start">
+            <!-- Notification Icon -->
+            <div class="notification-icon bg-{{ notification.color }} text-white me-3 flex-shrink-0">
+                <i class="fas fa-{{ notification.icon }}"></i>
+            </div>
+            
+            <!-- Notification Content -->
+            <div class="flex-grow-1 min-w-0">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="mb-0 fw-semibold text-dark" style="font-size: 1.1rem;">
+                            {{ notification.title }}
+                        </h5>
+                        
+                        <!-- Priority Badge -->
+                        {% if notification.priority != 'medium' %}
+                            <span class="badge priority-badge 
+                                {% if notification.priority == 'low' %}bg-secondary
+                                {% elif notification.priority == 'high' %}bg-warning text-dark
+                                {% elif notification.priority == 'urgent' %}bg-danger
+                                {% endif %}">
+                                {{ notification.get_priority_display }}
+                            </span>
+                        {% endif %}
+                        
+                        <!-- Unread Indicator -->
+                        {% if not notification.is_read %}
+                            <span class="badge bg-primary unread-indicator" style="font-size: 0.6rem;">New</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Actions Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if not notification.is_read %}
+                                <li>
+                                    <button class="dropdown-item" onclick="markAsRead({{ notification.id }}, this)">
+                                        <i class="fas fa-check me-2"></i>Mark as Read
+                                    </button>
+                                </li>
+                            {% endif %}
+                            {% if notification.action_url %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ notification.action_url }}">
+                                        <i class="fas fa-external-link-alt me-2"></i>View Details
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <button class="dropdown-item text-danger" onclick="deleteNotification({{ notification.id }}, this)">
+                                    <i class="fas fa-trash me-2"></i>Delete
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Notification Message -->
+                <p class="mb-3 text-muted" style="line-height: 1.6;">
+                    {{ notification.message }}
+                </p>
+                
+                <!-- Metadata Row -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <!-- Timestamp -->
+                        <small class="text-muted d-flex align-items-center">
+                            <i class="fas fa-clock me-1"></i>
+                            <span title="{{ notification.created_at|date:'Y-m-d H:i:s' }}">
+                                {{ notification.time_since }}
+                            </span>
+                        </small>
+                        
+                        <!-- Related Course -->
+                        {% if notification.related_course %}
+                            <small class="text-primary d-flex align-items-center">
+                                <i class="fas fa-graduation-cap me-1"></i>
+                                <a href="{% url 'course:course_detail' notification.related_course.id %}" 
+                                   class="text-decoration-none text-primary">
+                                    {{ notification.related_course.title|truncatechars:30 }}
+                                </a>
+                            </small>
+                        {% endif %}
+                        
+                        <!-- Related Video -->
+                        {% if notification.related_video %}
+                            <small class="text-info d-flex align-items-center">
+                                <i class="fas fa-play-circle me-1"></i>
+                                <span>{{ notification.related_video.title|truncatechars:30 }}</span>
+                            </small>
+                        {% endif %}
+                        
+                        <!-- Notification Type -->
+                        <small class="text-secondary d-flex align-items-center">
+                            <i class="fas fa-tag me-1"></i>
+                            {{ notification.get_type_display }}
+                        </small>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    {% if notification.action_url and not notification.is_read %}
+                        <div>
+                            <a href="{{ notification.action_url }}" 
+                               class="btn btn-sm btn-primary btn-action"
+                               onclick="markAsRead({{ notification.id }}, this)"
+                               style="border-radius: 20px; padding: 0.25rem 0.75rem;">
+                                <i class="fas fa-arrow-right me-1"></i>
+                                {% if notification.type == 'course_completion' %}
+                                    View Certificate
+                                {% elif notification.type == 'video_completion' %}
+                                    Continue Learning
+                                {% elif notification.type == 'achievement' %}
+                                    View Achievement
+                                {% elif notification.type == 'progress_update' %}
+                                    View Progress
+                                {% else %}
+                                    View Details
+                                {% endif %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar for Progress Updates -->
+        {% if notification.type == 'progress_update' and notification.related_course %}
+            <div class="mt-3 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted fw-semibold">Course Progress</small>
+                    <small class="text-primary fw-bold">{{ notification.related_course.progress|default:0 }}%</small>
+                </div>
+                <div class="progress" style="height: 6px; border-radius: 10px;">
+                    <div class="progress-bar bg-primary" 
+                         role="progressbar" 
+                         style="width: {{ notification.related_course.progress|default:0 }}%; border-radius: 10px;"
+                         aria-valuenow="{{ notification.related_course.progress|default:0 }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>

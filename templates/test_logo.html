@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Test - SavvyIndians</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .logo-container {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .logo-info {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 SavvyIndians Logo Display Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Logo with Django Static Tag (PNG)</h2>
+        <div class="logo-info">
+            <strong>Path:</strong> <code>{% static 'img/savvyindians-logo.png' %}</code>
+        </div>
+        <div class="logo-container">
+            <img src="{% static 'img/savvyindians-logo.png' %}" 
+                 alt="SavvyIndians Logo (PNG)" 
+                 style="height: 60px;"
+                 onerror="this.parentElement.innerHTML='<span class=error>❌ Logo failed to load!</span>'">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Logo with Django Static Tag (SVG)</h2>
+        <div class="logo-info">
+            <strong>Path:</strong> <code>{% static 'img/savvyindians-logo.svg' %}</code>
+        </div>
+        <div class="logo-container">
+            <img src="{% static 'img/savvyindians-logo.svg' %}" 
+                 alt="SavvyIndians Logo (SVG)" 
+                 style="height: 60px;"
+                 onerror="this.parentElement.innerHTML='<span class=error>❌ SVG failed to load!</span>'">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Logo with Direct Path (PNG)</h2>
+        <div class="logo-info">
+            <strong>Path:</strong> <code>/static/img/savvyindians-logo.png</code>
+        </div>
+        <div class="logo-container">
+            <img src="/static/img/savvyindians-logo.png" 
+                 alt="SavvyIndians Direct Path" 
+                 style="height: 60px;"
+                 onerror="this.parentElement.innerHTML='<span class=error>❌ Direct path failed!</span>'">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Responsive Logo Sizes</h2>
+        <div class="logo-container">
+            <div style="margin: 10px;">
+                <strong>Small (35px):</strong><br>
+                <img src="{% static 'img/savvyindians-logo.png' %}" alt="Small" style="height: 35px;">
+            </div>
+            <div style="margin: 10px;">
+                <strong>Medium (45px - Default Navbar):</strong><br>
+                <img src="{% static 'img/savvyindians-logo.png' %}" alt="Medium" style="height: 45px;">
+            </div>
+            <div style="margin: 10px;">
+                <strong>Large (80px):</strong><br>
+                <img src="{% static 'img/savvyindians-logo.png' %}" alt="Large" style="height: 80px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Logo with Background</h2>
+        <div class="logo-container" style="background: #000; padding: 30px;">
+            <img src="{% static 'img/savvyindians-logo.png' %}" 
+                 alt="Logo on Dark Background" 
+                 style="height: 60px;">
+        </div>
+        <div class="logo-container" style="background: #fff; padding: 30px; border: 2px solid #ddd;">
+            <img src="{% static 'img/savvyindians-logo.png' %}" 
+                 alt="Logo on White Background" 
+                 style="height: 60px;">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Debug Information</h2>
+        <div class="logo-info">
+            <strong>STATIC_URL:</strong> <code>{{ STATIC_URL }}</code><br>
+            <strong>Static Path:</strong> <code>{% static 'img/savvyindians-logo.png' %}</code><br>
+            <strong>Browser Check:</strong> Open browser console (F12) and check for any 404 errors
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ Expected Results</h2>
+        <ul>
+            <li>All logo images should display properly</li>
+            <li>No red error messages should appear</li>
+            <li>No 404 errors in browser console (F12)</li>
+            <li>Logo should be visible on both black and white backgrounds</li>
+        </ul>
+    </div>
+
+    <script>
+        // Check if images loaded successfully
+        window.addEventListener('load', function() {
+            const images = document.querySelectorAll('img[alt*="SavvyIndians"]');
+            let allLoaded = true;
+            images.forEach(img => {
+                if (!img.complete || img.naturalHeight === 0) {
+                    allLoaded = false;
+                    console.error('Failed to load:', img.src);
+                }
+            });
+            
+            if (allLoaded) {
+                console.log('%c✅ All logos loaded successfully!', 'color: green; font-size: 16px; font-weight: bold;');
+            } else {
+                console.error('%c❌ Some logos failed to load!', 'color: red; font-size: 16px; font-weight: bold;');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% comment %}
+Breadcrumb component template.
+Usage: {% render_breadcrumb breadcrumb_items %}
+{% endcomment %}
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for item in items %}
+            {% if item.url and not forloop.last %}
+                <li class="breadcrumb-item">
+                    <a href="{% url item.url %}">{{ item.title }}</a>
+                </li>
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ item.title }}</li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

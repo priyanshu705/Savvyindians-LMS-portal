@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Logout Confirmation' %} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="logout-card">
+                    <!-- Logo and Header -->
+                    <div class="logout-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="logout-logo">
+                        </div>
+                        <h2 class="logout-title">{% trans 'Confirm Logout' %}</h2>
+                        <p class="logout-subtitle">{% trans 'Are you sure you want to sign out?' %}</p>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="user-info mb-4">
+                        <div class="user-card">
+                            <div class="user-avatar">
+                                {% if user.picture %}
+                                    <img src="{{ user.picture.url }}" alt="User profile" class="avatar-img">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="user-details">
+                                <h4>{{ user_name }}</h4>
+                                <p>{{ user.email }}</p>
+                                {% if has_google_account %}
+                                    <div class="account-type">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                        </svg>
+                                        <span>{% trans 'Connected with Google' %}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logout Information -->
+                    <div class="logout-info mb-4">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>{% trans 'What happens when you logout:' %}</h6>
+                                <ul>
+                                    <li>{% trans 'You will be signed out of your student account' %}</li>
+                                    {% if has_google_account %}
+                                        <li>{% trans 'Your Google account session will be cleared' %}</li>
+                                    {% endif %}
+                                    <li>{% trans 'Your session data will be removed for security' %}</li>
+                                    <li>{% trans 'You can sign back in anytime' %}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logout Actions -->
+                    <form method="post" class="logout-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-actions">
+                            <!-- Confirm Logout Button -->
+                            <button type="submit" class="btn logout-confirm-btn w-100 mb-3">
+                                <div class="logout-btn-content">
+                                    <div class="logout-btn-icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </div>
+                                    <span class="logout-btn-text">{% trans 'Yes, Logout' %}</span>
+                                    <div class="logout-btn-loader" style="display: none;">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Cancel Button -->
+                            <a href="{% url 'user_course_list' %}" class="btn cancel-btn w-100">
+                                <i class="fas fa-times me-2"></i>
+                                {% trans 'Cancel' %}
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions mt-4">
+                        <div class="actions-header mb-3">
+                            <h6>{% trans 'Or you can:' %}</h6>
+                        </div>
+                        <div class="action-links">
+                            <a href="{% url 'profile' %}" class="action-link">
+                                <i class="fas fa-user me-2"></i>
+                                {% trans 'View Profile' %}
+                            </a>
+                            <a href="{% url 'edit_profile' %}" class="action-link">
+                                <i class="fas fa-cog me-2"></i>
+                                {% trans 'Account Settings' %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Logout Card Styles */
+.logout-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.logout-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f56565, #ed8936, #ecc94b);
+}
+
+/* Logo and Header */
+.logout-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.logout-title {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.logout-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* User Info */
+.user-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.user-avatar {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e53e3e;
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e53e3e, #f56565);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.user-details h4 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.user-details p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.account-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #4285f4;
+    font-weight: 500;
+}
+
+/* Logout Info */
+.info-card {
+    display: flex;
+    align-items: start;
+    padding: 1.5rem;
+    background: rgba(245, 101, 101, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(245, 101, 101, 0.1);
+}
+
+.info-icon {
+    color: #e53e3e;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.info-content h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+}
+
+.info-content ul {
+    color: #718096;
+    font-size: 0.85rem;
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.6;
+}
+
+.info-content li {
+    margin-bottom: 0.25rem;
+}
+
+/* Logout Buttons */
+.logout-confirm-btn {
+    background: linear-gradient(135deg, #e53e3e 0%, #f56565 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-confirm-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(229, 62, 62, 0.4);
+}
+
+.logout-confirm-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.logout-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.logout-btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.logout-btn-text {
+    flex: 1;
+    text-align: center;
+}
+
+.logout-btn-loader {
+    position: absolute;
+    right: 1rem;
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg, #718096 0%, #a0aec0 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 500;
+    font-size: 1rem;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(113, 128, 150, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* Quick Actions */
+.actions-header h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.action-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.action-link {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.action-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .logout-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .logout-title {
+        font-size: 1.5rem;
+    }
+    
+    .logout-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .user-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .user-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .info-card {
+        padding: 1rem;
+    }
+    
+    .action-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* Loading States */
+.logout-confirm-btn.loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.logout-confirm-btn.loading .logout-btn-text {
+    opacity: 0.7;
+}
+
+.logout-confirm-btn.loading .logout-btn-icon {
+    opacity: 0.5;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.logout-form');
+    const confirmBtn = document.querySelector('.logout-confirm-btn');
+    const btnText = document.querySelector('.logout-btn-text');
+    const btnLoader = document.querySelector('.logout-btn-loader');
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        confirmBtn.disabled = true;
+        confirmBtn.classList.add('loading');
+        btnText.textContent = '{% trans "Logging out..." %}';
+        btnLoader.style.display = 'block';
+        
+        // Re-enable button after 5 seconds as fallback
+        setTimeout(function() {
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('loading');
+            btnText.textContent = '{% trans "Yes, Logout" %}';
+            btnLoader.style.display = 'none';
+        }, 5000);
+    });
+    
+    // Add ripple effect to logout button
+    confirmBtn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+</script>
+{% endblock content %}

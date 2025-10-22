@@ -1,0 +1,685 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background: #000000;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card">
+                    <!-- Logo and Header -->
+                    <div class="login-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="login-logo">
+                        </div>
+                        <h2 class="login-title">{% trans 'Student Portal' %}</h2>
+                        <p class="login-subtitle">{% trans 'Sign in to access your courses' %}</p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form method="post" class="login-form" id="student-login-form">
+                        {% csrf_token %}
+                        
+                        <!-- Student ID Field -->
+                        <div class="form-floating mb-3">
+                            {{ form.username }}
+                            <label for="{{ form.username.id_for_label }}">
+                                <i class="fas fa-id-card me-2"></i>{{ form.username.label }}
+                            </label>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-floating mb-3">
+                            {{ form.password }}
+                            <label for="{{ form.password.id_for_label }}">
+                                <i class="fas fa-lock me-2"></i>{{ form.password.label }}
+                            </label>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="password-toggle-icon"></i>
+                            </button>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Remember Me and Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                {{ form.remember_me }}
+                                <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+                                    {{ form.remember_me.label }}
+                                </label>
+                            </div>
+                            <a href="{% url 'password_reset' %}" class="forgot-password">
+                                {% trans 'Forgot Password?' %}
+                            </a>
+                        </div>
+
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn login-btn w-100 mb-3" id="login-submit-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span id="login-btn-text">{% trans 'Sign In' %}</span>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="divider-container mb-3">
+                            <div class="divider-line"></div>
+                            <span class="divider-text">{% trans 'or' %}</span>
+                            <div class="divider-line"></div>
+                        </div>
+
+                        <!-- Google OAuth Button -->
+                        {% load socialaccount %}
+                        {% providers_media_js %}
+                        <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn google-login-btn w-100 mb-3" id="google-login-btn">
+                            <div class="google-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                            </div>
+                            <span class="google-text">{% trans 'Continue with Google' %}</span>
+                            <div class="google-loader" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </a>
+
+                        <!-- Registration Link -->
+                        <div class="text-center">
+                            <p class="register-text">
+                                {% trans "Don't have an account?" %}
+                                <a href="{% url 'student_register' %}" class="register-link">
+                                    {% trans 'Register here' %}
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+
+                    <!-- Features -->
+                    <div class="login-features mt-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-video text-primary"></i>
+                                    <small>{% trans 'Video Lectures' %}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-chart-line text-success"></i>
+                                    <small>{% trans 'Progress Tracking' %}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-mobile-alt text-info"></i>
+                                    <small>{% trans 'Mobile Ready' %}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional Login Page Specific Styles */
+.login-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.form-floating {
+    position: relative;
+}
+
+.form-floating input {
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+}
+
+.form-floating label {
+    padding-left: 3rem;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-gold);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+/* Form Check */
+.form-check-input:checked {
+    background-color: var(--primary-gold);
+    border-color: var(--primary-gold);
+}
+
+.form-check-label {
+    color: var(--text-secondary);
+}
+
+.forgot-password {
+    color: var(--primary-gold) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Login Button */
+.login-btn {
+    background: var(--primary-gold) !important;
+    border: 2px solid var(--primary-gold) !important;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-black) !important;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+    background: var(--hover-gold) !important;
+    border-color: var(--hover-gold) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Divider */
+.divider-container {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.divider-text {
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Google Login Button */
+.google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.google-icon {
+    display: flex;
+    align-items: center;
+}
+
+.google-text {
+    font-weight: 600;
+}
+
+/* Register Link */
+.register-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.register-link {
+    color: var(--primary-gold) !important;
+    font-weight: 600;
+}
+
+.register-link:hover {
+    color: var(--hover-gold) !important;
+    text-decoration: underline;
+}
+
+/* Loading Animation */
+.loading .login-btn {
+    position: relative;
+    color: transparent !important;
+}
+
+.loading .login-btn::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 3px solid var(--primary-black);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 1.5rem;
+    }
+    
+    .login-logo {
+        width: 60px;
+    }
+}
+    border-color: #667eea;
+}
+
+.forgot-password {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Login Button */
+.login-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+/* Divider Styling */
+.divider-container {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+}
+
+.divider-text {
+    margin: 0 1rem;
+    color: #718096;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0 0.5rem;
+}
+
+/* Google Login Button */
+.google-login-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #374151;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    gap: 0.75rem;
+}
+
+.google-login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+    color: #374151;
+    text-decoration: none;
+}
+
+.google-login-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+}
+
+.google-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.google-text {
+    flex: 1;
+    text-align: center;
+    margin-right: 20px; /* Balance for icon space */
+}
+
+.google-loader {
+    position: absolute;
+    right: 1rem;
+    color: #4285f4;
+}
+
+/* Google Button Loading State */
+.google-login-btn.loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.google-login-btn.loading .google-text {
+    opacity: 0.7;
+}
+
+.google-login-btn.loading .google-icon {
+    opacity: 0.5;
+}
+
+/* Registration Link */
+.register-text {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.register-link {
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.register-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Features */
+.login-features {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+}
+
+.feature-item {
+    padding: 0.5rem;
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.feature-item small {
+    display: block;
+    color: #718096;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+/* Error Messages */
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: #e53e3e;
+    margin-top: 0.25rem;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #feb2b2 0%, #fed7d7 100%);
+    color: #c53030;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading .login-btn {
+    background: #cbd5e0;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .login-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 1.5rem;
+    }
+    
+    .login-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation */
+.login-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('student-login-form');
+    const submitBtn = document.getElementById('login-submit-btn');
+    const btnText = document.getElementById('login-btn-text');
+    const usernameField = document.getElementById('{{ form.username.id_for_label }}');
+    const googleBtn = document.getElementById('google-login-btn');
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        btnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Signing In..." %}';
+        
+        // Re-enable button after 5 seconds as fallback
+        setTimeout(function() {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+            btnText.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>{% trans "Sign In" %}';
+        }, 5000);
+    });
+    
+    // Google login button handling
+    googleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const googleText = this.querySelector('.google-text');
+        const googleLoader = this.querySelector('.google-loader');
+        
+        // Show loading state
+        this.classList.add('loading');
+        googleText.textContent = '{% trans "Connecting to Google..." %}';
+        googleLoader.style.display = 'block';
+        
+        // Redirect to Google OAuth
+        setTimeout(() => {
+            window.location.href = this.getAttribute('href');
+        }, 500);
+    });
+    
+    // Username validation
+    usernameField.addEventListener('blur', function() {
+        const username = this.value.trim();
+        if (username) {
+            validateUsername(username);
+        }
+    });
+    
+    // Auto-focus on username field
+    usernameField.focus();
+});
+
+function togglePassword() {
+    const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+    const toggleIcon = document.getElementById('password-toggle-icon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+function validateUsername(username) {
+    fetch('/accounts/ajax/validate-username/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle validation response
+        const usernameField = document.getElementById('{{ form.username.id_for_label }}');
+        if (data.is_taken) {
+            usernameField.classList.add('is-valid');
+            usernameField.classList.remove('is-invalid');
+        } else {
+            usernameField.classList.add('is-invalid');
+            usernameField.classList.remove('is-valid');
+        }
+    })
+    .catch(error => {
+        console.log('Validation error:', error);
+    });
+}
+
+// Add ripple effect to buttons
+document.querySelectorAll('.login-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+</script>
+{% endblock content %}

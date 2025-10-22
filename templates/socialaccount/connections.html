@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Connect Google Account' %} | {% trans 'Learning Management System' %}{% endblock title %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="connections-card">
+                    <!-- Logo and Header -->
+                    <div class="connections-header text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <img src="{% static 'img/dj-lms.png' %}" alt="LMS Logo" class="connections-logo">
+                        </div>
+                        <h2 class="connections-title">{% trans 'Connect Your Google Account' %}</h2>
+                        <p class="connections-subtitle">{% trans 'Link your Google account to your existing student profile' %}</p>
+                    </div>
+
+                    <!-- Google Account Info -->
+                    {% if sociallogin.account.extra_data %}
+                    <div class="google-account-info mb-4">
+                        <div class="account-card">
+                            <div class="account-avatar">
+                                {% if sociallogin.account.extra_data.picture %}
+                                    <img src="{{ sociallogin.account.extra_data.picture }}" alt="User profile" class="avatar-img">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="account-details">
+                                <h4>{{ sociallogin.account.extra_data.name|default:sociallogin.account.extra_data.email }}</h4>
+                                <p>{{ sociallogin.account.extra_data.email }}</p>
+                                <div class="account-provider">
+                                    <svg width="16" height="16" viewBox="0 0 24 24">
+                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                    </svg>
+                                    <span>Google Account</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Connection Options -->
+                    <div class="connection-options mb-4">
+                        <div class="options-header mb-3">
+                            <h5>{% trans 'Choose Connection Method' %}</h5>
+                            <p>{% trans 'How would you like to connect this Google account?' %}</p>
+                        </div>
+
+                        <!-- Option 1: Login to existing account -->
+                        <div class="connection-option">
+                            <div class="option-card">
+                                <div class="option-icon">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h6>{% trans 'I have an existing account' %}</h6>
+                                    <p>{% trans 'Sign in to your existing student account and connect this Google account' %}</p>
+                                    <form method="post" action="{% url 'account_login' %}" class="mb-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="process" value="connect">
+                                        <button type="submit" class="btn option-btn">
+                                            {% trans 'Sign In to Connect' %}
+                                            <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Option 2: Create new account -->
+                        <div class="connection-option">
+                            <div class="option-card">
+                                <div class="option-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h6>{% trans 'Create a new account' %}</h6>
+                                    <p>{% trans 'Register as a new student using your Google account information' %}</p>
+                                    <form method="post" class="mb-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="process" value="signup">
+                                        <button type="submit" class="btn option-btn">
+                                            {% trans 'Create New Account' %}
+                                            <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Form Errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-3" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Back to Login -->
+                    <div class="text-center">
+                        <a href="{% url 'student_login' %}" class="back-to-login">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            {% trans 'Back to Login' %}
+                        </a>
+                    </div>
+
+                    <!-- Help Section -->
+                    <div class="help-section mt-4">
+                        <div class="help-card">
+                            <div class="help-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="help-content">
+                                <h6>{% trans 'Need Help?' %}</h6>
+                                <p>{% trans 'If you already have a student account, choose the first option to connect your Google account. If this is your first time, choose the second option to create a new account.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Connections Card Styles */
+.connections-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.connections-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4285f4, #34a853, #fbbc05, #ea4335);
+}
+
+/* Logo and Header */
+.connections-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.connections-title {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.connections-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Google Account Info */
+.account-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.account-avatar {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4285f4;
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.account-details h4 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.account-details p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.account-provider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #4285f4;
+    font-weight: 500;
+}
+
+/* Connection Options */
+.options-header h5 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.options-header p {
+    color: #718096;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.connection-option {
+    margin-bottom: 1rem;
+}
+
+.option-card {
+    display: flex;
+    align-items: start;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.option-card:hover {
+    border-color: #4285f4;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.1);
+    transform: translateY(-2px);
+}
+
+.option-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.option-content h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.option-content p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+}
+
+.option-btn {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.option-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+/* Back to Login Link */
+.back-to-login {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-to-login:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Help Section */
+.help-section {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+.help-card {
+    display: flex;
+    align-items: start;
+    padding: 1rem;
+    background: rgba(34, 197, 94, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(34, 197, 94, 0.1);
+}
+
+.help-icon {
+    color: #22c55e;
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.help-content h6 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.help-content p {
+    color: #718096;
+    font-size: 0.8rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 100%);
+    color: #1e40af;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #bbf7d0 0%, #d1fae5 100%);
+    color: #166534;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fef7cd 100%);
+    color: #92400e;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fecaca 0%, #fed7d7 100%);
+    color: #dc2626;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .connections-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .connections-title {
+        font-size: 1.5rem;
+    }
+    
+    .connections-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .account-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .account-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .option-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .option-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Button loading states */
+.option-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const optionButtons = document.querySelectorAll('.option-btn');
+    
+    optionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.disabled = true;
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            
+            // Re-enable after 5 seconds as fallback
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = originalText;
+            }, 5000);
+        });
+        
+        // Add ripple effect
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+});
+</script>
+{% endblock content %}
