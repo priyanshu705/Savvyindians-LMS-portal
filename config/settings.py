@@ -261,9 +261,6 @@ EMAIL_USE_SSL = False
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
-
 # DRF setup - disabled for minimal deployment
 # REST_FRAMEWORK = {
 #     "DEFAULT_PERMISSION_CLASSES": [
@@ -353,7 +350,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Redirect URLs after social login
 LOGIN_REDIRECT_URL = "/course/user_course_list/"  # Redirect to student dashboard
-ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Redirect to student login
+LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Standard Django logout redirect
+ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Django Allauth logout redirect
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Allauth logout configuration
