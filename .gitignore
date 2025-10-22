@@ -58,9 +58,10 @@ htmlcov/
 # Selenium
 selenium_screenshots/
 homepage_test_screenshots/
-*.txt
 selenium_test.py
 test_*.py
+*_test_report*.txt
+*_page_source.html
 
 # Temporary files
 *.bak
