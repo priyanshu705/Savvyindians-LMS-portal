@@ -755,7 +755,7 @@ def student_progress_dashboard(request):
         
     except Student.DoesNotExist:
         messages.error(request, 'Student profile not found.')
-        return redirect('course_list')
+        return redirect('user_course_list')
     except Exception as e:
         messages.error(request, f'Error loading progress dashboard: {str(e)}')
-        return redirect('course_list')
+        return redirect('user_course_list')

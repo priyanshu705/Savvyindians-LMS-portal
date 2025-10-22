@@ -36,7 +36,7 @@
         <div class="col-md-12 p-0">
             <p class="form-title m-0">{% trans 'Video Tutorials' %}</p>
             <div class="table-responsive">
-                <table class="table table-shadow table-light table-striped m-0">
+                <table class="table table-shadow table-striped m-0">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -65,10 +65,10 @@
                                     {% endif %}
                                 </a>
                                 {% if request.user.is_student and video.progress and video.progress.completion_percentage > 0 %}
-                                <div class="progress mt-1" style="height: 4px;">
-                                    <div class="progress-bar bg-{% if video.progress.is_completed %}success{% else %}primary{% endif %}" 
+                                <div class="progress mt-1 video-progress-bar">
+                                    <div class="progress-bar video-progress-fill {% if video.progress.is_completed %}progress-complete{% else %}progress-incomplete{% endif %}" 
                                          role="progressbar" 
-                                         style="width: {{ video.progress.completion_percentage }}%"
+                                         data-progress="{{ video.progress.completion_percentage }}"
                                          aria-valuenow="{{ video.progress.completion_percentage }}" 
                                          aria-valuemin="0" 
                                          aria-valuemax="100">

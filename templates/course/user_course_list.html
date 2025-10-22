@@ -39,19 +39,15 @@
 
 {% if request.user.is_student %}
 <div class="table-responsive p-3 mt-3">
-    <h6 class="fw-bold text-primary"><u>{% trans 'Taken Courses:' %}</u></h6>
+    <h6 class="fw-bold" style="color: var(--primary-gold);"><u>{% trans 'My Enrolled Programs:' %}</u></h6>
     <div class="table-shadow">
-        <table class="table table-light">
+        <table class="table">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th> {% trans 'Course Name' %} </th>
-                    <th> {% trans 'Course Code' %} </th>
-                    <th> {% trans 'Cr.Hr' %} </th>
-                    <th> {% trans 'Year' %} </th>
-                    <th> {% trans 'Semester' %} </th>
-                    <th> {% trans 'Current Semester' %} </th>
-                    <th> {% trans 'Taken' %} </th>
+                    <th> {% trans 'Program Name' %} </th>
+                    <th> {% trans 'Type' %} </th>
+                    <th> {% trans 'Enrolled' %} </th>
                 </tr>
             </thead>
             <tbody>
@@ -60,19 +56,17 @@
                     <td>{{ forloop.counter }}.</td> 
                     <td><a href="{{ course.get_absolute_url }}">
                         {{ course.course.title }}</a></td>
-                    <td>{{ course.course.code }}</td>
-                    <td>{{ course.course.credit }}</td>
-                    <td>{{ course.course.year }}</td>
-                    <td>{{ course.course.semester }}</td>
-                    <th>
-                        {% if course.course.is_current_semester == False %}
-                        <i class="fas fa-times-circle fa-1-5x danger"></i>
+                    <td>
+                        {% if 'Bootcamp' in course.course.title or 'bootcamp' in course.course.title %}
+                            <span class="badge bg-primary">Bootcamp</span>
+                        {% elif 'Masterclass' in course.course.title or 'masterclass' in course.course.title %}
+                            <span class="badge bg-warning text-dark">Masterclass</span>
                         {% else %}
-                        <i class="fas fa-check-circle"></i>
+                            <span class="badge bg-secondary">Program</span>
                         {% endif %}
-                    </th>
+                    </td>
                     <td class="success">
-                        <i class="fas fa-check-circle"></i> {% trans 'Taken' %}
+                        <i class="fas fa-check-circle"></i> {% trans 'Enrolled' %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -83,18 +77,14 @@
 {% endif %}
 
 <div class="table-responsive p-3">
-    <h6 class="fw-bold text-primary"><u>{% trans 'All Courses:' %}</u></h6>
+    <h6 class="fw-bold" style="color: var(--primary-gold);"><u>{% trans 'All Programs:' %}</u></h6>
     <div class="table-shadow">
-        <table class="table table-light">
+        <table class="table">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th> {% trans 'Course Name' %} </th>
-                    <th> {% trans 'Course Code' %} </th>
-                    <th> {% trans 'Cr.Hr' %} </th>
-                    <th> {% trans 'Year' %} </th>
-                    <th> {% trans 'Semester' %} </th>
-                    <th> {% trans 'Current Semester' %} </th>
+                    <th> {% trans 'Program Name' %} </th>
+                    <th> {% trans 'Type' %} </th>
                 </tr>
             </thead>
             <tbody>
@@ -103,17 +93,15 @@
                     <td>{{ forloop.counter }}.</td> 
                     <td><a href="{{ course.get_absolute_url }}">
                         {{ course.title }}</a></td>
-                    <td>{{ course.code }}</td>
-                    <td>{{ course.credit }}</td>
-                    <td>{{ course.year }}</td>
-                    <td>{{ course.semester }}</td>
-                    <th>
-                        {% if course.is_current_semester == False %}
-                        <i class="fas fa-times-circle fa-1-5x danger"></i>
+                    <td>
+                        {% if 'Bootcamp' in course.title or 'bootcamp' in course.title %}
+                            <span class="badge bg-primary">Bootcamp</span>
+                        {% elif 'Masterclass' in course.title or 'masterclass' in course.title %}
+                            <span class="badge bg-warning text-dark">Masterclass</span>
                         {% else %}
-                        <i class="fas fa-check-circle"></i>
+                            <span class="badge bg-secondary">Program</span>
                         {% endif %}
-                    </th>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

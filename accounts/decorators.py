@@ -1,6 +1,7 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
+from functools import wraps
 
 
 def admin_required(
@@ -12,20 +13,18 @@ def admin_required(
     redirects to the specified URL if necessary.
     """
 
-    # Define the test function: checks if the user is active and a superuser
-    def test_func(user):
-        return user.is_active and user.is_superuser
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if request.user.is_active and request.user.is_superuser:
+                return view_func(request, *args, **kwargs)
+            else:
+                return redirect(redirect_to)
+        return wrapper
 
-    # Define the wrapper function to handle the response
-    def wrapper(request, *args, **kwargs):
-        if test_func(request.user):
-            # Call the original function if the user passes the test
-            return function(request, *args, **kwargs) if function else None
-        else:
-            # Redirect to the specified URL if the user fails the test
-            return redirect(redirect_to)
-
-    return wrapper if function else test_func
+    if function:
+        return decorator(function)
+    return decorator
 
 
 def lecturer_required(
@@ -33,46 +32,42 @@ def lecturer_required(
     redirect_to="/",
 ):
     """
-    Decorator for views that checks that the logged-in user is a superuser,
+    Decorator for views that checks that the logged-in user is a lecturer,
     redirects to the specified URL if necessary.
     """
 
-    # Define the test function: checks if the user is active and a superuser
-    def test_func(user):
-        return user.is_active and user.is_lecturer or user.is_superuser
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if request.user.is_active and (request.user.is_lecturer or request.user.is_superuser):
+                return view_func(request, *args, **kwargs)
+            else:
+                return redirect(redirect_to)
+        return wrapper
 
-    # Define the wrapper function to handle the response
-    def wrapper(request, *args, **kwargs):
-        if test_func(request.user):
-            # Call the original function if the user passes the test
-            return function(request, *args, **kwargs) if function else None
-        else:
-            # Redirect to the specified URL if the user fails the test
-            return redirect(redirect_to)
-
-    return wrapper if function else test_func
+    if function:
+        return decorator(function)
+    return decorator
 
 
 def student_required(
     function=None,
-    redirect_to="/",
+    redirect_to="/accounts/student/login/",
 ):
     """
-    Decorator for views that checks that the logged-in user is a superuser,
-    redirects to the specified URL if necessary.
+    Decorator for views that checks that the logged-in user is a student,
+    redirects to the login page if necessary.
     """
 
-    # Define the test function: checks if the user is active and a superuser
-    def test_func(user):
-        return user.is_active and user.is_student or user.is_superuser
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if request.user.is_active and (request.user.is_student or request.user.is_superuser):
+                return view_func(request, *args, **kwargs)
+            else:
+                return redirect(redirect_to)
+        return wrapper
 
-    # Define the wrapper function to handle the response
-    def wrapper(request, *args, **kwargs):
-        if test_func(request.user):
-            # Call the original function if the user passes the test
-            return function(request, *args, **kwargs) if function else None
-        else:
-            # Redirect to the specified URL if the user fails the test
-            return redirect(redirect_to)
-
-    return wrapper if function else test_func
+    if function:
+        return decorator(function)
+    return decorator

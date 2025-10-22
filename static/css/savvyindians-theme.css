@@ -18,6 +18,8 @@
     --text-primary: #ffffff;
     --text-secondary: #cccccc;
     --text-muted: #888888;
+    --text-on-white: #000000;  /* Text on white backgrounds */
+    --text-grey: #6b7280;      /* Grey text for labels on white */
     
     /* Border & Background */
     --border-color: #333333;
@@ -137,15 +139,43 @@ body {
     color: var(--text-primary) !important;
 }
 
+/* White/Light background areas need dark text */
+.card.bg-white,
 .card.bg-white *,
+.bg-white,
 .bg-white *,
-.bg-light * {
-    color: var(--text-primary) !important;
+.bg-light,
+.bg-light *,
+.card.bg-white h1, .card.bg-white h2, .card.bg-white h3, 
+.card.bg-white h4, .card.bg-white h5, .card.bg-white h6,
+.bg-white h1, .bg-white h2, .bg-white h3, 
+.bg-white h4, .bg-white h5, .bg-white h6,
+.bg-light h1, .bg-light h2, .bg-light h3, 
+.bg-light h4, .bg-light h5, .bg-light h6 {
+    color: #000000 !important;
+}
+
+/* Form labels on white backgrounds - use grey for better readability */
+.bg-white label,
+.bg-light label,
+.bg-white .form-label,
+.bg-light .form-label {
+    color: #4b5563 !important;
+}
+
+/* Exception: keep badges, alerts, buttons with their own colors */
+.bg-white .badge,
+.bg-light .badge,
+.bg-white .alert,
+.bg-light .alert,
+.bg-white .btn,
+.bg-light .btn {
+    color: inherit !important;
 }
 
 .card-title,
 .card-text {
-    color: var(--text-primary) !important;
+    color: inherit !important;
 }
 
 /* Container backgrounds - keep dark */
@@ -690,4 +720,447 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-gold);
+}
+
+/* ========================================
+   SEARCH PAGE STYLES
+   ======================================== */
+.search-results-card {
+    box-shadow: 0px 2px 5px 0px rgba(255, 215, 0, 0.3) !important;
+    border-radius: 10px !important;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.search-results-heading {
+    color: var(--primary-gold) !important;
+}
+
+.search-query-highlight {
+    color: var(--hover-gold) !important;
+}
+
+.search-divider {
+    border-color: var(--border-color) !important;
+}
+
+.session-wrapper {
+    position: relative;
+}
+
+.session {
+    position: absolute;
+    top: -15px;
+    right: 25px;
+    z-index: 2;
+}
+
+.br-orange {
+    border: 1px solid #fd7e14;
+    border-radius: 7px;
+}
+
+.class-item {
+    display: block;
+    border-left: 4px solid var(--primary-gold) !important;
+    padding: 1rem !important;
+    background: var(--secondary-black) !important;
+    border-radius: 3px;
+    box-shadow: 0px 2px 5px 0px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.class-item p {
+    padding: 2px;
+    margin: 0;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease;
+}
+
+.class-item a {
+    padding: 2px;
+    color: var(--primary-gold) !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.class-item h4 {
+    color: var(--primary-gold) !important;
+    margin: 0.5rem 0;
+}
+
+.class-item h4 a {
+    color: var(--primary-gold) !important;
+}
+
+.class-item:hover {
+    transform: translateX(15px);
+    background: var(--tertiary-black) !important;
+    border-left-color: var(--hover-gold) !important;
+}
+
+.class-item:hover h4 a {
+    color: var(--hover-gold) !important;
+}
+
+.class-item:hover p,
+.class-item:hover span {
+    color: var(--text-primary) !important;
+}
+
+.search-instructions-heading {
+    color: var(--primary-gold) !important;
+    margin-top: 1.5rem;
+}
+
+.search-instructions-list {
+    color: var(--text-secondary) !important;
+}
+
+.search-instructions-list li {
+    color: var(--text-secondary) !important;
+    margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   LOGOUT PAGE STYLES
+   ======================================== */
+.logout-page-bg {
+    background: var(--primary-black) !important;
+}
+
+.logout-card {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+    border: 1px solid var(--border-color) !important;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.logout-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-gold), var(--hover-gold));
+}
+
+.logout-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+}
+
+.logout-title {
+    color: var(--text-primary) !important;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.logout-subtitle {
+    color: var(--text-secondary) !important;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: var(--secondary-black) !important;
+    border-radius: 12px;
+    border: 2px solid var(--border-color) !important;
+}
+
+.user-avatar {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-gold);
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-gold), var(--hover-gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-black);
+    font-size: 1.5rem;
+}
+
+.user-details h4 {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.user-details p {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.account-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--primary-gold) !important;
+    font-weight: 500;
+}
+
+.info-card {
+    display: flex;
+    align-items: start;
+    padding: 1.5rem;
+    background: rgba(255, 215, 0, 0.05) !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.1) !important;
+}
+
+.info-icon {
+    color: var(--primary-gold) !important;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.info-content h6 {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+}
+
+.info-content ul {
+    color: var(--text-secondary) !important;
+    font-size: 0.85rem;
+    margin: 0;
+    padding-left: 1.2rem;
+    line-height: 1.6;
+}
+
+.info-content li {
+    margin-bottom: 0.25rem;
+    color: var(--text-secondary) !important;
+}
+
+.logout-confirm-btn {
+    background: linear-gradient(135deg, var(--primary-gold) 0%, var(--hover-gold) 100%) !important;
+    border: none !important;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-black) !important;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-confirm-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.logout-confirm-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.logout-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.logout-btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.logout-btn-text {
+    flex: 1;
+    text-align: center;
+}
+
+.logout-btn-loader {
+    position: absolute;
+    right: 1rem;
+}
+
+.cancel-btn {
+    background: var(--secondary-black) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-primary) !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    color: var(--primary-gold) !important;
+    text-decoration: none;
+    border-color: var(--primary-gold) !important;
+}
+
+.actions-header h6 {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.action-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.action-link {
+    color: var(--primary-gold) !important;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.action-link:hover {
+    color: var(--hover-gold) !important;
+    text-decoration: underline;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logout-confirm-btn.loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.logout-confirm-btn.loading .logout-btn-text {
+    opacity: 0.7;
+}
+
+.logout-confirm-btn.loading .logout-btn-icon {
+    opacity: 0.5;
+}
+
+@media (max-width: 576px) {
+    .logout-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .logout-title {
+        font-size: 1.5rem;
+    }
+    
+    .logout-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .user-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .user-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .info-card {
+        padding: 1rem;
+    }
+    
+    .action-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* ========================================
+   VIDEO PROGRESS BAR STYLES
+   ======================================== */
+.video-progress-bar {
+    height: 4px !important;
+    background: var(--secondary-black) !important;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.video-progress-fill {
+    transition: width 0.3s ease;
+    height: 100%;
+}
+
+.progress-complete {
+    background: linear-gradient(90deg, #28a745, #20c997) !important;
+}
+
+.progress-incomplete {
+    background: linear-gradient(90deg, var(--primary-gold), var(--hover-gold)) !important;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+}
+
+.empty-state-title {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem;
 }

@@ -513,7 +513,7 @@ class StudentLoginForm(AuthenticationForm):
         max_length=254,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': _('Enter your email or phone number'),
+            'placeholder': ' ',
             'id': 'student_username',
             'autocomplete': 'username',
         })
@@ -524,7 +524,7 @@ class StudentLoginForm(AuthenticationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': _('Enter your password'),
+            'placeholder': ' ',
             'id': 'student_password',
             'autocomplete': 'current-password',
         })

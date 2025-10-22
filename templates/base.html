@@ -497,10 +497,10 @@
                             Learn from industry experts and transform your career.
                         </p>
                         <div class="social-links">
-                            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.facebook.com/people/SavvyIndiansai/61579325421925/" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.youtube.com/@SAVVYINDIANSAI" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.linkedin.com/company/savvy-indians/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://www.instagram.com/savvyindians.ai/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
                     
@@ -561,6 +561,18 @@
     <script type="text/javascript" src="{% static 'vendor/bootstrap-5.3.2/js/bootstrap.bundle.min.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+    <!-- Video Progress Bar Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set width for all progress bars based on data-progress attribute
+        const progressBars = document.querySelectorAll('.video-progress-fill[data-progress]');
+        progressBars.forEach(function(bar) {
+            const progress = bar.getAttribute('data-progress');
+            bar.style.width = progress + '%';
+        });
+    });
+    </script>
 
     {% block js %}
     {% endblock js %}
