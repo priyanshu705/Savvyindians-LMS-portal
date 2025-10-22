@@ -57,6 +57,11 @@ body {
     text-decoration: none !important;
 }
 
+.btn-primary *,
+.btn-gold * {
+    color: var(--primary-black) !important;
+}
+
 .btn-primary:hover,
 .btn-gold:hover {
     background: var(--hover-gold) !important;
@@ -121,33 +126,155 @@ body {
     background: var(--card-bg) !important;
 }
 
+/* Force dark backgrounds for white cards */
+.card.bg-white,
+.card[style*="background: white"],
+.card[style*="background-color: white"],
+.card[style*="background: #fff"],
+.bg-white,
+.bg-light {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+.card.bg-white *,
+.bg-white *,
+.bg-light * {
+    color: var(--text-primary) !important;
+}
+
+.card-title,
+.card-text {
+    color: var(--text-primary) !important;
+}
+
+/* Container backgrounds - keep dark */
+.container,
+.container-fluid,
+main,
+section {
+    background: transparent !important;
+}
+
+body {
+    background: var(--primary-black) !important;
+    color: var(--text-primary) !important;
+}
+
 /* ========================================
    FORM STYLES
    ======================================== */
 .form-control,
-.form-select {
-    background: var(--input-bg) !important;
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+    background: #ffffff !important;
     border: 2px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
+    color: #000000 !important;
     border-radius: 12px;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1rem !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    min-height: 45px !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Specific textarea styling to prevent overlap */
+textarea.form-control,
+textarea {
+    min-height: 120px !important;
+    resize: vertical !important;
+    padding: 0.75rem 1rem !important;
+    line-height: 1.6 !important;
+    overflow-y: auto !important;
+    display: block !important;
 }
 
 .form-control:focus,
-.form-select:focus {
-    background: var(--secondary-black) !important;
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    background: #ffffff !important;
     border-color: var(--primary-gold) !important;
-    color: var(--text-primary) !important;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    color: #000000 !important;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+    outline: none;
 }
 
-.form-control::placeholder {
-    color: var(--text-muted) !important;
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: #666666 !important;
+    opacity: 0.8 !important;
 }
 
-.form-label {
+/* Form groups with proper spacing */
+.form-group,
+.mb-3,
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+    position: relative;
+    clear: both;
+}
+
+.form-label,
+label {
+    color: #000000 !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    font-size: 14px !important;
+}
+
+/* Form text and help text */
+.form-text,
+.help-text,
+small {
     color: var(--text-secondary) !important;
-    font-weight: 500;
+}
+
+/* Input group styling */
+.input-group {
+    margin-bottom: 1rem !important;
+}
+
+.input-group-text {
+    background: var(--secondary-black) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--primary-gold) !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1rem !important;
+}
+
+/* Select dropdowns */
+.form-select {
+    background: #ffffff !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+
+/* Checkbox and radio inputs */
+.form-check-input {
+    background-color: #ffffff !important;
+    border: 2px solid var(--border-color) !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-gold) !important;
+    border-color: var(--primary-gold) !important;
+}
+
+.form-check-label {
+    color: #000000 !important;
+    margin-left: 0.5rem !important;
 }
 
 /* ========================================
@@ -280,6 +407,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .badge-primary {
     background: var(--primary-gold) !important;
+    color: var(--primary-black) !important;
+}
+
+.badge-primary *,
+.badge-gold * {
     color: var(--primary-black) !important;
 }
 
@@ -460,6 +592,26 @@ h1, h2, h3, h4, h5, h6 {
 
 .border-gold {
     border-color: var(--primary-gold) !important;
+}
+
+/* Force black text on gold backgrounds */
+.bg-warning,
+.bg-gold,
+.badge-warning,
+.alert-warning,
+[style*="background: #ffd700"],
+[style*="background-color: #ffd700"],
+[class*="gold"][class*="bg"] {
+    color: var(--primary-black) !important;
+}
+
+.bg-warning *,
+.bg-gold *,
+.badge-warning *,
+.alert-warning *,
+[style*="background: #ffd700"] *,
+[style*="background-color: #ffd700"] * {
+    color: var(--primary-black) !important;
 }
 
 /* ========================================
