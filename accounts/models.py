@@ -66,6 +66,15 @@ class CustomUserManager(UserManager):
     def get_superuser_count(self):
         return self.model.objects.filter(is_superuser=True).count()
 
+    def make_random_password(self, length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
+        """
+        Generate a random password with the given length and given
+        allowed_chars. The default value of allowed_chars does not have "I" or
+        "O" or letters and digits that look similar -- just to avoid confusion.
+        """
+        import random
+        return ''.join(random.choice(allowed_chars) for i in range(length))
+
 
 GENDERS = ((_("M"), _("Male")), (_("F"), _("Female")))
 
