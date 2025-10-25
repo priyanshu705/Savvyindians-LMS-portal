@@ -10,7 +10,7 @@ services:
   releaseCommand: |
     echo "Running release: migrate and collectstatic"
     python manage.py migrate --noinput
-    python manage.py collectstatic --noinput
+    python manage.py collectstatic --noinput --clear
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_minimal
