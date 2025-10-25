@@ -95,10 +95,14 @@ class User(AbstractUser):
     picture = models.ImageField(
         upload_to="profile_pictures/%y/%m/%d/", default="default.png", null=True
     )
-    email = models.EmailField(blank=True, null=True)
+    # Keep a single email field. Make it nullable for existing rows so
+    # migrations can run non-interactively on deployments where the DB
+    # may already contain NULL emails. The unique constraint is preserved.
     email = models.EmailField(
         _("email address"),
         unique=True,
+        null=True,
+        blank=True,
         help_text=_("Required. Used for login and notifications."),
     )
 
