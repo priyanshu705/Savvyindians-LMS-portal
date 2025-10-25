@@ -1,4 +1,5 @@
 import os
+
 from django.core.asgi import get_asgi_application
 
 # Use minimal settings and let Django initialize lazily

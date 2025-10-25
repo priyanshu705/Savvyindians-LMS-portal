@@ -1,7 +1,6 @@
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import redirect
 from functools import wraps
+
+from django.shortcuts import redirect
 
 
 def admin_required(
@@ -20,6 +19,7 @@ def admin_required(
                 return view_func(request, *args, **kwargs)
             else:
                 return redirect(redirect_to)
+
         return wrapper
 
     if function:
@@ -39,10 +39,13 @@ def lecturer_required(
     def decorator(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
-            if request.user.is_active and (request.user.is_lecturer or request.user.is_superuser):
+            if request.user.is_active and (
+                request.user.is_lecturer or request.user.is_superuser
+            ):
                 return view_func(request, *args, **kwargs)
             else:
                 return redirect(redirect_to)
+
         return wrapper
 
     if function:
@@ -62,10 +65,13 @@ def student_required(
     def decorator(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):
-            if request.user.is_active and (request.user.is_student or request.user.is_superuser):
+            if request.user.is_active and (
+                request.user.is_student or request.user.is_superuser
+            ):
                 return view_func(request, *args, **kwargs)
             else:
                 return redirect(redirect_to)
+
         return wrapper
 
     if function:

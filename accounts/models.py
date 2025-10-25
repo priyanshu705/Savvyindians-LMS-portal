@@ -1,14 +1,14 @@
-from django.db import models
-from django.urls import reverse
-from django.contrib.auth.models import AbstractUser, UserManager
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.db import models
 from django.db.models import Q
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from PIL import Image
 
 from course.models import Program
-from .validators import ASCIIUsernameValidator
 
+from .validators import ASCIIUsernameValidator
 
 # Experience Levels for Bootcamp/Masterclass participants
 BEGINNER = _("Beginner")
@@ -66,14 +66,19 @@ class CustomUserManager(UserManager):
     def get_superuser_count(self):
         return self.model.objects.filter(is_superuser=True).count()
 
-    def make_random_password(self, length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
+    def make_random_password(
+        self,
+        length=10,
+        allowed_chars="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+    ):
         """
         Generate a random password with the given length and given
         allowed_chars. The default value of allowed_chars does not have "I" or
         "O" or letters and digits that look similar -- just to avoid confusion.
         """
         import random
-        return ''.join(random.choice(allowed_chars) for i in range(length))
+
+        return "".join(random.choice(allowed_chars) for i in range(length))
 
 
 GENDERS = ((_("M"), _("Male")), (_("F"), _("Female")))
@@ -91,6 +96,11 @@ class User(AbstractUser):
         upload_to="profile_pictures/%y/%m/%d/", default="default.png", null=True
     )
     email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(
+        _("email address"),
+        unique=True,
+        help_text=_("Required. Used for login and notifications."),
+    )
 
     username_validator = ASCIIUsernameValidator()
 
@@ -124,15 +134,23 @@ class User(AbstractUser):
 
     def get_picture(self):
         try:
+            # If picture is not set or file is missing, return default
+            if not self.picture or not self.picture.storage.exists(self.picture.name):
+                return settings.MEDIA_URL + "default.png"
             return self.picture.url
-        except:
-            no_picture = settings.MEDIA_URL + "default.png"
-            return no_picture
+        except Exception:
+            # Return default picture on any error (missing file, storage issues, etc.)
+            return settings.MEDIA_URL + "default.png"
 
     def get_absolute_url(self):
         return reverse("profile_single", kwargs={"id": self.id})
 
     def save(self, *args, **kwargs):
+        # Store the old picture path before saving
+        old_picture = None
+        if self.pk:
+            old_picture = User.objects.get(pk=self.pk).picture
+
         super().save(*args, **kwargs)
         try:
             img = Image.open(self.picture.path)
@@ -140,12 +158,22 @@ class User(AbstractUser):
                 output_size = (300, 300)
                 img.thumbnail(output_size)
                 img.save(self.picture.path)
-        except:
+        except Exception:
+            # Ignore image processing errors safely
             pass
 
+        # Delete the old picture if it has changed and is not the default
+        if old_picture and self.picture and old_picture.url != self.picture.url:
+            if old_picture.url != settings.MEDIA_URL + "default.png":
+                old_picture.delete(save=False)
+
     def delete(self, *args, **kwargs):
-        if self.picture.url != settings.MEDIA_URL + "default.png":
-            self.picture.delete()
+        try:
+            if self.picture and getattr(self.picture, 'url', None) != settings.MEDIA_URL + "default.png":
+                self.picture.delete()
+        except Exception:
+            # If picture deletion fails, continue with user deletion
+            pass
         super().delete(*args, **kwargs)
 
 
@@ -165,20 +193,24 @@ class Student(models.Model):
     Bootcamp/Masterclass Participant Model
     Stores information about learners enrolled in AI bootcamps and masterclasses
     """
-    student = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # Link to the User model (keep a single OneToOneField)
+    student = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="student_profile"
+    )
     level = models.CharField(
-        max_length=25, 
-        choices=LEVEL, 
+        max_length=25,
+        choices=LEVEL,
         null=True,
         verbose_name=_("Experience Level"),
-        help_text=_("Your current experience level with technology")
+        help_text=_("Your current experience level with technology"),
     )
     program = models.ForeignKey(
-        Program, 
-        on_delete=models.CASCADE, 
+        Program,
+        on_delete=models.CASCADE,
         null=True,
         verbose_name=_("Bootcamp/Masterclass"),
-        help_text=_("Select the bootcamp or masterclass you want to join")
+        help_text=_("Select the bootcamp or masterclass you want to join"),
     )
 
     objects = StudentManager()
@@ -203,19 +235,23 @@ class Student(models.Model):
 
     def delete(self, force=False, *args, **kwargs):
         """
-        Custom delete to handle User deletion
-        - If force=True: Delete only Student (used when User is being deleted)
-        - If force=False: Delete both Student and User (cascade)
+        Delete student profile.
+        - If force=True: only delete the Student instance (used when the User is being deleted).
+        - If force=False: delete the Student and then delete the associated User to avoid orphaned accounts.
         """
         if force:
-            # Called from UserAdmin - don't try to delete user again
             super().delete(*args, **kwargs)
-        else:
-            # Normal deletion - delete user which will cascade to student
-            user = self.student
-            super().delete(*args, **kwargs)
+            return
+
+        # Normal deletion - delete Student then associated User
+        user = self.student
+        super().delete(*args, **kwargs)
+        try:
             if user:
                 user.delete()
+        except Exception:
+            # If user deletion fails for any reason, ignore to avoid leaving the DB in an inconsistent state
+            pass
 
 
 class Parent(models.Model):

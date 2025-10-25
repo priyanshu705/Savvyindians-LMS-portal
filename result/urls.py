@@ -1,13 +1,13 @@
 from django.urls import path
+
 from .views import (
     add_score,
     add_score_for,
-    grade_result,
     assessment_result,
     course_registration_form,
+    grade_result,
     result_sheet_pdf_view,
 )
-
 
 urlpatterns = [
     path("manage-score/", add_score, name="add_score"),

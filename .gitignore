@@ -63,6 +63,14 @@ test_*.py
 *_test_report*.txt
 *_page_source.html
 
+# Local debug artifacts we remove before PR
+debug_final_error.png
+homepage_fresh_*.png
+selenium_test_debug.py
+selenium_test_final.py
+selenium_test_fixed.py
+selenium_test_scroll.py
+
 # Temporary files
 *.bak
 *.tmp

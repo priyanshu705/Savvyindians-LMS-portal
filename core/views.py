@@ -1,12 +1,18 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import admin_required, lecturer_required
-from accounts.models import User, Student
-from .forms import SessionForm, SemesterForm, NewsAndEventsForm
-from .models import NewsAndEvents, ActivityLog, Session, Semester
-from .utils import handle_form_submission, handle_delete_operation, validate_current_session_deletion, validate_current_semester_deletion
+from accounts.models import Student, User
+
+from .forms import NewsAndEventsForm, SemesterForm, SessionForm
+from .models import ActivityLog, NewsAndEvents, Semester, Session
+from .utils import (
+    handle_delete_operation,
+    handle_form_submission,
+    validate_current_semester_deletion,
+    validate_current_session_deletion,
+)
 
 
 # ########################################################
@@ -14,23 +20,23 @@ from .utils import handle_form_submission, handle_delete_operation, validate_cur
 # ########################################################
 def home_view(request):
     """Public homepage for SavvyIndians AI Bootcamp & Masterclass platform"""
-    from course.models import Course, Program, UploadVideo
     from accounts.models import User
-    
+    from course.models import Course, Program, UploadVideo
+
     # Get featured courses and videos for public viewing
     featured_courses = Course.objects.all()[:6]
-    featured_videos = UploadVideo.objects.all().order_by('-timestamp')[:8]
-    latest_courses = Course.objects.all().order_by('-pk')[:4]
-    
+    featured_videos = UploadVideo.objects.all().order_by("-timestamp")[:8]
+    latest_courses = Course.objects.all().order_by("-pk")[:4]
+
     # Get statistics for hero section
     total_bootcamps = Program.objects.count()
     total_courses = Course.objects.count()
     total_participants = User.objects.filter(is_student=True).count()
     total_videos = UploadVideo.objects.count()
-    
+
     # Check if user is authenticated
     user_authenticated = request.user.is_authenticated
-    
+
     context = {
         "title": "SavvyIndians - AI Bootcamps & Masterclasses",
         "featured_courses": featured_courses,
@@ -69,7 +75,7 @@ def post_add(request):
         template_name="core/post_add.html",
         success_url="home",
         success_message="{title} has been uploaded.",
-        context={"title": "Add Post"}
+        context={"title": "Add Post"},
     )
 
 
@@ -84,7 +90,7 @@ def edit_post(request, pk):
         success_url="home",
         success_message="{title} has been updated.",
         context={"title": "Edit Post"},
-        instance=instance
+        instance=instance,
     )
 
 
@@ -96,7 +102,7 @@ def delete_post(request, pk):
         model_class=NewsAndEvents,
         pk_field=pk,
         redirect_url="home",
-        success_message="{title} has been deleted."
+        success_message="{title} has been deleted.",
     )
 
 
@@ -184,7 +190,7 @@ def session_delete_view(request, pk):
         pk_field=pk,
         redirect_url="session_list",
         success_message="Session successfully deleted",
-        validation_func=validate_current_session_deletion
+        validation_func=validate_current_session_deletion,
     )
 
 
@@ -308,5 +314,5 @@ def semester_delete_view(request, pk):
         pk_field=pk,
         redirect_url="semester_list",
         success_message="Semester successfully deleted",
-        validation_func=validate_current_semester_deletion
+        validation_func=validate_current_semester_deletion,
     )

@@ -5,22 +5,25 @@ Simplified configuration for zero-error deployment on Vercel
 """
 
 import os
+import dj_database_url
 
 # Build paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Security
-SECRET_KEY = os.environ.get("SECRET_KEY", "bFp3Us&2LTCD+x9M_dC68sSnD41&SRl$7!)om!!1Zr_tV_hs2e")
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "bFp3Us&2LTCD+x9M_dC68sSnD41&SRl$7!)om!!1Zr_tV_hs2e"
+)
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 
 # Allowed hosts for Vercel
 ALLOWED_HOSTS = [
-    "127.0.0.1", 
+    "127.0.0.1",
     "localhost",
     "testserver",
     ".vercel.app",
     ".savvyindians.com",
-    "*"  # For serverless flexibility
+    "*",  # For serverless flexibility
 ]
 
 # Custom user model
@@ -35,13 +38,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",  # required by allauth and useful for admin
-
     # Third-party - allauth required for URLs
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-
     # Essential project apps only
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
@@ -49,8 +50,11 @@ INSTALLED_APPS = [
     "result.apps.ResultConfig",
     "notifications.apps.NotificationsConfig",
     "quiz.apps.QuizConfig",
-    "payments.apps.PaymentsConfig",
+    # "payments.apps.PaymentsConfig",  # Temporarily disabled - missing gopay dependency
     "search.apps.SearchConfig",
+    # Crispy forms for nicer form rendering in templates
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 # Minimal middleware stack
@@ -90,16 +94,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database configuration
-import dj_database_url
-
-
 # Use DATABASE_URL if available, otherwise use SQLite as fallback
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
 if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)
-    }
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
 else:
     DATABASES = {
         "default": {
@@ -148,6 +147,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+# Default ID prefixes used by account utilities (tests rely on these)
+STUDENT_ID_PREFIX = os.environ.get("STUDENT_ID_PREFIX", "STD")
+LECTURER_ID_PREFIX = os.environ.get("LECTURER_ID_PREFIX", "LECT")
+
+# Email defaults used in tests to avoid background thread errors
+EMAIL_FROM_ADDRESS = os.environ.get("EMAIL_FROM_ADDRESS", "no-reply@example.com")
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.locmem.EmailBackend")
+
 # Sites framework (required by allauth)
 SITE_ID = 1
 
@@ -184,7 +191,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": os.environ.get("GOOGLE_OAUTH2_CLIENT_ID", ""),
             "secret": os.environ.get("GOOGLE_OAUTH2_CLIENT_SECRET", ""),
-            "key": ""
+            "key": "",
         },
     }
 }
@@ -209,3 +216,7 @@ LOGGING = {
 
 # Essential settings only
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# django-crispy-forms configuration
+# Use Bootstrap 5 templates if available
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap5"]
+CRISPY_TEMPLATE_PACK = "bootstrap5"

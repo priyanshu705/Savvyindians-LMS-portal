@@ -13,6 +13,6 @@ from django.core.wsgi import get_wsgi_application
 
 # Ensure minimal settings are used if imported indirectly
 if os.environ.get("DJANGO_SETTINGS_MODULE") is None:
-	os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
 
 application = get_wsgi_application()

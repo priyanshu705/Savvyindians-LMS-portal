@@ -1,15 +1,21 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
+
 django.setup()
 
-from course.models import Program, Course, UploadVideo
-from django.utils import timezone
+from django.utils import timezone  # noqa: E402
+
+from course.models import Course, Program, UploadVideo  # noqa: E402
 
 # Use existing program or create one
-program, _ = Program.objects.get_or_create(title="Computer Science", summary="Learn programming, algorithms, and software engineering.")
+program, _ = Program.objects.get_or_create(
+    title="Computer Science",
+    summary="Learn programming, algorithms, and software engineering.",
+)
 
 # Add new course named Python
 python_course, _ = Course.objects.get_or_create(
@@ -31,7 +37,7 @@ UploadVideo.objects.get_or_create(
     youtube_url="https://www.youtube.com/watch?v=jjw5dYBz2zU",
     summary="A complete Python crash course for beginners.",
     is_youtube_video=True,
-    timestamp=timezone.now()
+    timestamp=timezone.now(),
 )
 
 print("Python course and YouTube lesson added!")

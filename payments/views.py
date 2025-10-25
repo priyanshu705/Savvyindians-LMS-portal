@@ -1,17 +1,14 @@
-import stripe
-import uuid
 import json
-
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.conf import settings
-from django.shortcuts import redirect
-from django.views.generic.base import TemplateView
-
-from django.http import JsonResponse
+import uuid
 
 import gopay
-from gopay.enums import Recurrence, PaymentInstrument, BankSwiftCode, Currency, Language
+import stripe
+from django.conf import settings
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.generic.base import TemplateView
+from gopay.enums import BankSwiftCode, Currency, Language, PaymentInstrument, Recurrence
+
 from .models import Invoice
 
 

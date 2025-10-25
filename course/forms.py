@@ -1,6 +1,8 @@
 from django import forms
+
 from accounts.models import User
-from .models import Program, Course, CourseAllocation, Upload, UploadVideo
+
+from .models import Course, CourseAllocation, Program, Upload, UploadVideo
 
 
 class ProgramForm(forms.ModelForm):
@@ -106,45 +108,54 @@ class UploadFormVideo(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["title"].widget.attrs.update({
-            "class": "form-control",
-            "placeholder": "Enter video title"
-        })
-        
-        self.fields["youtube_url"].widget.attrs.update({
-            "class": "form-control",
-            "placeholder": "https://www.youtube.com/watch?v=VIDEO_ID (Recommended for storage optimization)"
-        })
-        
-        self.fields["video"].widget.attrs.update({
-            "class": "form-control",
-            "accept": "video/*"
-        })
-        
-        self.fields["summary"].widget.attrs.update({
-            "class": "form-control",
-            "rows": 3,
-            "placeholder": "Enter video description (optional)"
-        })
-        
+        self.fields["title"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Enter video title"}
+        )
+
+        self.fields["youtube_url"].widget.attrs.update(
+            {
+                "class": "form-control",
+                "placeholder": "https://www.youtube.com/watch?v=VIDEO_ID (Recommended for storage optimization)",
+            }
+        )
+
+        self.fields["video"].widget.attrs.update(
+            {"class": "form-control", "accept": "video/*"}
+        )
+
+        self.fields["summary"].widget.attrs.update(
+            {
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": "Enter video description (optional)",
+            }
+        )
+
         # Add help text
-        self.fields["youtube_url"].help_text = "Paste YouTube video URL here. This is recommended as it saves server storage space."
-        self.fields["video"].help_text = "Upload video file only if YouTube URL is not available. Large files may cause storage issues."
+        self.fields["youtube_url"].help_text = (
+            "Paste YouTube video URL here. This is recommended as it saves server storage space."
+        )
+        self.fields["video"].help_text = (
+            "Upload video file only if YouTube URL is not available. Large files may cause storage issues."
+        )
 
     def clean(self):
         cleaned_data = super().clean()
-        youtube_url = cleaned_data.get('youtube_url')
-        video = cleaned_data.get('video')
-        
+        youtube_url = cleaned_data.get("youtube_url")
+        video = cleaned_data.get("video")
+
         # Validate that at least one video source is provided
         if not youtube_url and not video:
-            raise forms.ValidationError("Please provide either a YouTube URL or upload a video file.")
-        
+            raise forms.ValidationError(
+                "Please provide either a YouTube URL or upload a video file."
+            )
+
         # Validate YouTube URL if provided
         if youtube_url:
             from .utils import validate_youtube_url
+
             is_valid, video_id, error_msg = validate_youtube_url(youtube_url)
             if not is_valid:
                 raise forms.ValidationError(f"Invalid YouTube URL: {error_msg}")
-        
+
         return cleaned_data

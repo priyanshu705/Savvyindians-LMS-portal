@@ -1,32 +1,30 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
-
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
-    SimpleDocTemplate,
+    Image,
     Paragraph,
+    SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
-    Image,
 )
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
-from reportlab.platypus.tables import Table
-from reportlab.lib.units import inch
-from reportlab.lib import colors
+# Avoid re-importing Table from reportlab.platypus.tables (already imported above)
 
-from accounts.models import Student
-from core.models import Session, Semester
-from course.models import Course
 from accounts.decorators import lecturer_required, student_required
-from .models import TakenCourse, Result, FIRST, SECOND
+from accounts.models import Student
+from core.models import Semester, Session
+from course.models import Course
 
+from .models import FIRST, SECOND, Result, TakenCourse
 
 cm = 2.54
 

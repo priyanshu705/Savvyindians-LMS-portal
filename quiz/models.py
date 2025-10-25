@@ -1,23 +1,23 @@
-import re
 import json
+import re
 
-from django.db import models
-from django.urls import reverse
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.validators import (
     MaxValueValidator,
     validate_comma_separated_integer_list,
 )
-from django.utils.translation import gettext_lazy as _
-from django.utils.timezone import now
-from django.conf import settings
-from django.db.models.signals import pre_save
-
+from django.db import models
 from django.db.models import Q
-
+from django.db.models.signals import pre_save
+from django.urls import reverse
+from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 from model_utils.managers import InheritanceManager
+
 from course.models import Course
-from .utils import *
+
+from .utils import unique_slug_generator
 
 CHOICE_ORDER_OPTIONS = (
     ("content", _("Content")),
@@ -245,7 +245,9 @@ class SittingManager(models.Manager):
 
         if len(question_set) == 0:
             raise ImproperlyConfigured(
-                _("Question set of the quiz is empty. Please configure questions properly")
+                _(
+                    "Question set of the quiz is empty. Please configure questions properly"
+                )
             )
 
         # if quiz.max_questions and quiz.max_questions < len(question_set):
@@ -401,9 +403,9 @@ class Sitting(models.Model):
     @property
     def result_message(self):
         if self.check_if_passed:
-            return _(f"You have passed this quiz, congratulation")
+            return _("You have passed this quiz, congratulation")
         else:
-            return _(f"You failed this quiz, give it one chance again.")
+            return _("You failed this quiz, give it one chance again.")
 
     def add_user_answer(self, question, guess):
         current = json.loads(self.user_answers)
