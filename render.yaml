@@ -2,7 +2,7 @@ services:
   - type: web
     name: savvyindians-lms
     env: python
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+  buildCommand: pip install --upgrade pip && python -m pip show setuptools || true && python -m pip show gunicorn || true && pip install -r requirements.txt
     startCommand: python -m gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
