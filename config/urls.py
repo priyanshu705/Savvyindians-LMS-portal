@@ -19,7 +19,7 @@ urlpatterns = [
     path("search/", include("search.urls")),
     path("quiz/", include("quiz.urls")),
     path("result/", include("result.urls")),
-    path("payments/", include("payments.urls")),
+    # path("payments/", include("payments.urls")),  # Temporarily disabled - needs gopay package
     # Django Allauth URLs
     path("auth/", include("allauth.urls")),
     # Logo Test Page (for debugging)
