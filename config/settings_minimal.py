@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "result.apps.ResultConfig",
     "notifications.apps.NotificationsConfig",
     "quiz.apps.QuizConfig",
-    "payments.apps.PaymentsConfig",
+    # "payments.apps.PaymentsConfig",  # Temporarily disabled - missing gopay dependency
     "search.apps.SearchConfig",
     # Crispy forms for nicer form rendering in templates
     "crispy_forms",
