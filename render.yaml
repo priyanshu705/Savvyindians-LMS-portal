@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: savvyindians-lms
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings_minimal
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: DATABASE_URL
+        sync: false # render.com will supply this
+
+databases:
+  - name: savvyindians-lms-db
+    databaseName: lmsdb
+    plan: free
