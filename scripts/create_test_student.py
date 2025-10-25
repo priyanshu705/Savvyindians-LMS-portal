@@ -1,14 +1,17 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
+
 django.setup()
 
-from accounts.models import User, Student
-from course.models import Program, Course
-from result.models import TakenCourse
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password  # noqa: E402
+
+from accounts.models import Student, User  # noqa: E402
+from course.models import Course, Program  # noqa: E402
+from result.models import TakenCourse  # noqa: E402
 
 # Create a test student user
 username = "teststudent"
@@ -27,7 +30,7 @@ else:
         last_name="Student",
         password=make_password(password),
         is_student=True,
-        is_active=True
+        is_active=True,
     )
     print(f"Created student user: {username}")
 
@@ -35,11 +38,7 @@ else:
 program = Program.objects.first()
 if program:
     student, created = Student.objects.get_or_create(
-        student=user,
-        defaults={
-            'level': 'Bachelor',
-            'program': program
-        }
+        student=user, defaults={"level": "Bachelor", "program": program}
     )
     if created:
         print(f"Created student profile for {username}")
@@ -53,8 +52,7 @@ else:
 course = Course.objects.first()
 if course:
     enrollment, created = TakenCourse.objects.get_or_create(
-        student=student,
-        course=course
+        student=student, course=course
     )
     if created:
         print(f"Enrolled {username} in course: {course.title}")
@@ -66,5 +64,5 @@ else:
 print("\n=== Test Student Details ===")
 print(f"Username: {username}")
 print(f"Password: {password}")
-print(f"Login URL: http://127.0.0.1:8000/accounts/student/login/")
-print(f"Course List URL: http://127.0.0.1:8000/course/user_course_list/")
+print("Login URL: http://127.0.0.1:8000/accounts/student/login/")
+print("Course List URL: http://127.0.0.1:8000/course/user_course_list/")

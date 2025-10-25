@@ -1,6 +1,33 @@
 from django.urls import path
-from .views import *
 
+from .views import (
+    ProgramFilterView,
+    program_detail,
+    program_add,
+    program_edit,
+    program_delete,
+    course_single,
+    course_add,
+    course_edit,
+    course_delete,
+    CourseAllocationFormView,
+    CourseAllocationFilterView,
+    edit_allocated_course,
+    deallocate_course,
+    handle_file_upload,
+    handle_file_edit,
+    handle_file_delete,
+    handle_video_upload,
+    handle_video_single,
+    handle_video_edit,
+    handle_video_delete,
+    course_registration,
+    course_drop,
+    user_course_list,
+    update_video_progress,
+    get_video_progress,
+    student_progress_dashboard,
+)
 
 urlpatterns = [
     # Program urls
@@ -70,9 +97,20 @@ urlpatterns = [
     path("course/registration/", course_registration, name="course_registration"),
     path("course/drop/", course_drop, name="course_drop"),
     path("my_courses/", user_course_list, name="user_course_list"),
-    
     # Video Progress Tracking API URLs
-    path("api/video/progress/update/", update_video_progress, name="update_video_progress"),
-    path("api/video/<int:video_id>/progress/", get_video_progress, name="get_video_progress"),
-    path("progress/dashboard/", student_progress_dashboard, name="student_progress_dashboard"),
+    path(
+        "api/video/progress/update/",
+        update_video_progress,
+        name="update_video_progress",
+    ),
+    path(
+        "api/video/<int:video_id>/progress/",
+        get_video_progress,
+        name="get_video_progress",
+    ),
+    path(
+        "progress/dashboard/",
+        student_progress_dashboard,
+        name="student_progress_dashboard",
+    ),
 ]

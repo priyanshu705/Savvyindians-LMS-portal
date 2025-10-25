@@ -1,10 +1,16 @@
-from modeltranslation.translator import register, TranslationOptions
-from .models import Quiz, Question, Choice, MCQuestion
+from modeltranslation.translator import TranslationOptions, register
+
+from .models import Choice, Quiz
+
 
 @register(Quiz)
 class QuizTranslationOptions(TranslationOptions):
-    fields = ('title', 'description',)
-    empty_values=None
+    fields = (
+        "title",
+        "description",
+    )
+    empty_values = None
+
 
 """
 Note:
@@ -25,10 +31,12 @@ registrations safely.
 #     fields = ('content', 'explanation',)
 #     empty_values=None
 
+
 @register(Choice)
 class ChoiceTranslationOptions(TranslationOptions):
-    fields = ('choice',)
-    empty_values=None
+    fields = ("choice",)
+    empty_values = None
+
 
 # @register(MCQuestion)
 # class MCQuestionTranslationOptions(TranslationOptions):

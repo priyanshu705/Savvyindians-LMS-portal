@@ -1,5 +1,5 @@
-from rest_framework import generics
 from django.contrib.auth import get_user_model
+from rest_framework import generics
 
 from .serializers import UserSerializer
 
@@ -12,7 +12,8 @@ class UserListAPIView(generics.ListAPIView):
         queryset = get_user_model().objects.all()
         query = self.request.GET.get("q")
         if query is not None:
-            queryset = queryset.filter(username__iexact=q)
+            # use the local variable `query` (not undefined `q`)
+            queryset = queryset.filter(username__iexact=query)
         return queryset
 
 

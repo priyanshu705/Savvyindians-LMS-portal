@@ -1,41 +1,40 @@
-from django.http.response import JsonResponse
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import update_session_auth_hash, login, logout, authenticate
-from django.views.generic import CreateView, ListView
-from django.db.models import Q
-from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import PasswordChangeForm
-from django_filters.views import FilterView
-from django.urls import reverse_lazy, reverse
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import CreateView
+from django_filters.views import FilterView
+
 try:
     from allauth.socialaccount.models import SocialAccount
 except Exception:
     SocialAccount = None
-from core.models import Session, Semester
-from course.models import Course
-from result.models import TakenCourse
-from .decorators import admin_required
-from .forms import (
-    StaffAddForm,
-    StudentAddForm,
-    ProfileUpdateForm,
-    ParentAddForm,
-    ProgramUpdateForm,
-    StudentLoginForm,
-    StudentRegistrationForm,
-)
-from .models import User, Student, Parent
-from .filters import LecturerFilter, StudentFilter
-
 # to generate pdf from template we need the following
 from django.http import HttpResponse
-from django.template.loader import get_template  # to get template which render as pdf
 from django.template.loader import (
     render_to_string,
 )  # to render a template into a string
+
+from core.models import Semester, Session
+from course.models import Course
+from result.models import TakenCourse
+
+from .decorators import admin_required
+from .filters import LecturerFilter, StudentFilter
+from .forms import (
+    ParentAddForm,
+    ProfileUpdateForm,
+    ProgramUpdateForm,
+    StaffAddForm,
+    StudentAddForm,
+    StudentLoginForm,
+    StudentRegistrationForm,
+)
+from .models import Parent, Student, User
 
 
 def validate_username(request):
@@ -49,10 +48,12 @@ def register(request):
         form = StudentAddForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, f"Account created successfuly.")
+            # no placeholder in string, use normal string instead of f-string
+            messages.success(request, "Account created successfuly.")
         else:
             messages.error(
-                request, f"Somthing is not correct, please fill all fields correctly."
+                request,
+                "Somthing is not correct, please fill all fields correctly.",
             )
     else:
         form = StudentAddForm(request.POST)
@@ -540,164 +541,190 @@ class ParentAdd(CreateView):
 # Student Authentication Views
 # ########################################################
 
+
 def student_login(request):
     """Enhanced login view specifically for students"""
     if request.user.is_authenticated:
-        if hasattr(request.user, 'is_student') and request.user.is_student:
-            return redirect('user_course_list')
+        if hasattr(request.user, "is_student") and request.user.is_student:
+            return redirect("user_course_list")
         else:
             messages.info(request, _("Please use the student login form."))
             logout(request)
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         form = StudentLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            
+
             # Set session expiry based on remember_me
-            if form.cleaned_data.get('remember_me'):
+            if form.cleaned_data.get("remember_me"):
                 request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
             else:
                 request.session.set_expiry(60 * 60 * 8)  # 8 hours
-            
+
             login(request, user)
             messages.success(request, _("Welcome back, {}!".format(user.get_full_name)))
-            
+
             # Redirect to next URL or default student dashboard
-            next_url = request.GET.get('next')
+            next_url = request.GET.get("next")
             if next_url:
                 return redirect(next_url)
             else:
-                return redirect('user_course_list')
+                return redirect("user_course_list")
         else:
             messages.error(request, _("Please correct the errors below."))
     else:
         form = StudentLoginForm()
-    
+
     context = {
-        'form': form,
-        'title': _('Student Login'),
+        "form": form,
+        "title": _("Student Login"),
     }
-    return render(request, 'accounts/student_login.html', context)
+    return render(request, "accounts/student_login.html", context)
 
 
 def student_register(request):
     """Enhanced registration view for bootcamp/masterclass participants"""
     if request.user.is_authenticated:
         messages.info(request, _("You are already logged in."))
-        return redirect('user_course_list')
-    
-    if request.method == 'POST':
+        return redirect("user_course_list")
+
+    if request.method == "POST":
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             messages.success(
-                request, 
-                _("Welcome to the bootcamp! You can now login with your email: {}").format(user.email)
+                request,
+                _(
+                    "Welcome to the bootcamp! You can now login with your email: {}"
+                ).format(user.email),
             )
-            return redirect('student_login')
+            return redirect("student_login")
         else:
             messages.error(request, _("Please correct the errors below."))
     else:
         form = StudentRegistrationForm()
-    
+
     context = {
-        'form': form,
-        'title': _('Join AI Bootcamp'),
+        "form": form,
+        "title": _("Join AI Bootcamp"),
     }
-    return render(request, 'accounts/student_register_bootcamp.html', context)
+    return render(request, "accounts/student_register_bootcamp.html", context)
 
 
 def student_logout(request):
     """Enhanced logout view for students with OAuth support"""
     if request.user.is_authenticated:
-        user_name = request.user.get_full_name if hasattr(request.user, 'get_full_name') else str(request.user)
-        
+        user_name = (
+            request.user.get_full_name
+            if hasattr(request.user, "get_full_name")
+            else str(request.user)
+        )
+
         # Check if user has OAuth social accounts
-        social_accounts = SocialAccount.objects.filter(user=request.user) if SocialAccount else []
-        has_google_account = social_accounts.filter(provider='google').exists() if SocialAccount else False
-        
+        social_accounts = (
+            SocialAccount.objects.filter(user=request.user) if SocialAccount else []
+        )
+        has_google_account = (
+            social_accounts.filter(provider="google").exists()
+            if SocialAccount
+            else False
+        )
+
         # Store user info for logout confirmation page
         context = {
-            'user_name': user_name,
-            'has_google_account': has_google_account,
-            'social_accounts': social_accounts,
+            "user_name": user_name,
+            "has_google_account": has_google_account,
+            "social_accounts": social_accounts,
         }
-        
+
         # If GET request, show logout confirmation page
-        if request.method == 'GET':
-            return render(request, 'accounts/logout_confirm.html', context)
-        
+        if request.method == "GET":
+            return render(request, "accounts/logout_confirm.html", context)
+
         # If POST request, perform logout
-        elif request.method == 'POST':
+        elif request.method == "POST":
             # Clear all sessions and logout
             logout(request)
-            
+
             # Add appropriate success message
             if has_google_account:
                 messages.success(
-                    request, 
-                    _("You have been logged out successfully from both your student account and Google. See you next time, {}!").format(user_name)
+                    request,
+                    _(
+                        "You have been logged out successfully from both your student account and Google. See you next time, {}!"
+                    ).format(user_name),
                 )
             else:
                 messages.success(
-                    request, 
-                    _("You have been logged out successfully. See you next time, {}!").format(user_name)
+                    request,
+                    _(
+                        "You have been logged out successfully. See you next time, {}!"
+                    ).format(user_name),
                 )
-            
+
             # Redirect to home page after logout
-            return redirect('home')
-    
+            return redirect("home")
+
     # If user is not authenticated, redirect to home page
-    return redirect('home')
+    return redirect("home")
 
 
 @login_required
 def oauth_connections(request):
     """View for managing OAuth social account connections"""
-    social_accounts = SocialAccount.objects.filter(user=request.user) if SocialAccount else []
-    
+    social_accounts = (
+        SocialAccount.objects.filter(user=request.user) if SocialAccount else []
+    )
+
     context = {
-        'title': _('Connected Accounts'),
-        'social_accounts': social_accounts,
-        'has_google_account': social_accounts.filter(provider='google').exists() if SocialAccount else False,
-        'user': request.user,
+        "title": _("Connected Accounts"),
+        "social_accounts": social_accounts,
+        "has_google_account": (
+            social_accounts.filter(provider="google").exists()
+            if SocialAccount
+            else False
+        ),
+        "user": request.user,
     }
-    return render(request, 'accounts/oauth_connections.html', context)
+    return render(request, "accounts/oauth_connections.html", context)
 
 
 def lecturer_login(request):
     """Enhanced login view specifically for lecturers/instructors"""
     if request.user.is_authenticated:
-        if hasattr(request.user, 'is_lecturer') and request.user.is_lecturer:
-            return redirect('admin_panel')
+        if hasattr(request.user, "is_lecturer") and request.user.is_lecturer:
+            return redirect("admin_panel")
         else:
             messages.info(request, _("Please use the lecturer login form."))
             logout(request)
-    
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
-            if hasattr(user, 'is_lecturer') and user.is_lecturer:
+            if hasattr(user, "is_lecturer") and user.is_lecturer:
                 login(request, user)
-                messages.success(request, _("Welcome back, {}!".format(user.get_full_name)))
-                
+                messages.success(
+                    request, _("Welcome back, {}!".format(user.get_full_name))
+                )
+
                 # Redirect to next URL or default lecturer dashboard
-                next_url = request.GET.get('next')
+                next_url = request.GET.get("next")
                 if next_url:
                     return redirect(next_url)
                 else:
-                    return redirect('admin_panel')
+                    return redirect("admin_panel")
             else:
-                messages.error(request, _("This account is not registered as a lecturer."))
+                messages.error(
+                    request, _("This account is not registered as a lecturer.")
+                )
         else:
             messages.error(request, _("Invalid username or password."))
-    
-    context = {
-        'title': _('Lecturer Login'),
-    }
-    return render(request, 'accounts/lecturer_login.html', context)
 
+    context = {
+        "title": _("Lecturer Login"),
+    }
+    return render(request, "accounts/lecturer_login.html", context)

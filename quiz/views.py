@@ -1,27 +1,27 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404, render, redirect
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import (
+    CreateView,
     DetailView,
+    FormView,
     ListView,
     TemplateView,
-    FormView,
-    CreateView,
     UpdateView,
 )
-from django.contrib import messages
-from django.db import transaction
 
 from accounts.decorators import lecturer_required
-from .models import Course, Progress, Sitting, EssayQuestion, Quiz, MCQuestion, Question
+
 from .forms import (
-    QuizAddForm,
+    EssayForm,
     MCQuestionForm,
     MCQuestionFormSet,
     QuestionForm,
-    EssayForm,
+    QuizAddForm,
 )
+from .models import Course, EssayQuestion, MCQuestion, Progress, Question, Quiz, Sitting
 
 
 @method_decorator([login_required, lecturer_required], name="dispatch")
@@ -89,7 +89,7 @@ def quiz_delete(request, slug, pk):
     quiz = Quiz.objects.get(pk=pk)
     course = Course.objects.get(slug=slug)
     quiz.delete()
-    messages.success(request, f"successfuly deleted.")
+    messages.success(request, "successfuly deleted.")
     return redirect("quiz_index", quiz.course.slug)
 
 
@@ -248,7 +248,7 @@ class QuizTake(FormView):
         quizQuestions = Question.objects.filter(quiz=self.quiz).count()
 
         if quizQuestions <= 0:
-            messages.warning(request, f"Question set of the quiz is empty. try later!")
+            messages.warning(request, "Question set of the quiz is empty. try later!")
             return redirect("quiz_index", self.course.slug)
 
         # if self.quiz.draft and not request.user.has_perm("quiz.change_quiz"):
@@ -262,7 +262,7 @@ class QuizTake(FormView):
             # return render(request, self.single_complete_template_name)
             messages.info(
                 request,
-                f"You have already sat this exam and only one sitting is permitted",
+                "You have already sat this exam and only one sitting is permitted",
             )
             return redirect("quiz_index", self.course.slug)
 
@@ -339,7 +339,7 @@ class QuizTake(FormView):
             "percent": self.sitting.get_percent_correct,
             "sitting": self.sitting,
             "previous": self.previous,
-            "course": get_object_or_404(Course, pk=self.kwargs["pk"]),
+            # removed duplicate "course" key
         }
 
         self.sitting.mark_quiz_complete()

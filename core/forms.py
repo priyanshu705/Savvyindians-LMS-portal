@@ -1,7 +1,6 @@
 from django import forms
-from django.db import transaction
 
-from .models import NewsAndEvents, Session, Semester, SEMESTER
+from .models import SEMESTER, NewsAndEvents, Semester, Session
 
 
 # news and events

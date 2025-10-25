@@ -2,15 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from .models import (
-    Quiz,
-    Progress,
-    Question,
-    MCQuestion,
-    Choice,
-    EssayQuestion,
-    Sitting,
-)
+from .models import Choice, EssayQuestion, MCQuestion, Progress, Question, Quiz, Sitting
 
 
 class ChoiceInline(admin.TabularInline):
@@ -32,9 +24,9 @@ class QuizAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuizAdminForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
-            self.fields[
-                "questions"
-            ].initial = self.instance.question_set.all().select_subclasses()
+            self.fields["questions"].initial = (
+                self.instance.question_set.all().select_subclasses()
+            )
 
     def save(self, commit=True):
         quiz = super(QuizAdminForm, self).save(commit=False)
@@ -46,7 +38,10 @@ class QuizAdminForm(forms.ModelForm):
 
 class QuizAdmin(admin.ModelAdmin):
     form = QuizAdminForm
-    fields = ('title', 'description',)
+    fields = (
+        "title",
+        "description",
+    )
     list_display = ("title",)
     # list_filter = ('category',)
     search_fields = (
@@ -58,7 +53,9 @@ class QuizAdmin(admin.ModelAdmin):
 class MCQuestionAdmin(admin.ModelAdmin):
     list_display = ("content",)
     # list_filter = ('category',)
-    fieldsets = [(u'figure' 'quiz' 'choice_order', {'fields': ("content","explanation")})]
+    fieldsets = [
+        ("figure" "quiz" "choice_order", {"fields": ("content", "explanation")})
+    ]
 
     search_fields = ("content", "explanation")
     filter_horizontal = ("quiz",)

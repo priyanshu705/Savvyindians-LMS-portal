@@ -1,9 +1,9 @@
+from django.conf import settings
+from django.contrib import messages
 from django.core.mail import send_mail
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
-from django.shortcuts import render, redirect
-from django.contrib import messages
 
 
 def send_email(user, subject, msg):
@@ -35,11 +35,19 @@ def send_html_email(subject, recipient_list, template, context):
 
 
 # Common utilities to reduce code duplication across the project
-def handle_form_submission(request, form_class, template_name, success_url, 
-                         success_message, error_message=None, context=None, instance=None):
+def handle_form_submission(
+    request,
+    form_class,
+    template_name,
+    success_url,
+    success_message,
+    error_message=None,
+    context=None,
+    instance=None,
+):
     """
     Generic function to handle form submission (add/edit operations).
-    
+
     Args:
         request: HTTP request object
         form_class: Django form class
@@ -52,20 +60,20 @@ def handle_form_submission(request, form_class, template_name, success_url,
     """
     if error_message is None:
         error_message = "Please correct the error(s) below."
-    
+
     if context is None:
         context = {}
-    
+
     if request.method == "POST":
         if instance:
             form = form_class(request.POST, request.FILES, instance=instance)
         else:
             form = form_class(request.POST, request.FILES)
-            
+
         if form.is_valid():
             saved_instance = form.save()
             # Handle success message formatting
-            if hasattr(saved_instance, 'title') and '{title}' in success_message:
+            if hasattr(saved_instance, "title") and "{title}" in success_message:
                 message = success_message.format(title=saved_instance.title)
             else:
                 message = success_message
@@ -78,16 +86,17 @@ def handle_form_submission(request, form_class, template_name, success_url,
             form = form_class(instance=instance)
         else:
             form = form_class()
-    
+
     context.update({"form": form})
     return render(request, template_name, context)
 
 
-def handle_delete_operation(request, model_class, pk_field, redirect_url, 
-                          success_message, validation_func=None):
+def handle_delete_operation(
+    request, model_class, pk_field, redirect_url, success_message, validation_func=None
+):
     """
     Generic function to handle delete operations.
-    
+
     Args:
         request: HTTP request object
         model_class: Django model class
@@ -100,21 +109,21 @@ def handle_delete_operation(request, model_class, pk_field, redirect_url,
         instance = model_class.objects.get(**pk_field)
     else:
         instance = model_class.objects.get(pk=pk_field)
-    
+
     # Check if deletion is allowed
     if validation_func and not validation_func(instance):
         return redirect(redirect_url)
-    
+
     # Store title before deletion
-    title = getattr(instance, 'title', str(instance))
+    title = getattr(instance, "title", str(instance))
     instance.delete()
-    
+
     # Format success message
-    if '{title}' in success_message:
+    if "{title}" in success_message:
         message = success_message.format(title=title)
     else:
         message = success_message
-    
+
     messages.success(request, message)
     return redirect(redirect_url)
 
@@ -140,7 +149,7 @@ def validate_current_semester_deletion(semester):
 def get_pagination_context(queryset, request, per_page=10):
     """Get paginated context for list views."""
     from django.core.paginator import Paginator
-    
+
     paginator = Paginator(queryset, per_page)
     page = request.GET.get("page")
     return paginator.get_page(page)

@@ -1,29 +1,36 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.db.models import Sum, Avg, Max, Min, Count
-from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
-from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView
+from django.views.generic import CreateView
 from django_filters.views import FilterView
-from core.utils import handle_form_submission, handle_delete_operation
+import json
 
-from accounts.models import User, Student
-from core.models import Session, Semester
-from result.models import TakenCourse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from .models import VideoProgress
+
 from accounts.decorators import lecturer_required, student_required
+from accounts.models import Student, User
+from core.models import Semester
+from core.utils import handle_delete_operation
+from result.models import TakenCourse
+
+from .filters import CourseAllocationFilter, ProgramFilter
 from .forms import (
-    ProgramForm,
     CourseAddForm,
     CourseAllocationForm,
     EditCourseAllocationForm,
+    ProgramForm,
     UploadFormFile,
     UploadFormVideo,
 )
-from .filters import ProgramFilter, CourseAllocationFilter
-from .models import Program, Course, CourseAllocation, Upload, UploadVideo
+from .models import Course, CourseAllocation, Program, Upload, UploadVideo
 
 
 @method_decorator([login_required, lecturer_required], name="dispatch")
@@ -117,7 +124,7 @@ def program_delete(request, pk):
         model_class=Program,
         pk_field=pk,
         redirect_url="programs",
-        success_message="Program {title} has been deleted."
+        success_message="Program {title} has been deleted.",
     )
 
 
@@ -137,8 +144,13 @@ def course_single(request, slug):
     lecturers = CourseAllocation.objects.filter(courses__pk=course.id)
 
     # Annotate each video with student's progress
-    if request.user.is_authenticated and hasattr(request.user, 'is_student') and request.user.is_student:
+    if (
+        request.user.is_authenticated
+        and hasattr(request.user, "is_student")
+        and request.user.is_student
+    ):
         from .models import VideoProgress
+
         for video in videos:
             try:
                 progress = VideoProgress.objects.get(student=request.user, video=video)
@@ -230,8 +242,8 @@ def course_delete(request, slug):
         request=request,
         model_class=Course,
         pk_field={"slug": slug},
-        redirect_url=f"program_detail",
-        success_message="Course {title} has been deleted."
+        redirect_url="program_detail",
+        success_message="Course {title} has been deleted.",
     )
 
 
@@ -581,14 +593,6 @@ def user_course_list(request):
 # Video Progress Tracking API Views
 # ########################################################
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_http_methods
-from django.utils import timezone
-import json
-from .models import VideoProgress
-
 
 @csrf_exempt
 @login_required
@@ -598,57 +602,59 @@ def update_video_progress(request):
     """API endpoint to update video watching progress"""
     try:
         data = json.loads(request.body)
-        video_id = data.get('video_id')
-        current_time = data.get('current_time', 0)
-        duration = data.get('duration', 0)
-        
+        video_id = data.get("video_id")
+        current_time = data.get("current_time", 0)
+        duration = data.get("duration", 0)
+
         if not video_id:
-            return JsonResponse({'error': 'Video ID is required'}, status=400)
-        
+            return JsonResponse({"error": "Video ID is required"}, status=400)
+
         # Get the video object
         try:
             video = UploadVideo.objects.get(id=video_id)
         except UploadVideo.DoesNotExist:
-            return JsonResponse({'error': 'Video not found'}, status=404)
-        
+            return JsonResponse({"error": "Video not found"}, status=404)
+
         # Get student
         student = Student.objects.get(student__pk=request.user.id)
-        
+
         # Get or create progress record
         progress, created = VideoProgress.objects.get_or_create(
             student=request.user,
             video=video,
             defaults={
-                'total_duration': duration,
-                'watch_time': 0,
-                'last_position': current_time
-            }
+                "total_duration": duration,
+                "watch_time": 0,
+                "last_position": current_time,
+            },
         )
-        
+
         # Update progress
         progress.last_position = current_time
         progress.total_duration = max(progress.total_duration, duration)
-        
+
         # Only increment watch time if moving forward
         if current_time > progress.last_position:
-            progress.watch_time += (current_time - progress.last_position)
-        
+            progress.watch_time += current_time - progress.last_position
+
         progress.save()
-        
-        return JsonResponse({
-            'success': True,
-            'progress': {
-                'completion_percentage': progress.completion_percentage,
-                'is_completed': progress.is_completed,
-                'watch_time': progress.watch_time,
-                'last_position': progress.last_position
+
+        return JsonResponse(
+            {
+                "success": True,
+                "progress": {
+                    "completion_percentage": progress.completion_percentage,
+                    "is_completed": progress.is_completed,
+                    "watch_time": progress.watch_time,
+                    "last_position": progress.last_position,
+                },
             }
-        })
-        
+        )
+
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @login_required
@@ -657,44 +663,45 @@ def get_video_progress(request, video_id):
     """API endpoint to get current video progress"""
     try:
         video = UploadVideo.objects.get(id=video_id)
-        
+
         try:
-            progress = VideoProgress.objects.get(
-                student=request.user,
-                video=video
+            progress = VideoProgress.objects.get(student=request.user, video=video)
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "progress": {
+                        "completion_percentage": progress.completion_percentage,
+                        "is_completed": progress.is_completed,
+                        "watch_time": progress.watch_time,
+                        "last_position": progress.last_position,
+                        "total_duration": progress.total_duration,
+                        "time_watched_display": progress.time_watched_display,
+                        "progress_display": progress.progress_display,
+                    },
+                }
             )
-            
-            return JsonResponse({
-                'success': True,
-                'progress': {
-                    'completion_percentage': progress.completion_percentage,
-                    'is_completed': progress.is_completed,
-                    'watch_time': progress.watch_time,
-                    'last_position': progress.last_position,
-                    'total_duration': progress.total_duration,
-                    'time_watched_display': progress.time_watched_display,
-                    'progress_display': progress.progress_display
-                }
-            })
-            
+
         except VideoProgress.DoesNotExist:
-            return JsonResponse({
-                'success': True,
-                'progress': {
-                    'completion_percentage': 0,
-                    'is_completed': False,
-                    'watch_time': 0,
-                    'last_position': 0,
-                    'total_duration': 0,
-                    'time_watched_display': '0s',
-                    'progress_display': '0.0%'
+            return JsonResponse(
+                {
+                    "success": True,
+                    "progress": {
+                        "completion_percentage": 0,
+                        "is_completed": False,
+                        "watch_time": 0,
+                        "last_position": 0,
+                        "total_duration": 0,
+                        "time_watched_display": "0s",
+                        "progress_display": "0.0%",
+                    },
                 }
-            })
-            
+            )
+
     except UploadVideo.DoesNotExist:
-        return JsonResponse({'error': 'Video not found'}, status=404)
+        return JsonResponse({"error": "Video not found"}, status=404)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @login_required
@@ -703,59 +710,62 @@ def student_progress_dashboard(request):
     """View to show student's overall video progress"""
     try:
         student = Student.objects.get(student__pk=request.user.id)
-        
+
         # Get all progress records for this student
         progress_records = VideoProgress.objects.filter(
             student=request.user
-        ).select_related('video', 'video__course')
-        
+        ).select_related("video", "video__course")
+
         # Calculate statistics
         total_videos = progress_records.count()
         completed_videos = progress_records.filter(is_completed=True).count()
         total_watch_time = sum(p.watch_time for p in progress_records)
-        
+
         # Group by course
         course_progress = {}
         for progress in progress_records:
             course_title = progress.video.course.title
             if course_title not in course_progress:
                 course_progress[course_title] = {
-                    'videos': [],
-                    'completed': 0,
-                    'total': 0,
-                    'total_watch_time': 0
+                    "videos": [],
+                    "completed": 0,
+                    "total": 0,
+                    "total_watch_time": 0,
                 }
-            
-            course_progress[course_title]['videos'].append(progress)
-            course_progress[course_title]['total'] += 1
-            course_progress[course_title]['total_watch_time'] += progress.watch_time
-            
+
+            course_progress[course_title]["videos"].append(progress)
+            course_progress[course_title]["total"] += 1
+            course_progress[course_title]["total_watch_time"] += progress.watch_time
+
             if progress.is_completed:
-                course_progress[course_title]['completed'] += 1
-        
+                course_progress[course_title]["completed"] += 1
+
         # Calculate course completion percentages
         for course in course_progress.values():
-            course['completion_percentage'] = (
-                (course['completed'] / course['total']) * 100 
-                if course['total'] > 0 else 0
+            course["completion_percentage"] = (
+                (course["completed"] / course["total"]) * 100
+                if course["total"] > 0
+                else 0
             )
-        
+
         context = {
-            'student': student,
-            'progress_records': progress_records,
-            'course_progress': course_progress,
-            'total_videos': total_videos,
-            'completed_videos': completed_videos,
-            'total_watch_time': total_watch_time,
-            'overall_completion': (completed_videos / total_videos * 100) if total_videos > 0 else 0,
-            'title': 'My Progress Dashboard'
+            "student": student,
+            "progress_records": progress_records,
+            "course_progress": course_progress,
+            "total_videos": total_videos,
+            "completed_videos": completed_videos,
+            "total_watch_time": total_watch_time,
+            "overall_completion": (
+                (completed_videos / total_videos * 100) if total_videos > 0 else 0
+            ),
+            "title": "My Progress Dashboard",
         }
-        
-        return render(request, 'course/student_progress_dashboard.html', context)
-        
+
+        return render(request, "course/student_progress_dashboard.html", context)
+
     except Student.DoesNotExist:
-        messages.error(request, 'Student profile not found.')
-        return redirect('user_course_list')
+        messages.error(request, "Student profile not found.")
+        return redirect("user_course_list")
     except Exception as e:
-        messages.error(request, f'Error loading progress dashboard: {str(e)}')
-        return redirect('user_course_list')
+        messages.error(request, f"Error loading progress dashboard: {str(e)}")
+        return redirect("user_course_list")

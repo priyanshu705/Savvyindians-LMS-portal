@@ -1,31 +1,31 @@
-from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.urls import include, path
 
+from .views import render_lecturer_pdf_list  # new
+from .views import render_student_pdf_list  # new
 from .views import (
-    profile,
-    profile_single,
-    admin_panel,
-    profile_update,
-    change_password,
     LecturerFilterView,
-    StudentListView,
-    staff_add_view,
-    edit_staff,
-    delete_staff,
-    student_add_view,
-    edit_student,
-    delete_student,
-    edit_student_program,
     ParentAdd,
-    validate_username,
-    register,
-    render_lecturer_pdf_list,  # new
-    render_student_pdf_list,  # new
-    student_login,
-    student_register,
-    student_logout,
+    StudentListView,
+    admin_panel,
+    change_password,
+    delete_staff,
+    delete_student,
+    edit_staff,
+    edit_student,
+    edit_student_program,
     lecturer_login,
     oauth_connections,
+    profile,
+    profile_single,
+    profile_update,
+    register,
+    staff_add_view,
+    student_add_view,
+    student_login,
+    student_logout,
+    student_register,
+    validate_username,
 )
 
 # from .forms import EmailValidationOnForgotPassword
@@ -33,19 +33,34 @@ from .views import (
 
 urlpatterns = [
     # Password Reset URLs with custom templates
-    path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name='registration/password_reset.html'
-    ), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='registration/password_reset_done.html'
-    ), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='registration/password_reset_confirm.html'
-    ), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='registration/password_reset_complete.html'
-    ), name='password_reset_complete'),
-    
+    path(
+        "password_reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="registration/password_reset.html"
+        ),
+        name="password_reset",
+    ),
+    path(
+        "password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="registration/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="registration/password_reset_confirm.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="registration/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
+    ),
     path("", include("django.contrib.auth.urls")),
     path("admin_panel/", admin_panel, name="admin_panel"),
     path("profile/", profile, name="profile"),
@@ -68,17 +83,13 @@ urlpatterns = [
     path("parents/add/", ParentAdd.as_view(), name="add_parent"),
     path("ajax/validate-username/", validate_username, name="validate_username"),
     path("register/", register, name="register"),
-    
     # Student Authentication URLs
     path("student/login/", student_login, name="student_login"),
     path("student/register/", student_register, name="student_register"),
     path("student/logout/", student_logout, name="student_logout"),
-    
     # Lecturer Authentication URLs
     path("lecturer/login/", lecturer_login, name="lecturer_login"),
-    
     path("oauth/connections/", oauth_connections, name="oauth_connections"),
-    
     # paths to pdf
     path(
         "create_lecturers_pdf_list/", render_lecturer_pdf_list, name="lecturer_list_pdf"

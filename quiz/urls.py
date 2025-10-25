@@ -1,5 +1,17 @@
 from django.urls import path
-from .views import *
+
+from .views import (
+    quiz_list,
+    QuizUserProgressView,
+    QuizMarkingList,
+    QuizMarkingDetail,
+    QuizTake,
+    QuizCreateView,
+    QuizUpdateView,
+    quiz_delete,
+    MCQuestionCreate,
+)
+
 
 urlpatterns = [
     path("<slug>/quizzes/", quiz_list, name="quiz_index"),

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
+
 from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -28,7 +30,7 @@ SECRET_KEY = config(
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = [
-    "127.0.0.1", 
+    "127.0.0.1",
     "localhost",
     "testserver",
     ".vercel.app",  # Allow all Vercel subdomains
@@ -50,10 +52,12 @@ CSRF_TRUSTED_ORIGINS = [
 # Add wildcard for development
 if DEBUG:
     ALLOWED_HOSTS.append("*")
-    CSRF_TRUSTED_ORIGINS.extend([
-        "http://127.0.0.1:8000",
-        "http://localhost:8000",
-    ])
+    CSRF_TRUSTED_ORIGINS.extend(
+        [
+            "http://127.0.0.1:8000",
+            "http://localhost:8000",
+        ]
+    )
 
 # Add your production domains
 if not DEBUG:
@@ -152,16 +156,20 @@ ASGI_APPLICATION = "config.asgi.application"
 # Check if we have a DATABASE_URL (production)
 DATABASE_URL = config("DATABASE_URL", default="")
 
-if DATABASE_URL and DATABASE_URL.startswith('postgresql'):
+if DATABASE_URL and DATABASE_URL.startswith("postgresql"):
     # Production database configuration using Neon PostgreSQL
     try:
         import dj_database_url
+
         DATABASES = {
-            "default": dj_database_url.parse(DATABASE_URL, conn_max_age=60, conn_health_checks=True)
+            "default": dj_database_url.parse(
+                DATABASE_URL, conn_max_age=60, conn_health_checks=True
+            )
         }
     except ImportError:
         # Manual configuration if dj_database_url is not available
         import urllib.parse
+
         url = urllib.parse.urlparse(DATABASE_URL)
         DATABASES = {
             "default": {
@@ -343,7 +351,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": config("GOOGLE_OAUTH2_CLIENT_ID", default=""),
             "secret": config("GOOGLE_OAUTH2_CLIENT_SECRET", default=""),
-            "key": ""
+            "key": "",
         },
     }
 }
@@ -351,7 +359,9 @@ SOCIALACCOUNT_PROVIDERS = {
 # Redirect URLs after social login
 LOGIN_REDIRECT_URL = "/course/user_course_list/"  # Redirect to student dashboard
 LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Standard Django logout redirect
-ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Django Allauth logout redirect
+ACCOUNT_LOGOUT_REDIRECT_URL = (
+    "/accounts/student/login/"  # Django Allauth logout redirect
+)
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Allauth logout configuration
@@ -372,25 +382,26 @@ if not DEBUG:
     USE_TZ = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = 'DENY'
+    X_FRAME_OPTIONS = "DENY"
 
 STUDENT_ID_PREFIX = config("STUDENT_ID_PREFIX", "ugr")
 LECTURER_ID_PREFIX = config("LECTURER_ID_PREFIX", "lec")
 
 # Serverless/Vercel specific settings
-import sys
-if 'vercel' in sys.modules or os.environ.get('VERCEL'):
+
+if "vercel" in sys.modules or os.environ.get("VERCEL"):
     # Disable migrations in serverless environment
     class DisableMigrations:
         def __contains__(self, item):
             return True
+
         def __getitem__(self, item):
             return None
-    
+
     # Only disable migrations if not explicitly running them
-    if 'migrate' not in sys.argv:
+    if "migrate" not in sys.argv:
         MIGRATION_MODULES = DisableMigrations()
-    
+
     # Optimize for serverless
     CONN_MAX_AGE = 0  # Don't persist database connections
-    DATABASES['default']['CONN_MAX_AGE'] = 0
+    DATABASES["default"]["CONN_MAX_AGE"] = 0

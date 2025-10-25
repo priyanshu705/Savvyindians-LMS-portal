@@ -1,6 +1,7 @@
-from django.db.models import Q
 import django_filters
-from .models import Program, CourseAllocation, Course
+from django.db.models import Q
+
+from .models import CourseAllocation, Program
 
 
 class ProgramFilter(django_filters.FilterSet):

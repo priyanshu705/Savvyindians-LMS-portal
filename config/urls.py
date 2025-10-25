@@ -1,7 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
@@ -23,7 +23,11 @@ urlpatterns = [
     # Django Allauth URLs
     path("auth/", include("allauth.urls")),
     # Logo Test Page (for debugging)
-    path("test-logo/", TemplateView.as_view(template_name="test_logo.html"), name="test_logo"),
+    path(
+        "test-logo/",
+        TemplateView.as_view(template_name="test_logo.html"),
+        name="test_logo",
+    ),
 ]
 
 
