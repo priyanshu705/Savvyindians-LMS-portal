@@ -8,7 +8,9 @@ services:
     python -m pip show gunicorn || true
     pip install -r requirements.txt
     python manage.py collectstatic --noinput --clear --no-post-process
-  startCommand: python -m gunicorn config.wsgi:application
+  # Use Gunicorn to serve the Django WSGI application. Bind to the port
+  # provided by Render via the $PORT env var and use a few workers.
+  startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
   # Run database migrations and collectstatic as a release step so
   # the staticfiles manifest is created and migrations run before the
   # web service starts. `DJANGO_SETTINGS_MODULE` is provided in envVars.
