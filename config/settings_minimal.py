@@ -94,8 +94,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database configuration
-# Use DATABASE_URL if available, otherwise use SQLite as fallback
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
+# Use DATABASE_URL if available, otherwise fall back to the Render PostgreSQL URL
+# (provided by the user). In production Render will supply DATABASE_URL via env vars,
+# but providing the full URL here allows a quick deploy if the env var isn't set.
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql://savvyindians_lms_db_user:9Ih96HwA3017hhCodMMo9zU2lyFQuTAR@dpg-d3v4c70dl3ps73fi4png-a.oregon-postgres.render.com/savvyindians_lms_db",
+)
 
 if DATABASE_URL:
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
