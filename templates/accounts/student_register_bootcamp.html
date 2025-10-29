@@ -6,10 +6,10 @@
 
 {% block content %}
 <!-- Registration page with global theme integration -->
-<div class="min-vh-100 py-5" style="background: var(--primary-black) !important;">
+<div class="min-vh-100 d-flex align-items-center py-5" style="background: var(--primary-black) !important;">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8">
+            <div class="col-12 col-md-10 col-lg-9 col-xl-8">
                 <div class="register-card">
                     <!-- Header -->
                     <div class="register-header text-center mb-4">
@@ -189,13 +189,15 @@
 .register-card {
     background: var(--secondary-black) !important;
     backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.1);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 25px 70px rgba(255, 215, 0, 0.15);
     border: 2px solid var(--primary-gold);
     position: relative;
     overflow: hidden;
     animation: fadeInUp 0.6s ease-out;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .register-card::before {
@@ -204,94 +206,154 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 5px;
+    height: 6px;
     background: linear-gradient(90deg, var(--primary-gold), var(--hover-gold), var(--primary-gold));
 }
 
 /* Logo and Header */
+.register-header {
+    margin-bottom: 2.5rem !important;
+}
+
 .register-logo {
-    width: 80px;
+    width: 100px;
     height: auto;
-    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
+    margin-bottom: 1.5rem;
 }
 
 .register-title {
     color: var(--primary-gold) !important;
     font-weight: 700;
-    font-size: 2rem;
-    margin: 0;
-    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    font-size: 2.25rem;
+    margin: 1rem 0 0.75rem 0;
+    text-shadow: 0 2px 15px rgba(255, 215, 0, 0.3);
+    line-height: 1.2;
 }
 
 .register-subtitle {
-    color: #a0a0a0;
-    font-size: 1.1rem;
+    color: #b0b0b0;
+    font-size: 1.15rem;
     margin: 0;
+    font-weight: 400;
+}
+
+/* Section Headers */
+h5 {
+    color: var(--primary-gold) !important;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem !important;
+}
+
+h5 i {
+    color: var(--primary-gold);
+    margin-right: 0.5rem;
+}
+
+hr {
+    border-color: rgba(255, 215, 0, 0.2) !important;
+    margin: 2rem 0 !important;
 }
 
 /* Form Styling */
 .register-form .form-label {
     color: #e0e0e0 !important;
     font-weight: 600;
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.625rem;
     display: block;
 }
 
 .register-form .form-label i {
     color: var(--primary-gold);
+    font-size: 0.95rem;
 }
 
 .register-form .form-control {
     border: 2px solid #333333 !important;
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    border-radius: 14px;
+    padding: 0.875rem 1.125rem;
+    font-size: 1.05rem;
     transition: all 0.3s ease;
     background: var(--tertiary-black) !important;
     color: white !important;
+    height: auto;
+    min-height: 48px;
 }
 
 .register-form .form-control:focus {
     border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1) !important;
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15) !important;
     background: var(--secondary-black) !important;
+    transform: translateY(-2px);
+}
+
+.register-form .form-control::placeholder {
+    color: #666666;
 }
 
 .register-form .form-select {
     border: 2px solid #333333 !important;
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    border-radius: 14px;
+    padding: 0.875rem 1.125rem;
+    font-size: 1.05rem;
     transition: all 0.3s ease;
     background: var(--tertiary-black) !important;
     color: white !important;
+    min-height: 48px;
+    cursor: pointer;
 }
 
 .register-form .form-select:focus {
     border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1) !important;
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15) !important;
     background: var(--secondary-black) !important;
+    transform: translateY(-2px);
+}
+
+.register-form .form-select option {
+    background: var(--secondary-black);
+    color: white;
+    padding: 0.5rem;
+}
+
+/* Small text */
+.form-text {
+    color: #888888 !important;
+    font-size: 0.875rem;
+    margin-top: 0.375rem;
+    display: block;
 }
 
 /* Terms Checkbox */
 .terms-check {
     background: var(--tertiary-black);
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid #333333;
+    padding: 1.25rem;
+    border-radius: 14px;
+    border: 2px solid #333333;
+    transition: all 0.3s ease;
+}
+
+.terms-check:hover {
+    border-color: rgba(255, 215, 0, 0.3);
 }
 
 .terms-check label {
     color: #e0e0e0;
+    font-size: 0.975rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
 }
 
 .form-check-input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-top: 0.15rem;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-top: 0.125rem;
     background-color: var(--tertiary-black);
-    border-color: var(--primary-gold);
+    border: 2px solid var(--primary-gold);
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .form-check-input:checked {
@@ -299,24 +361,36 @@
     border-color: var(--primary-gold);
 }
 
+.form-check-input:focus {
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15);
+}
+
 /* Register Button */
 .register-btn {
     background: linear-gradient(135deg, var(--primary-gold) 0%, var(--hover-gold) 100%);
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     color: var(--primary-black) !important;
+    padding: 1rem 2rem !important;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
 }
 
 .register-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.45);
     color: var(--primary-black) !important;
     background: var(--hover-gold);
+}
+
+.register-btn:active {
+    transform: translateY(-1px);
 }
 
 .register-btn::before {
@@ -334,10 +408,14 @@
     left: 100%;
 }
 
+.register-btn i {
+    font-size: 1.15rem;
+}
+
 /* Login Link */
 .login-text {
     color: #a0a0a0;
-    font-size: 1rem;
+    font-size: 1.05rem;
     margin: 0;
 }
 
@@ -345,7 +423,8 @@
     color: var(--primary-gold);
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    font-size: 1.05rem;
 }
 
 .login-link:hover {
@@ -353,11 +432,28 @@
     text-decoration: underline;
 }
 
+/* Error Messages */
+.invalid-feedback {
+    color: #ff6b6b !important;
+    font-size: 0.9rem;
+    margin-top: 0.375rem;
+    display: block;
+}
+
+.alert-danger {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid #ff6b6b;
+    border-radius: 12px;
+    color: #ff6b6b;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
 /* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -368,8 +464,42 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .register-card {
-        margin: 1rem;
         padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .register-title {
+        font-size: 1.75rem;
+    }
+    
+    .register-subtitle {
+        font-size: 1rem;
+    }
+    
+    .register-logo {
+        width: 80px;
+    }
+    
+    .register-btn {
+        font-size: 1.1rem;
+        padding: 0.875rem 1.5rem !important;
+    }
+    
+    h5 {
+        font-size: 1.15rem;
+    }
+    
+    .register-form .form-control,
+    .register-form .form-select {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .register-card {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
     }
     
     .register-title {
@@ -377,7 +507,19 @@
     }
     
     .register-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+    }
+    
+    .register-logo {
+        width: 70px;
+    }
+    
+    .register-btn {
+        font-size: 1rem;
+    }
+    
+    h5 {
+        font-size: 1.05rem;
     }
 }
 </style>

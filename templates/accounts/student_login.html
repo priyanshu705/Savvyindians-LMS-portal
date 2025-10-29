@@ -145,13 +145,51 @@
 </div>
 
 <style>
-/* Additional Login Page Specific Styles */
+/* Login Card - Black & Gold Theme */
+.login-card {
+    background: var(--secondary-black) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15);
+    border: 2px solid var(--primary-gold);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-gold), var(--hover-gold), var(--primary-gold));
+}
+
+/* Logo and Header */
 .login-logo {
     width: 80px;
     height: auto;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
 }
 
+.login-title {
+    color: var(--primary-gold) !important;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.login-subtitle {
+    color: #a0a0a0;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Form Floating Labels */
 .form-floating {
     position: relative;
     margin-bottom: 1.5rem;
@@ -161,9 +199,9 @@
     height: 60px;
     padding: 1.5rem 1rem 0.5rem 1rem;
     font-size: 1rem;
-    background: white !important;
-    color: #000000 !important;
-    border: 2px solid #e2e8f0 !important;
+    background: var(--tertiary-black) !important;
+    color: white !important;
+    border: 2px solid #333333 !important;
     border-radius: 12px;
     line-height: 1.5;
 }
@@ -183,7 +221,7 @@
     border: 0;
     transform-origin: 0 0;
     transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
-    color: #9ca3af !important;
+    color: #888888 !important;
     font-weight: 400;
     font-size: 1rem;
     display: flex;
@@ -193,19 +231,20 @@
 .form-floating label i {
     margin-right: 0.5rem;
     font-size: 0.9rem;
+    color: var(--primary-gold);
 }
 
 .form-floating input:focus ~ label,
 .form-floating input:not(:placeholder-shown) ~ label {
-    opacity: 0.65;
+    opacity: 0.8;
     transform: scale(0.75) translateY(-0.8rem) translateX(0.2rem);
     padding: 0.25rem 0.5rem;
-    color: #6b7280 !important;
+    color: #e0e0e0 !important;
     font-weight: 500;
 }
 
 .form-floating input:focus {
-    border-color: #ffd700 !important;
+    border-color: var(--primary-gold) !important;
     box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15);
     outline: none;
 }
@@ -219,10 +258,10 @@
 .password-toggle {
     position: absolute;
     right: 1rem;
-    top: 1rem;
+    top: 1.2rem;
     background: none;
     border: none;
-    color: #6b7280;
+    color: #888888;
     cursor: pointer;
     z-index: 10;
     padding: 0.5rem;
@@ -231,7 +270,7 @@
 }
 
 .password-toggle:hover {
-    color: #ffd700;
+    color: var(--primary-gold);
     background: rgba(255, 215, 0, 0.1);
 }
 
@@ -240,7 +279,7 @@
     width: 1.2rem;
     height: 1.2rem;
     border: 2px solid var(--primary-gold);
-    background-color: white;
+    background-color: var(--tertiary-black);
     cursor: pointer;
 }
 
@@ -255,7 +294,7 @@
 }
 
 .form-check-label {
-    color: white !important;
+    color: #e0e0e0 !important;
     font-weight: 500;
     margin-left: 0.5rem;
     cursor: pointer;
@@ -265,11 +304,17 @@
     color: var(--primary-gold) !important;
     font-size: 0.9rem;
     font-weight: 500;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    color: var(--hover-gold) !important;
+    text-decoration: underline;
 }
 
 /* Login Button */
 .login-btn {
-    background: var(--primary-gold) !important;
+    background: linear-gradient(135deg, var(--primary-gold) 0%, var(--hover-gold) 100%) !important;
     border: 2px solid var(--primary-gold) !important;
     border-radius: 12px;
     padding: 1rem;
@@ -277,140 +322,14 @@
     font-size: 1.1rem;
     color: var(--primary-black) !important;
     transition: all 0.3s ease;
-}
-
-.login-btn:hover:not(:disabled) {
-    background: var(--hover-gold) !important;
-    border-color: var(--hover-gold) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-}
-
-.login-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-/* Divider */
-.divider-container {
-    display: flex;
-    align-items: center;
-    margin: 1.5rem 0;
-}
-
-.divider-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border-color);
-}
-
-.divider-text {
-    padding: 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/* Google Login Button */
-.google-login-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.google-icon {
-    display: flex;
-    align-items: center;
-}
-
-.google-text {
-    font-weight: 600;
-}
-
-/* Register Link */
-.register-text {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.register-link {
-    color: var(--primary-gold) !important;
-    font-weight: 600;
-}
-
-.register-link:hover {
-    color: var(--hover-gold) !important;
-    text-decoration: underline;
-}
-
-/* Loading Animation */
-.loading .login-btn {
-    position: relative;
-    color: transparent !important;
-}
-
-.loading .login-btn::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    left: 50%;
-    margin-left: -10px;
-    margin-top: -10px;
-    border: 3px solid var(--primary-black);
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spinner 0.6s linear infinite;
-}
-
-@keyframes spinner {
-    to { transform: rotate(360deg); }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .login-card {
-        padding: 1.5rem;
-    }
-    
-    .login-logo {
-        width: 60px;
-    }
-}
-    border-color: #667eea;
-}
-
-.forgot-password {
-    color: #667eea;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-
-.forgot-password:hover {
-    color: #5a67d8;
-    text-decoration: underline;
-}
-
-/* Login Button */
-.login-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 12px;
-    padding: 1rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: white;
-    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
 .login-btn:hover:not(:disabled) {
+    background: var(--hover-gold) !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
 }
 
 .login-btn:disabled {
@@ -425,7 +344,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     transition: left 0.5s;
 }
 
@@ -443,27 +362,27 @@
 .divider-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+    background: #333333;
 }
 
 .divider-text {
     margin: 0 1rem;
-    color: #718096;
+    color: #888888;
     font-size: 0.9rem;
     font-weight: 500;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--secondary-black);
     padding: 0 0.5rem;
 }
 
 /* Google Login Button */
 .google-login-btn {
-    background: white;
-    border: 2px solid #e2e8f0;
+    background: var(--tertiary-black) !important;
+    border: 2px solid #333333 !important;
     border-radius: 12px;
     padding: 1rem;
     font-weight: 600;
     font-size: 1rem;
-    color: #374151;
+    color: #e0e0e0 !important;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -476,20 +395,19 @@
 
 .google-login-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: #d1d5db;
-    color: #374151;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+    border-color: var(--primary-gold) !important;
+    color: var(--primary-gold) !important;
     text-decoration: none;
 }
 
 .google-login-btn:active {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .google-login-btn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
 
 .google-icon {
@@ -504,13 +422,13 @@
 .google-text {
     flex: 1;
     text-align: center;
-    margin-right: 20px; /* Balance for icon space */
+    margin-right: 20px;
 }
 
 .google-loader {
     position: absolute;
     right: 1rem;
-    color: #4285f4;
+    color: var(--primary-gold);
 }
 
 /* Google Button Loading State */
@@ -529,41 +447,47 @@
 
 /* Registration Link */
 .register-text {
-    color: #718096;
+    color: #a0a0a0;
     font-size: 0.9rem;
     margin: 0;
 }
 
 .register-link {
-    color: #667eea;
+    color: var(--primary-gold) !important;
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.2s ease;
 }
 
 .register-link:hover {
-    color: #5a67d8;
+    color: var(--hover-gold) !important;
     text-decoration: underline;
 }
 
 /* Features */
 .login-features {
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1rem;
+    border-top: 1px solid #333333;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .feature-item {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
 }
 
 .feature-item i {
-    font-size: 1.2rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-gold);
 }
 
 .feature-item small {
     display: block;
-    color: #718096;
+    color: #a0a0a0;
     font-weight: 500;
     font-size: 0.8rem;
 }
@@ -571,7 +495,7 @@
 /* Error Messages */
 .invalid-feedback {
     font-size: 0.875rem;
-    color: #e53e3e;
+    color: #ff6b6b;
     margin-top: 0.25rem;
 }
 
@@ -582,25 +506,24 @@
 }
 
 .alert-danger {
-    background: linear-gradient(135deg, #feb2b2 0%, #fed7d7 100%);
-    color: #c53030;
+    background: rgba(255, 107, 107, 0.2) !important;
+    color: #ff6b6b !important;
+    border: 1px solid rgba(255, 107, 107, 0.3) !important;
 }
 
 /* Loading States */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
 .loading .login-btn {
-    background: #cbd5e0;
+    background: rgba(255, 215, 0, 0.5) !important;
 }
 
 /* Responsive Design */
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .login-card {
-        margin: 1rem;
         padding: 2rem 1.5rem;
+    }
+    
+    .login-logo {
+        width: 60px;
     }
     
     .login-title {
@@ -612,11 +535,29 @@
     }
 }
 
-/* Animation */
-.login-card {
-    animation: fadeInUp 0.6s ease-out;
+@media (max-width: 576px) {
+    .login-card {
+        margin: 1rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .login-title {
+        font-size: 1.3rem;
+    }
+    
+    .form-floating input {
+        font-size: 0.9rem;
+        height: 55px;
+    }
+    
+    .login-btn,
+    .google-login-btn {
+        padding: 0.85rem;
+        font-size: 0.95rem;
+    }
 }
 
+/* Animation */
 @keyframes fadeInUp {
     from {
         opacity: 0;
