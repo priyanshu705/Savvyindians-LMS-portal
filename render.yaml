@@ -18,10 +18,11 @@ services:
     # the staticfiles manifest is created and migrations run before the
     # web service starts. `DJANGO_SETTINGS_MODULE` is provided in envVars.
     releaseCommand: |
-      echo "Running release: migrate and collectstatic"
+      echo "Running release: migrate, collectstatic, and ensure superuser"
       echo "DATABASE_URL check: ${DATABASE_URL:0:20}..."
       python manage.py migrate --noinput
       python manage.py collectstatic --noinput --clear
+      python manage.py ensure_superuser
       echo "Release command completed successfully"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
