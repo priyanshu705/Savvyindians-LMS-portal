@@ -76,3 +76,8 @@ selenium_test_scroll.py
 # Temporary files
 *.bak
 *.tmp
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
