@@ -17,6 +17,8 @@ class Command(BaseCommand):
         email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@savvyindians.com')
         password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin@SavvyIndians2025!')
         
+        self.stdout.write(self.style.SUCCESS(f'🔍 Checking for superuser: {username}'))
+        
         # Check if superuser already exists
         if User.objects.filter(is_superuser=True).exists():
             existing_admin = User.objects.filter(is_superuser=True).first()
@@ -25,6 +27,17 @@ class Command(BaseCommand):
                     f'✅ Superuser already exists: {existing_admin.username}'
                 )
             )
+            
+            # Update password if it's the admin user we're trying to create
+            if existing_admin.username == username:
+                existing_admin.set_password(password)
+                existing_admin.email = email
+                existing_admin.save()
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f'🔄 Updated password for existing superuser: {username}'
+                    )
+                )
             return
         
         # Check if user with this username exists
