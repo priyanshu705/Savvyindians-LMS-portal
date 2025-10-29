@@ -194,9 +194,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Use WhiteNoise for static file serving (works with collectstatic)
-# CompressedManifestStaticFilesStorage provides compression and caching
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Use WhiteNoise WITHOUT manifest to avoid build errors
+# This will still serve static files efficiently
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Media files
 MEDIA_URL = "/media/"
