@@ -30,6 +30,8 @@ services:
         value: false
       - key: WEB_CONCURRENCY
         value: 4
+      - key: DATABASE_URL
+        sync: false
 
 databases:
   - name: savvyindians-lms-db
