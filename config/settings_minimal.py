@@ -105,12 +105,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Use DATABASE_URL from environment (Render will provide this)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+# Debug logging for database configuration
+import sys
 if DATABASE_URL:
+    print(f"✓ DATABASE_URL found: {DATABASE_URL[:30]}...", file=sys.stderr)
     # Parse PostgreSQL DATABASE_URL from Render
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
     # Serverless database optimization (PostgreSQL-safe)
     DATABASES["default"]["CONN_MAX_AGE"] = 0  # No persistent connections in serverless
+    print(f"✓ Using database: {DATABASES['default']['ENGINE']}", file=sys.stderr)
 else:
+    print("✗ DATABASE_URL NOT FOUND in environment!", file=sys.stderr)
     # Fallback to SQLite for local development only
     # In production, DATABASE_URL MUST be set
     DATABASES = {
@@ -121,9 +126,9 @@ else:
     }
     # Print warning if running in production without DATABASE_URL
     if not DEBUG:
-        import sys
-        print("WARNING: Running in production mode without DATABASE_URL!", file=sys.stderr)
-        print("Using SQLite fallback - this may cause errors!", file=sys.stderr)
+        print("✗✗✗ CRITICAL: Running in production mode without DATABASE_URL!", file=sys.stderr)
+        print("✗✗✗ Using SQLite fallback - this WILL cause errors!", file=sys.stderr)
+        print("✗✗✗ Check Render database connection settings!", file=sys.stderr)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
