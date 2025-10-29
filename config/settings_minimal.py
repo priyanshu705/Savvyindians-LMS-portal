@@ -11,10 +11,8 @@ import dj_database_url
 # CRITICAL: Setup Render environment variables FIRST (before anything else)
 # This must run before any database configuration
 try:
-    from config.render_env import setup_render_database, run_migrations_once
+    from config.render_env import setup_render_database
     setup_render_database()
-    # Run migrations automatically on Render startup
-    run_migrations_once()
 except Exception as e:
     print(f"Warning: Could not load render_env: {e}", file=sys.stderr)
 
