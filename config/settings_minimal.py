@@ -20,21 +20,39 @@ except Exception as e:
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Security
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY", "bFp3Us&2LTCD+x9M_dC68sSnD41&SRl$7!)om!!1Zr_tV_hs2e"
-)
-DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
+# CRITICAL: SECRET_KEY must be set in environment variables
+# No fallback for production security
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    if os.environ.get('RENDER'):
+        # On Render, SECRET_KEY is required
+        raise EnvironmentError(
+            "SECRET_KEY environment variable is required for production. "
+            "Please set it in the Render dashboard (use 'generateValue: true' in render.yaml)"
+        )
+    else:
+        # Local development only - generate a random key
+        import secrets
+        SECRET_KEY = secrets.token_urlsafe(50)
+        print("⚠ WARNING: Using auto-generated SECRET_KEY for development", file=sys.stderr)
 
-# Allowed hosts for Vercel
+# DEBUG should default to False for security (only enable explicitly)
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
+
+# Allowed hosts - specific domains only for security
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "testserver",
     ".vercel.app",
     ".savvyindians.com",
-    ".onrender.com",  # Add Render domain
-    "*",  # For serverless flexibility
+    ".onrender.com",  # Render domain
+    "savvyindians-lms-portal-2.onrender.com",  # Specific Render URL
 ]
+
+# Only allow wildcard in local development
+if DEBUG and not os.environ.get('RENDER'):
+    ALLOWED_HOSTS.append("*")
 
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = [
@@ -262,8 +280,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap5"]
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# Production Security Settings (applied when DEBUG=False)
-if not DEBUG:
+# Production Security Settings (always enabled, not just when DEBUG=False)
+# These settings protect against common web attacks
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# HTTPS enforcement - only on production (Render)
+if os.environ.get('RENDER'):
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
