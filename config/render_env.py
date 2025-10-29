@@ -8,32 +8,37 @@ import sys
 def setup_render_database():
     """
     Setup DATABASE_URL for Render deployment
-    This is a workaround for Render's environment variable injection issues
+    This checks for DATABASE_URL and provides helpful error messages if missing.
     
-    SECURITY NOTE: We check environment first before any fallback.
-    In production, DATABASE_URL MUST be set in Render dashboard.
+    SECURITY NOTE: No hardcoded credentials - environment variables only.
     """
-    # Only set if not already in environment
-    if not os.environ.get('DATABASE_URL'):
-        # SECURITY: Check if running on Render platform
+    # Check if DATABASE_URL exists
+    database_url = os.environ.get('DATABASE_URL')
+    
+    if not database_url:
+        # Check if running on Render platform
         if os.environ.get('RENDER'):
-            # On Render, DATABASE_URL should be available from dashboard
-            # If not found, it means configuration issue - fail loudly
-            print("✗✗✗ CRITICAL: DATABASE_URL not found on Render!", file=sys.stderr, flush=True)
-            print("✗ Please set DATABASE_URL in Render dashboard", file=sys.stderr, flush=True)
-            # Raise error to prevent app from starting with wrong database
-            raise EnvironmentError(
-                "DATABASE_URL environment variable is required for Render deployment. "
-                "Please set it in the Render dashboard."
-            )
+            print("⚠️  WARNING: DATABASE_URL not found on Render!", file=sys.stderr, flush=True)
+            print("⚠️  This usually means:", file=sys.stderr, flush=True)
+            print("   1. PostgreSQL database not linked to this service", file=sys.stderr, flush=True)
+            print("   2. Database connection needs to be configured in Render dashboard", file=sys.stderr, flush=True)
+            print("", file=sys.stderr, flush=True)
+            print("💡 SOLUTION:", file=sys.stderr, flush=True)
+            print("   Go to Render Dashboard → Your Service → Environment", file=sys.stderr, flush=True)
+            print("   Add: DATABASE_URL = <your-postgres-connection-string>", file=sys.stderr, flush=True)
+            print("", file=sys.stderr, flush=True)
+            print("🔄 For now, attempting to continue with SQLite fallback...", file=sys.stderr, flush=True)
+            # Don't raise error - let Django settings handle SQLite fallback
         else:
             # Local development - use SQLite (settings.py will handle this)
             print("⚠ DATABASE_URL not set - using SQLite for local development", flush=True)
     else:
         # Mask password in logs for security
-        db_url = os.environ['DATABASE_URL']
-        masked_url = db_url.split('@')[0].split(':')[0] + ':***@' + db_url.split('@')[1] if '@' in db_url else db_url[:20]
-        print(f"✓ DATABASE_URL found: {masked_url}...", flush=True)
+        try:
+            masked_url = database_url.split('@')[0].split(':')[0] + ':***@' + database_url.split('@')[1]
+        except:
+            masked_url = database_url[:20] + "..."
+        print(f"✓ DATABASE_URL found: {masked_url}", flush=True)
 
 def run_migrations_once():
     """

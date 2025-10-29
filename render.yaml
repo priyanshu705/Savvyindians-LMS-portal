@@ -31,11 +31,11 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: false
+        value: "False"
       - key: WEB_CONCURRENCY
         value: 4
-      - key: DATABASE_URL
-        sync: false
+      # DATABASE_URL will be automatically provided by linked PostgreSQL database
+      # Remove 'sync: false' to allow Render to inject it automatically
 
 databases:
   - name: savvyindians-lms-db
