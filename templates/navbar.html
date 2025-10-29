@@ -111,22 +111,32 @@
 .form-header {
 	position: relative;
 	flex: 0.8;
-	max-width: 600px;
+	max-width: 500px;
+	display: flex;
+	margin: 0 auto;
 }
 
 .form-header input {
-	border: 2px solid #e2e8f0;
+	border: 2px solid rgba(255, 215, 0, 0.3);
 	border-radius: 25px 0 0 25px;
 	padding: 0.75rem 1.25rem;
-	font-size: 0.95rem;
+	font-size: 0.9rem;
 	transition: all 0.3s ease;
-	background: rgba(255, 255, 255, 0.9);
+	background: rgba(17, 17, 17, 0.9);
+	color: #ffffff;
+	flex: 1;
+	min-width: 0;
+}
+
+.form-header input::placeholder {
+	color: #888888;
 }
 
 .form-header input:focus {
 	border-color: #ffd700;
 	box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-	background: white;
+	background: #1a1a1a;
+	outline: none;
 }
 
 .form-header button {
@@ -137,6 +147,8 @@
 	color: #000000;
 	transition: all 0.3s ease;
 	font-weight: 600;
+	border-left: none;
+	flex-shrink: 0;
 }
 
 .form-header button:hover {
@@ -285,19 +297,36 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+	.main-nav-menu {
+		display: none;
+	}
+	
 	.form-header {
+		max-width: 400px;
 		flex: 1;
 		margin: 0 1rem;
 	}
+}
+
+@media (max-width: 768px) {
+	.form-header {
+		flex: 1;
+		margin: 0 0.5rem;
+		max-width: none;
+	}
 	
 	.form-header input {
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 		padding: 0.6rem 1rem;
 	}
 	
 	.form-header button {
 		padding: 0.6rem 1rem;
+	}
+	
+	.form-header button i {
+		font-size: 0.9rem;
 	}
 	
 	.auth-buttons {
@@ -309,6 +338,26 @@
 	.register-nav-btn {
 		font-size: 0.8rem;
 		padding: 0.4rem 1rem;
+		white-space: nowrap;
+	}
+	
+	.navbar-brand-logo img {
+		height: 30px;
+	}
+}
+
+@media (max-width: 576px) {
+	.form-header input {
+		font-size: 0.8rem;
+		padding: 0.5rem 0.75rem;
+	}
+	
+	.form-header button {
+		padding: 0.5rem 0.75rem;
+	}
+	
+	#top-navbar .nav-wrapper {
+		gap: 0.5rem;
 	}
 }
 </style>
