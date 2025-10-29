@@ -1,115 +1,227 @@
-{% extends 'base.html' %}
-{% load i18n %}
-{% load static %}
+{% extends 'base.html' %}{% extends 'base.html' %}
 
-{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}
+{% load i18n %}{% load i18n %}
 
-{% block content %}
+{% load static %}{% load static %}
 
-<div class="container">
-    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">
-        <div class="col-lg-8">
-            <div class="form-modern">
-                <div class="text-center mb-4">
-                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
-                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>
-                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>
-                </div>
 
-                <form method="post" id="modern-register-form">
-                    {% csrf_token %}
-          
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.first_name.label }}</label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.last_name.label }}</label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.email.label }}</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.phone.label }}</label>
-                                {{ form.phone }}
-                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.city.label }}</label>
-                                {{ form.city }}
-                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.level.label }}</label>
-                                {{ form.level }}
-                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.program.label }}</label>
-                                {{ form.program }}
-                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.password1.label }}</label>
-                                {{ form.password1 }}
-                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern">{{ form.password2.label }}</label>
-                                {{ form.password2 }}
-                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="mt-3">
-                        <div class="form-check">
-                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>
-                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}
-                        </div>
-                    </div>
+{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>
-                    {% endif %}
 
-                    <div class="mt-4 text-center">
-                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>
-                    </div>
 
-                    <div class="text-center mt-3">
-                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+{% block content %}{% block content %}
 
-{% endblock content %}
+
+
+<div class="container"><div class="container">
+
+    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">
+
+        <div class="col-lg-8">        <div class="col-lg-8">
+
+            <div class="form-modern">            <div class="form-modern">
+
+                <div class="text-center mb-4">                <div class="text-center mb-4">
+
+                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
+
+                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>
+
+                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>
+
+                </div>                </div>
+
+
+
+                <form method="post" id="modern-register-form">                <form method="post" id="modern-register-form">
+
+                    {% csrf_token %}                    {% csrf_token %}
+
+                              
+
+                    <div class="row g-3">                    <div class="row g-3">
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.first_name.label }}</label>                                <label class="form-label-modern">{{ form.first_name.label }}</label>
+
+                                {{ form.first_name }}                                {{ form.first_name }}
+
+                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.last_name.label }}</label>                                <label class="form-label-modern">{{ form.last_name.label }}</label>
+
+                                {{ form.last_name }}                                {{ form.last_name }}
+
+                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.email.label }}</label>                                <label class="form-label-modern">{{ form.email.label }}</label>
+
+                                {{ form.email }}                                {{ form.email }}
+
+                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.phone.label }}</label>                                <label class="form-label-modern">{{ form.phone.label }}</label>
+
+                                {{ form.phone }}                                {{ form.phone }}
+
+                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.city.label }}</label>                                <label class="form-label-modern">{{ form.city.label }}</label>
+
+                                {{ form.city }}                                {{ form.city }}
+
+                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.level.label }}</label>                                <label class="form-label-modern">{{ form.level.label }}</label>
+
+                                {{ form.level }}                                {{ form.level }}
+
+                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.program.label }}</label>                                <label class="form-label-modern">{{ form.program.label }}</label>
+
+                                {{ form.program }}                                {{ form.program }}
+
+                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.password1.label }}</label>                                <label class="form-label-modern">{{ form.password1.label }}</label>
+
+                                {{ form.password1 }}                                {{ form.password1 }}
+
+                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                        <div class="col-md-6">                        <div class="col-md-6">
+
+                            <div class="form-group-modern">                            <div class="form-group-modern">
+
+                                <label class="form-label-modern">{{ form.password2.label }}</label>                                <label class="form-label-modern">{{ form.password2.label }}</label>
+
+                                {{ form.password2 }}                                {{ form.password2 }}
+
+                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}
+
+                            </div>                            </div>
+
+                        </div>                        </div>
+
+                    </div>                    </div>
+
+
+
+                    <div class="mt-3">                    <div class="mt-3">
+
+                        <div class="form-check">                        <div class="form-check">
+
+                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>
+
+                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}
+
+                        </div>                        </div>
+
+                    </div>                    </div>
+
+
+
+                    {% if form.non_field_errors %}                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>
+
+                    {% endif %}                    {% endif %}
+
+
+
+                    <div class="mt-4 text-center">                    <div class="mt-4 text-center">
+
+                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>
+
+                    </div>                    </div>
+
+
+
+                    <div class="text-center mt-3">                    <div class="text-center mt-3">
+
+                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>
+
+                    </div>                    </div>
+
+                </form>                </form>
+
+            </div>            </div>
+
+        </div>        </div>
+
+    </div>    </div>
+
+</div></div>
+
+
+
+{% endblock content %}{% endblock content %}
+
                     <div class="register-header text-center mb-4">
                         <div class="logo-container mb-3">
                             <img src="{% static 'img/savvyindians-logo.png' %}" alt="SavvyIndians Logo" class="register-logo">

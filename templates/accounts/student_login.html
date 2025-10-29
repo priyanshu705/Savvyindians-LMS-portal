@@ -1,70 +1,137 @@
-{% extends 'base.html' %}
-{% load i18n %}
-{% load static %}
-{% load socialaccount %}
+{% extends 'base.html' %}{% extends 'base.html' %}
 
-{% block title %}{{ title }} | {% trans 'Student Login' %}{% endblock title %}
+{% load i18n %}{% load i18n %}
 
-{% block content %}
+{% load static %}{% load static %}
 
-<div class="container">
-    <div class="row justify-content-center align-items-center" style="min-height:70vh;">
-        <div class="col-md-6 col-lg-5">
-            <div class="form-modern">
-                <div class="text-center mb-4">
-                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
-                    <h2 class="mt-3 text-gold">{% trans 'Student Sign In' %}</h2>
-                    <p class="text-muted">{% trans 'Access your courses and continue learning' %}</p>
-                </div>
+{% load socialaccount %}{% load socialaccount %}
 
-                <form method="post" id="student-login-modern">
-                    {% csrf_token %}
 
-                    <div class="form-group-modern">
-                        <label class="form-label-modern" for="id_login">{% trans 'Email or Username' %}</label>
-                        {{ form.login }}
-                        {% if form.login.errors %}
-                            <div class="invalid-feedback d-block">{{ form.login.errors.0 }}</div>
-                        {% endif %}
-                    </div>
 
-                    <div class="form-group-modern">
-                        <label class="form-label-modern" for="id_password">{% trans 'Password' %}</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}
-                            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
-                        {% endif %}
-                    </div>
+{% block title %}{{ title }} | {% trans 'Student Login' %}{% endblock title %}{% block title %}{{ title }} | {% trans 'Student Login' %}{% endblock title %}
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            {{ form.remember }} <label for="id_remember" class="text-muted">{% trans 'Remember me' %}</label>
-                        </div>
-                        <div>
-                            <a href="{% url 'password_reset' %}" class="text-gold">{% trans 'Forgot password?' %}</a>
-                        </div>
-                    </div>
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger mb-3">{{ form.non_field_errors.0 }}</div>
-                    {% endif %}
 
-                    <button type="submit" class="btn-modern-gold w-100 mb-3">{% trans 'Sign In' %}</button>
+{% block content %}{% block content %}
 
-                    <div class="text-center mb-2 text-muted">{% trans 'or continue with' %}</div>
 
-                    <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn-outline-modern w-100 mb-2 text-center d-inline-block">{% trans 'Continue with Google' %}</a>
 
-                    <div class="text-center mt-3">
-                                    <p class="text-muted">{% trans "Don't have an account?" %} <a href="{% url 'student_register' %}" class="text-gold">{% trans 'Register here' %}</a></p>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container"><div class="container">
 
-{% endblock content %}
+    <div class="row justify-content-center align-items-center" style="min-height:70vh;">    <div class="row justify-content-center align-items-center" style="min-height:70vh;">
+
+        <div class="col-md-6 col-lg-5">        <div class="col-md-6 col-lg-5">
+
+            <div class="form-modern">            <div class="form-modern">
+
+                <div class="text-center mb-4">                <div class="text-center mb-4">
+
+                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
+
+                    <h2 class="mt-3 text-gold">{% trans 'Student Sign In' %}</h2>                    <h2 class="mt-3 text-gold">{% trans 'Student Sign In' %}</h2>
+
+                    <p class="text-muted">{% trans 'Access your courses and continue learning' %}</p>                    <p class="text-muted">{% trans 'Access your courses and continue learning' %}</p>
+
+                </div>                </div>
+
+
+
+                <form method="post" id="student-login-modern">                <form method="post" id="student-login-modern">
+
+                    {% csrf_token %}                    {% csrf_token %}
+
+
+
+                    <div class="form-group-modern">                    <div class="form-group-modern">
+
+                        <label class="form-label-modern" for="id_login">{% trans 'Email or Username' %}</label>                        <label class="form-label-modern" for="id_login">{% trans 'Email or Username' %}</label>
+
+                        {{ form.login }}                        {{ form.login }}
+
+                        {% if form.login.errors %}                        {% if form.login.errors %}
+
+                            <div class="invalid-feedback d-block">{{ form.login.errors.0 }}</div>                            <div class="invalid-feedback d-block">{{ form.login.errors.0 }}</div>
+
+                        {% endif %}                        {% endif %}
+
+                    </div>                    </div>
+
+
+
+                    <div class="form-group-modern">                    <div class="form-group-modern">
+
+                        <label class="form-label-modern" for="id_password">{% trans 'Password' %}</label>                        <label class="form-label-modern" for="id_password">{% trans 'Password' %}</label>
+
+                        {{ form.password }}                        {{ form.password }}
+
+                        {% if form.password.errors %}                        {% if form.password.errors %}
+
+                            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>                            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+
+                        {% endif %}                        {% endif %}
+
+                    </div>                    </div>
+
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>                        <div>
+
+                            {{ form.remember }} <label for="id_remember" class="text-muted">{% trans 'Remember me' %}</label>                            {{ form.remember }} <label for="id_remember" class="text-muted">{% trans 'Remember me' %}</label>
+
+                        </div>                        </div>
+
+                        <div>                        <div>
+
+                            <a href="{% url 'password_reset' %}" class="text-gold">{% trans 'Forgot password?' %}</a>                            <a href="{% url 'password_reset' %}" class="text-gold">{% trans 'Forgot password?' %}</a>
+
+                        </div>                        </div>
+
+                    </div>                    </div>
+
+
+
+                    {% if form.non_field_errors %}                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger mb-3">{{ form.non_field_errors.0 }}</div>                        <div class="alert alert-danger mb-3">{{ form.non_field_errors.0 }}</div>
+
+                    {% endif %}                    {% endif %}
+
+
+
+                    <button type="submit" class="btn-modern-gold w-100 mb-3">{% trans 'Sign In' %}</button>                    <button type="submit" class="btn-modern-gold w-100 mb-3">{% trans 'Sign In' %}</button>
+
+
+
+                    <div class="text-center mb-2 text-muted">{% trans 'or continue with' %}</div>                    <div class="text-center mb-2 text-muted">{% trans 'or continue with' %}</div>
+
+
+
+                    <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn-outline-modern w-100 mb-2 text-center d-inline-block">{% trans 'Continue with Google' %}</a>                    <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn-outline-modern w-100 mb-2 text-center d-inline-block">{% trans 'Continue with Google' %}</a>
+
+
+
+                    <div class="text-center mt-3">                    <div class="text-center mt-3">
+
+                        <p class="text-muted">{% trans "Don't have an account?" %} <a href="{% url 'student_register' %}" class="text-gold">{% trans 'Register here' %}</a></p>                                    <p class="text-muted">{% trans "Don't have an account?" %} <a href="{% url 'student_register' %}" class="text-gold">{% trans 'Register here' %}</a></p>
+
+                    </div>                    </div>
+
+                </form>                </form>
+
+            </div>            </div>
+
+        </div>        </div>
+
+    </div>    </div>
+
+</div></div>
+
+
+
+{% endblock content %}{% endblock content %}
+
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
                         </a>
