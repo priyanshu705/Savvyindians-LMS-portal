@@ -1,0 +1,537 @@
+/* ========================================
+   SAVVYINDIANS - ULTRA MODERN THEME 2025
+   Gold & Black Premium Design
+   ======================================== */
+
+/* ========================================
+   MODERN CSS VARIABLES
+   ======================================== */
+:root {
+    /* Premium Gold Palette */
+    --gold-primary: #ffd700;
+    --gold-light: #ffed4e;
+    --gold-dark: #ffb700;
+    --gold-glow: rgba(255, 215, 0, 0.4);
+    
+    /* Elegant Black Palette */
+    --black-primary: #000000;
+    --black-secondary: #0a0a0a;
+    --black-tertiary: #111111;
+    --black-card: #141414;
+    --black-hover: #1a1a1a;
+    
+    /* Glass Morphism */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-blur: blur(20px);
+    
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    --gradient-black: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
+    --gradient-gold-radial: radial-gradient(circle at top, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+    --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.3);
+    --shadow-gold-lg: 0 0 50px rgba(255, 215, 0, 0.5);
+    
+    /* Typography */
+    --font-primary: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-display: 'Poppins', 'Inter', sans-serif;
+}
+
+/* ========================================
+   GLOBAL MODERN STYLES
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--black-primary) !important;
+    color: #ffffff !important;
+    font-family: var(--font-primary) !important;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Body Padding for Fixed Navbar */
+body {
+    padding-top: 80px !important;
+}
+
+/* ========================================
+   MODERN STICKY TRANSPARENT NAVBAR
+   ======================================== */
+#top-navbar {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 0.5rem 0 !important;
+}
+
+/* Scrolled State */
+#top-navbar.scrolled,
+.navbar.scrolled {
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(30px) !important;
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.15) !important;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3) !important;
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Logo Glow Effect */
+.navbar-brand-logo img {
+    height: 50px;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+.navbar-brand-logo:hover img {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+    transform: scale(1.05);
+}
+
+/* Modern Nav Links */
+.nav-link-modern {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    text-decoration: none !important;
+}
+
+.nav-link-modern::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gold-primary);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.nav-link-modern:hover {
+    color: var(--gold-primary) !important;
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-link-modern:hover::before {
+    width: 80%;
+}
+
+.nav-link-modern.active {
+    color: var(--gold-primary) !important;
+    background: rgba(255, 215, 0, 0.15);
+}
+
+/* Modern Buttons */
+.btn-modern-gold {
+    background: var(--gradient-gold) !important;
+    border: none !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 50px !important;
+    font-size: 0.95rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern-gold::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-modern-gold:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-modern-gold:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5) !important;
+}
+
+.btn-outline-modern {
+    background: transparent !important;
+    border: 2px solid var(--gold-primary) !important;
+    color: var(--gold-primary) !important;
+    font-weight: 600 !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 50px !important;
+    transition: all 0.4s ease !important;
+}
+
+.btn-outline-modern:hover {
+    background: var(--gold-primary) !important;
+    color: #000000 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+/* ========================================
+   MODERN HERO SECTION
+   ======================================== */
+.hero-modern {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--black-primary);
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 0;
+}
+
+/* Animated Background Gradient */
+.hero-modern::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: var(--gradient-gold-radial);
+    animation: rotateGradient 20s linear infinite;
+}
+
+@keyframes rotateGradient {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Floating Particles */
+.hero-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    background: var(--gold-primary);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-100px) translateX(50px); }
+}
+
+/* Hero Content */
+.hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 3rem;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+}
+
+/* ========================================
+   GLASS MORPHISM CARDS
+   ======================================== */
+.card-modern {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px !important;
+    padding: 2rem !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: var(--shadow-md) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-gold);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.card-modern:hover::before {
+    transform: scaleX(1);
+}
+
+.card-modern:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 15px 50px rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Card Glow Effect on Hover */
+.card-modern:hover {
+    box-shadow: 
+        0 15px 50px rgba(255, 215, 0, 0.2),
+        0 0 50px rgba(255, 215, 0, 0.1) !important;
+}
+
+/* ========================================
+   MODERN FORM STYLES
+   ======================================== */
+.form-modern {
+    background: var(--black-card);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.form-group-modern {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-label-modern {
+    color: var(--gold-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control-modern {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control-modern:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--gold-primary) !important;
+    outline: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.form-control-modern::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* ========================================
+   MODERN SECTION STYLES
+   ======================================== */
+.section-modern {
+    padding: 6rem 0;
+    position: relative;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #ffffff 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 4rem;
+}
+
+/* ========================================
+   MODERN GRID LAYOUTS
+   ======================================== */
+.grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+}
+
+.glow-effect {
+    animation: glow 3s infinite;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 992px) {
+    body {
+        padding-top: 70px !important;
+    }
+    
+    .navbar-brand-logo img {
+        height: 40px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .section-modern {
+        padding: 4rem 0;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 65px !important;
+    }
+    
+    .navbar-container {
+        padding: 0 1rem;
+    }
+    
+    .hero-modern {
+        min-height: 80vh;
+        padding: 3rem 0;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-modern-gold,
+    .btn-outline-modern {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .form-modern {
+        padding: 2rem 1.5rem;
+    }
+    
+    .grid-modern {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+.text-gold {
+    color: var(--gold-primary) !important;
+}
+
+.bg-black-card {
+    background: var(--black-card) !important;
+}
+
+.border-gold {
+    border-color: var(--gold-primary) !important;
+}
+
+.shadow-gold {
+    box-shadow: var(--shadow-gold) !important;
+}

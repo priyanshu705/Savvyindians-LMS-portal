@@ -1,0 +1,85 @@
+{
+  "test_run": "2025-10-29T18:18:55.848873",
+  "base_url": "https://savvyindians-lms-portal-2.onrender.com",
+  "tests": [
+    {
+      "test": "Registration Page Load",
+      "status": "PASS",
+      "message": "All 4 key elements loaded successfully",
+      "timestamp": "2025-10-29T18:19:03.281968",
+      "details": {
+        "found_elements": [
+          "heading",
+          "first_name",
+          "email",
+          "submit_btn"
+        ]
+      }
+    },
+    {
+      "test": "Registration Form Styling (Black & Gold Theme)",
+      "status": "PASS",
+      "message": "Registration form uses black & gold theme",
+      "timestamp": "2025-10-29T18:19:05.090144",
+      "details": {
+        "background_color": "rgb(17, 17, 17)",
+        "border_color": "rgb(255, 215, 0)",
+        "is_dark_theme": true,
+        "has_gold_border": true,
+        "has_gold_title": true
+      }
+    },
+    {
+      "test": "Registration Form Submission",
+      "status": "WARNING",
+      "message": "Form submitted but no clear success/error indicator",
+      "timestamp": "2025-10-29T18:19:53.231187",
+      "details": {
+        "filled_fields": [
+          "first_name",
+          "last_name",
+          "email",
+          "phone",
+          "city"
+        ],
+        "current_url": "https://savvyindians-lms-portal-2.onrender.com/accounts/student/register/"
+      }
+    },
+    {
+      "test": "Login Page Load",
+      "status": "FAIL",
+      "message": "Only 2/3 elements loaded",
+      "timestamp": "2025-10-29T18:20:15.554060",
+      "details": {
+        "found": [
+          "password_input",
+          "submit_btn"
+        ],
+        "missing": [
+          "login_input (not found)"
+        ]
+      }
+    },
+    {
+      "test": "Login with Invalid Credentials",
+      "status": "FAIL",
+      "message": "Exception: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff6c297e415+77285]\n\tGetHandleVerifier [0x0x7ff6c297e470+77376]\n\t(No symbol) [0x0x7ff6c2749a6a]\n\t(No symbol) [0x0x7ff6c27a0406]\n\t(No symbol) [0x0x7ff6c27a06bc]\n\t(No symbol) [0x0x7ff6c27f3ac7]\n\t(No symbol) [0x0x7ff6c27c864f]\n\t(No symbol) [0x0x7ff6c27f087f]\n\t(No symbol) [0x0x7ff6c27c83e3]\n\t(No symbol) [0x0x7ff6c2791521]\n\t(No symbol) [0x0x7ff6c27922b3]\n\tGetHandleVerifier [0x0x7ff6c2c61efd+3107021]\n\tGetHandleVerifier [0x0x7ff6c2c5c29d+3083373]\n\tGetHandleVerifier [0x0x7ff6c2c7bedd+3213485]\n\tGetHandleVerifier [0x0x7ff6c299884e+184862]\n\tGetHandleVerifier [0x0x7ff6c29a055f+216879]\n\tGetHandleVerifier [0x0x7ff6c2987084+113236]\n\tGetHandleVerifier [0x0x7ff6c2987239+113673]\n\tGetHandleVerifier [0x0x7ff6c296e298+11368]\n\tBaseThreadInitThunk [0x0x7ffb2d3754e0+16]\n\tRtlUserThreadStart [0x0x7ffb2e24485b+43]\n",
+      "timestamp": "2025-10-29T18:20:38.431358"
+    },
+    {
+      "test": "Logout Functionality",
+      "status": "PASS",
+      "message": "Logout successful - Redirected to https://savvyindians-lms-portal-2.onrender.com/",
+      "timestamp": "2025-10-29T18:21:32.539584",
+      "details": {
+        "redirect_url": "https://savvyindians-lms-portal-2.onrender.com/"
+      }
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 3,
+    "failed": 2,
+    "warnings": 1
+  }
+}
