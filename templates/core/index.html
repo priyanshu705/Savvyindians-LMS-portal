@@ -1,20 +1,4 @@
-{% extends 'base.html' %}
-{% load i18n %}
-{% block title %}{{ title }} | {% trans 'Learning management system' %}{% endblock title %}
-{% load static %}
-
-{% block content %}
-
-<style>
-    /* Modern Hero Section */
-    .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4rem 0;
-        margin: -2rem -15px 2rem -15px;
-        position: relative;
-        overflow: hidden;
-    }
+{% include 'core/index_modern.html' %}
     
     .hero-section::before {
         content: '';
