@@ -1,0 +1,42 @@
+[
+  {
+    "model": "course.program",
+    "pk": 1,
+    "fields": {
+      "title": "AI & Machine Learning Bootcamp",
+      "summary": "Master AI, ML, and Deep Learning with hands-on projects. Learn neural networks, computer vision, and NLP."
+    }
+  },
+  {
+    "model": "course.program",
+    "pk": 2,
+    "fields": {
+      "title": "Full Stack Web Development",
+      "summary": "Learn MERN/MEAN stack development from scratch. Build complete web applications."
+    }
+  },
+  {
+    "model": "course.program",
+    "pk": 3,
+    "fields": {
+      "title": "Data Science Masterclass",
+      "summary": "Python, Data Analysis, Visualization, and Big Data. Master pandas, NumPy, and scikit-learn."
+    }
+  },
+  {
+    "model": "course.program",
+    "pk": 4,
+    "fields": {
+      "title": "Cloud & DevOps Engineering",
+      "summary": "AWS, Azure, Docker, Kubernetes, and CI/CD pipelines. Become a cloud expert."
+    }
+  },
+  {
+    "model": "course.program",
+    "pk": 5,
+    "fields": {
+      "title": "Mobile App Development",
+      "summary": "Build Android & iOS apps with React Native/Flutter. Create cross-platform mobile apps."
+    }
+  }
+]

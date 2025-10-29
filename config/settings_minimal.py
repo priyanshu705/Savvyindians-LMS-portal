@@ -194,9 +194,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Use StaticFilesStorage (no manifest) to avoid manifest lookup errors
-# WhiteNoise will still serve files efficiently
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# Use WhiteNoise for static file serving (works with collectstatic)
+# CompressedManifestStaticFilesStorage provides compression and caching
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files
 MEDIA_URL = "/media/"
