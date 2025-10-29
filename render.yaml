@@ -11,8 +11,16 @@ services:
     # provided by Render via the $PORT env var and use a few workers.
     # Run migrations and collectstatic BEFORE starting gunicorn
     startCommand: |
+      echo "🔄 Running migrations on Render startup..."
       python manage.py migrate --noinput
+      echo "✓ Migrations completed successfully!"
+      echo "🔄 Collecting static files..."
       python manage.py collectstatic --noinput --clear
+      echo "✓ Static files collected!"
+      echo "🔐 Ensuring superuser exists..."
+      python manage.py ensure_superuser
+      echo "✓ Superuser check complete!"
+      echo "🚀 Starting Gunicorn server..."
       gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
     # Run database migrations and collectstatic as a release step so
     # the staticfiles manifest is created and migrations run before the
