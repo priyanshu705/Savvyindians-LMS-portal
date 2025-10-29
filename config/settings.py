@@ -153,45 +153,21 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# Check if we have a DATABASE_URL (production)
-DATABASE_URL = config("DATABASE_URL", default="")
-
-if DATABASE_URL and DATABASE_URL.startswith("postgresql"):
-    # Production database configuration using Neon PostgreSQL
-    try:
-        import dj_database_url
-
-        DATABASES = {
-            "default": dj_database_url.parse(
-                DATABASE_URL, conn_max_age=60, conn_health_checks=True
-            )
-        }
-    except ImportError:
-        # Manual configuration if dj_database_url is not available
-        import urllib.parse
-
-        url = urllib.parse.urlparse(DATABASE_URL)
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.postgresql",
-                "NAME": url.path[1:],
-                "USER": url.username,
-                "PASSWORD": url.password,
-                "HOST": url.hostname,
-                "PORT": url.port,
-                "OPTIONS": {
-                    "sslmode": "require",
-                },
-            }
-        }
-else:
-    # Local development database
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
+# MySQL Configuration for both local and production
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": config("DB_NAME", default="savvyindians_lms"),
+        "USER": config("DB_USER", default="root"),
+        "PASSWORD": config("DB_PASSWORD", default=""),
+        "HOST": config("DB_HOST", default="localhost"),
+        "PORT": config("DB_PORT", default="3306"),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
+}
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

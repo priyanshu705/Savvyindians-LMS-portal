@@ -137,30 +137,50 @@ import sys
 if DATABASE_URL:
     print(f"✓ DATABASE_URL found: {DATABASE_URL[:50]}...", file=sys.stderr)
     
-    # Check if DATABASE_URL is actually a connection string (not just a name)
-    if DATABASE_URL.startswith(('postgres://', 'postgresql://')):
-        # Parse PostgreSQL DATABASE_URL from Render
+    # Check if DATABASE_URL is actually a connection string
+    if DATABASE_URL.startswith(('mysql://', 'mysql+pymysql://')):
+        # Parse MySQL DATABASE_URL from Render
         DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
-        # Serverless database optimization (PostgreSQL-safe)
-        DATABASES["default"]["CONN_MAX_AGE"] = 0  # No persistent connections in serverless
-        print(f"✓ Using database: {DATABASES['default']['ENGINE']}", file=sys.stderr)
+        # Add MySQL specific options
+        DATABASES["default"]["OPTIONS"] = {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+        print(f"✓ Using MySQL database: {DATABASES['default']['NAME']}", file=sys.stderr)
     else:
-        print(f"✗ DATABASE_URL is not a valid connection string: {DATABASE_URL}", file=sys.stderr)
-        print("✗ Expected format: postgresql://user:pass@host:port/dbname", file=sys.stderr)
-        print("✗ Falling back to SQLite", file=sys.stderr)
+        print(f"✗ DATABASE_URL is not a valid MySQL connection string: {DATABASE_URL}", file=sys.stderr)
+        print("✗ Expected format: mysql://user:pass@host:port/dbname", file=sys.stderr)
+        print("✗ Using environment variables instead", file=sys.stderr)
+        # Fallback to manual MySQL configuration
         DATABASES = {
             "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-                "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": os.environ.get("DB_NAME", "savvyindians_lms"),
+                "USER": os.environ.get("DB_USER", "root"),
+                "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+                "HOST": os.environ.get("DB_HOST", "localhost"),
+                "PORT": os.environ.get("DB_PORT", "3306"),
+                "OPTIONS": {
+                    "charset": "utf8mb4",
+                    "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+                },
             }
         }
 else:
     print("✗ DATABASE_URL NOT FOUND in environment!", file=sys.stderr)
-    # Fallback to SQLite for local development only
+    # Fallback to manual MySQL configuration
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ.get("DB_NAME", "savvyindians_lms"),
+            "USER": os.environ.get("DB_USER", "root"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "3306"),
+            "OPTIONS": {
+                "charset": "utf8mb4",
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
         }
     }
     # Print warning if running in production without DATABASE_URL

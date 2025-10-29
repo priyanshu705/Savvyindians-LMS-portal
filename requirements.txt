@@ -4,7 +4,7 @@ python-decouple==3.8
 whitenoise==6.6.0
 django-allauth==0.57.0
 dj-database-url==2.1.0
-psycopg2-binary==2.9.11
+mysqlclient==2.2.4
 Pillow==11.3.0
 gunicorn==21.2.0
 django-crispy-forms==2.1
