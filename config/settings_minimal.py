@@ -103,20 +103,27 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database configuration
 # Use DATABASE_URL from environment (Render will provide this)
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
+    # Parse PostgreSQL DATABASE_URL from Render
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
+    # Serverless database optimization (PostgreSQL-safe)
+    DATABASES["default"]["CONN_MAX_AGE"] = 0  # No persistent connections in serverless
 else:
+    # Fallback to SQLite for local development only
+    # In production, DATABASE_URL MUST be set
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-
-# Serverless database optimization (PostgreSQL-safe)
-DATABASES["default"]["CONN_MAX_AGE"] = 0  # No persistent connections in serverless
+    # Print warning if running in production without DATABASE_URL
+    if not DEBUG:
+        import sys
+        print("WARNING: Running in production mode without DATABASE_URL!", file=sys.stderr)
+        print("Using SQLite fallback - this may cause errors!", file=sys.stderr)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
