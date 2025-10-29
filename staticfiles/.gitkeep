@@ -1,2 +1,0 @@
-# This file ensures the staticfiles directory exists in the repository
-# WhiteNoise needs this directory to exist when Django starts
