@@ -30,10 +30,8 @@ services:
         value: false
       - key: WEB_CONCURRENCY
         value: 4
-      - key: DATABASE_URL
-        fromDatabase:
-          name: savvyindians-lms-db
-          property: internalConnectionString
+      # DATABASE_URL will be auto-injected by Render when database is linked
+      # No need to explicitly define it here
 
 databases:
   - name: savvyindians-lms-db
