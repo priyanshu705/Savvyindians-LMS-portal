@@ -30,8 +30,6 @@ services:
         value: false
       - key: WEB_CONCURRENCY
         value: 4
-      - key: DATABASE_URL
-        value: postgresql://lmsdb_28b7_user:WCL8o8WhiO3RaaNjWBvZv85GwbdQ2zg5@dpg-d40qm7ili9vc73bshqig-a/lmsdb_28b7
 
 databases:
   - name: savvyindians-lms-db
