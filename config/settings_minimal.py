@@ -5,7 +5,16 @@ Simplified configuration for zero-error deployment on Vercel
 """
 
 import os
+import sys
 import dj_database_url
+
+# CRITICAL: Setup Render environment variables FIRST (before anything else)
+# This must run before any database configuration
+try:
+    from config.render_env import setup_render_database
+    setup_render_database()
+except Exception as e:
+    print(f"Warning: Could not load render_env: {e}", file=sys.stderr)
 
 # Build paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
