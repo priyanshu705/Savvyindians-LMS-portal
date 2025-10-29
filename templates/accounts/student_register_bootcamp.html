@@ -1,736 +1,112 @@
-{% extends 'base.html' %}{% extends 'base.html' %}
-
-{% load i18n %}{% load i18n %}
-
-{% load static %}{% load static %}
-
-
-
-{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}
-
-
-
-{% block content %}{% block content %}
-
-
-
-<div class="container"><div class="container">
-
-    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">
-
-        <div class="col-lg-8">        <div class="col-lg-8">
-
-            <div class="form-modern">            <div class="form-modern">
-
-                <div class="text-center mb-4">                <div class="text-center mb-4">
-
-                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
-
-                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>
-
-                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>
-
-                </div>                </div>
-
-
-
-                <form method="post" id="modern-register-form">                <form method="post" id="modern-register-form">
-
-                    {% csrf_token %}                    {% csrf_token %}
-
-                              
-
-                    <div class="row g-3">                    <div class="row g-3">
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.first_name.label }}</label>                                <label class="form-label-modern">{{ form.first_name.label }}</label>
-
-                                {{ form.first_name }}                                {{ form.first_name }}
-
-                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.last_name.label }}</label>                                <label class="form-label-modern">{{ form.last_name.label }}</label>
-
-                                {{ form.last_name }}                                {{ form.last_name }}
-
-                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.email.label }}</label>                                <label class="form-label-modern">{{ form.email.label }}</label>
-
-                                {{ form.email }}                                {{ form.email }}
-
-                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.phone.label }}</label>                                <label class="form-label-modern">{{ form.phone.label }}</label>
-
-                                {{ form.phone }}                                {{ form.phone }}
-
-                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.city.label }}</label>                                <label class="form-label-modern">{{ form.city.label }}</label>
-
-                                {{ form.city }}                                {{ form.city }}
-
-                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.level.label }}</label>                                <label class="form-label-modern">{{ form.level.label }}</label>
-
-                                {{ form.level }}                                {{ form.level }}
-
-                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.program.label }}</label>                                <label class="form-label-modern">{{ form.program.label }}</label>
-
-                                {{ form.program }}                                {{ form.program }}
-
-                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.password1.label }}</label>                                <label class="form-label-modern">{{ form.password1.label }}</label>
-
-                                {{ form.password1 }}                                {{ form.password1 }}
-
-                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                        <div class="col-md-6">                        <div class="col-md-6">
-
-                            <div class="form-group-modern">                            <div class="form-group-modern">
-
-                                <label class="form-label-modern">{{ form.password2.label }}</label>                                <label class="form-label-modern">{{ form.password2.label }}</label>
-
-                                {{ form.password2 }}                                {{ form.password2 }}
-
-                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}
-
-                            </div>                            </div>
-
-                        </div>                        </div>
-
-                    </div>                    </div>
-
-
-
-                    <div class="mt-3">                    <div class="mt-3">
-
-                        <div class="form-check">                        <div class="form-check">
-
-                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>
-
-                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}
-
-                        </div>                        </div>
-
-                    </div>                    </div>
-
-
-
-                    {% if form.non_field_errors %}                    {% if form.non_field_errors %}
-
-                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>
-
-                    {% endif %}                    {% endif %}
-
-
-
-                    <div class="mt-4 text-center">                    <div class="mt-4 text-center">
-
-                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>
-
-                    </div>                    </div>
-
-
-
-                    <div class="text-center mt-3">                    <div class="text-center mt-3">
-
-                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>
-
-                    </div>                    </div>
-
-                </form>                </form>
-
-            </div>            </div>
-
-        </div>        </div>
-
-    </div>    </div>
-
-</div></div>
-
-
-
-{% endblock content %}{% endblock content %}
-
-                    <div class="register-header text-center mb-4">
-                        <div class="logo-container mb-3">
-                            <img src="{% static 'img/savvyindians-logo.png' %}" alt="SavvyIndians Logo" class="register-logo">
-                        </div>
-                        <h2 class="register-title">🚀 {% trans 'Join Our AI Bootcamp' %}</h2>
-                        <p class="register-subtitle">{% trans 'Learn Latest AI Technologies & Transform Your Career' %}</p>
-                    </div>
-
-                    <!-- Registration Form -->
-                    <form method="post" class="register-form" id="bootcamp-register-form">
-                        {% csrf_token %}
-                        
-                        <div class="row">
-                            <!-- Personal Information -->
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-user me-2"></i>{{ form.first_name.label }}
-                                </label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-user me-2"></i>{{ form.last_name.label }}
-                                </label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-envelope me-2"></i>{{ form.email.label }}
-                                </label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fab fa-whatsapp me-2"></i>{{ form.phone.label }}
-                                </label>
-                                {{ form.phone }}
-                                {% if form.phone.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                <i class="fas fa-map-marker-alt me-2"></i>{{ form.city.label }}
-                            </label>
-                            {{ form.city }}
-                            {% if form.city.errors %}
-                                <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-
-                        <hr class="my-4">
-
-                        <!-- Bootcamp Selection -->
-                        <h5 class="mb-3">
-                            <i class="fas fa-graduation-cap me-2"></i>{% trans 'Select Your Bootcamp' %}
-                        </h5>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-signal me-2"></i>{{ form.level.label }}
-                                </label>
-                                {{ form.level }}
-                                {% if form.level.help_text %}
-                                    <small class="form-text text-muted">{{ form.level.help_text }}</small>
-                                {% endif %}
-                                {% if form.level.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-robot me-2"></i>{{ form.program.label }}
-                                </label>
-                                {{ form.program }}
-                                {% if form.program.help_text %}
-                                    <small class="form-text text-muted">{{ form.program.help_text }}</small>
-                                {% endif %}
-                                {% if form.program.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <!-- Account Setup -->
-                        <h5 class="mb-3">
-                            <i class="fas fa-lock me-2"></i>{% trans 'Create Your Password' %}
-                        </h5>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ form.password1.label }}</label>
-                                {{ form.password1 }}
-                                {% if form.password1.help_text %}
-                                    <small class="form-text text-muted">{{ form.password1.help_text }}</small>
-                                {% endif %}
-                                {% if form.password1.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ form.password2.label }}</label>
-                                {{ form.password2 }}
-                                {% if form.password2.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="form-check terms-check">
-                                {{ form.terms_accepted }}
-                                <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
-                                    {{ form.terms_accepted.label }}
-                                </label>
-                                {% if form.terms_accepted.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Form Errors -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                {{ form.non_field_errors.0 }}
-                            </div>
-                        {% endif %}
-
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn register-btn w-100 py-3">
-                            <i class="fas fa-rocket me-2"></i>
-                            <span>{% trans 'Join Bootcamp Now' %}</span>
-                        </button>
-                    </form>
-
-                    <!-- Login Link -->
-                    <div class="text-center mt-4">
-                        <p class="login-text">
-                            {% trans "Already enrolled?" %}
-                            <a href="{% url 'student_login' %}" class="login-link">
-                                {% trans 'Sign in here' %}
-                            </a>
-                        </p>
-                    </div>
+﻿{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {% trans 'Register - AI Bootcamp' %}{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center" style="min-height:80vh; padding-top:4rem;">
+        <div class="col-lg-8">
+            <div class="form-modern">
+                <div class="text-center mb-4">
+                    <img src="{% static 'img/savvyindians-logo.png' %}" alt="logo" style="height:60px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));">
+                    <h2 class="mt-3 text-gold">{% trans 'Join Our AI Bootcamp' %}</h2>
+                    <p class="text-muted">{% trans 'Fill the form below to secure your seat' %}</p>
                 </div>
+
+                <form method="post" id="modern-register-form">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.first_name.label }}</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.last_name.label }}</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.email.label }}</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.phone.label }}</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.city.label }}</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.level.label }}</label>
+                                {{ form.level }}
+                                {% if form.level.errors %}<div class="invalid-feedback d-block">{{ form.level.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.program.label }}</label>
+                                {{ form.program }}
+                                {% if form.program.errors %}<div class="invalid-feedback d-block">{{ form.program.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.password1.label }}</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">{{ form.password2.label }}</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="form-check">
+                            {{ form.terms_accepted }} <label class="form-check-label text-muted">{{ form.terms_accepted.label }}</label>
+                            {% if form.terms_accepted.errors %}<div class="invalid-feedback d-block">{{ form.terms_accepted.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>
+                    {% endif %}
+
+                    <div class="mt-4 text-center">
+                        <button type="submit" class="btn-modern-gold">{% trans 'Join Bootcamp Now' %}</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <p class="text-muted">{% trans 'Already enrolled?' %} <a href="{% url 'student_login' %}" class="text-gold">{% trans 'Sign in here' %}</a></p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-/* Register Card Styles - Black & Gold Theme */
-.register-card {
-    background: var(--secondary-black) !important;
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 3rem 2.5rem;
-    box-shadow: 0 25px 70px rgba(255, 215, 0, 0.15);
-    border: 2px solid var(--primary-gold);
-    position: relative;
-    overflow: hidden;
-    animation: fadeInUp 0.6s ease-out;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.register-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, var(--primary-gold), var(--hover-gold), var(--primary-gold));
-}
-
-/* Logo and Header */
-.register-header {
-    margin-bottom: 2.5rem !important;
-}
-
-.register-logo {
-    width: 100px;
-    height: auto;
-    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
-    margin-bottom: 1.5rem;
-}
-
-.register-title {
-    color: var(--primary-gold) !important;
-    font-weight: 700;
-    font-size: 2.25rem;
-    margin: 1rem 0 0.75rem 0;
-    text-shadow: 0 2px 15px rgba(255, 215, 0, 0.3);
-    line-height: 1.2;
-}
-
-.register-subtitle {
-    color: #b0b0b0;
-    font-size: 1.15rem;
-    margin: 0;
-    font-weight: 400;
-}
-
-/* Section Headers */
-h5 {
-    color: var(--primary-gold) !important;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem !important;
-}
-
-h5 i {
-    color: var(--primary-gold);
-    margin-right: 0.5rem;
-}
-
-hr {
-    border-color: rgba(255, 215, 0, 0.2) !important;
-    margin: 2rem 0 !important;
-}
-
-/* Form Styling */
-.register-form .form-label {
-    color: #e0e0e0 !important;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 0.625rem;
-    display: block;
-}
-
-.register-form .form-label i {
-    color: var(--primary-gold);
-    font-size: 0.95rem;
-}
-
-.register-form .form-control {
-    border: 2px solid #333333 !important;
-    border-radius: 14px;
-    padding: 0.875rem 1.125rem;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    background: var(--tertiary-black) !important;
-    color: white !important;
-    height: auto;
-    min-height: 48px;
-}
-
-.register-form .form-control:focus {
-    border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15) !important;
-    background: var(--secondary-black) !important;
-    transform: translateY(-2px);
-}
-
-.register-form .form-control::placeholder {
-    color: #666666;
-}
-
-.register-form .form-select {
-    border: 2px solid #333333 !important;
-    border-radius: 14px;
-    padding: 0.875rem 1.125rem;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    background: var(--tertiary-black) !important;
-    color: white !important;
-    min-height: 48px;
-    cursor: pointer;
-}
-
-.register-form .form-select:focus {
-    border-color: var(--primary-gold) !important;
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15) !important;
-    background: var(--secondary-black) !important;
-    transform: translateY(-2px);
-}
-
-.register-form .form-select option {
-    background: var(--secondary-black);
-    color: white;
-    padding: 0.5rem;
-}
-
-/* Small text */
-.form-text {
-    color: #888888 !important;
-    font-size: 0.875rem;
-    margin-top: 0.375rem;
-    display: block;
-}
-
-/* Terms Checkbox */
-.terms-check {
-    background: var(--tertiary-black);
-    padding: 1.25rem;
-    border-radius: 14px;
-    border: 2px solid #333333;
-    transition: all 0.3s ease;
-}
-
-.terms-check:hover {
-    border-color: rgba(255, 215, 0, 0.3);
-}
-
-.terms-check label {
-    color: #e0e0e0;
-    font-size: 0.975rem;
-    margin-left: 0.5rem;
-    cursor: pointer;
-}
-
-.form-check-input {
-    width: 1.375rem;
-    height: 1.375rem;
-    margin-top: 0.125rem;
-    background-color: var(--tertiary-black);
-    border: 2px solid var(--primary-gold);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.form-check-input:checked {
-    background-color: var(--primary-gold);
-    border-color: var(--primary-gold);
-}
-
-.form-check-input:focus {
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15);
-}
-
-/* Register Button */
-.register-btn {
-    background: linear-gradient(135deg, var(--primary-gold) 0%, var(--hover-gold) 100%);
-    border: none;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--primary-black) !important;
-    padding: 1rem 2rem !important;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
-}
-
-.register-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.45);
-    color: var(--primary-black) !important;
-    background: var(--hover-gold);
-}
-
-.register-btn:active {
-    transform: translateY(-1px);
-}
-
-.register-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
-}
-
-.register-btn:hover::before {
-    left: 100%;
-}
-
-.register-btn i {
-    font-size: 1.15rem;
-}
-
-/* Login Link */
-.login-text {
-    color: #a0a0a0;
-    font-size: 1.05rem;
-    margin: 0;
-}
-
-.login-link {
-    color: var(--primary-gold);
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-size: 1.05rem;
-}
-
-.login-link:hover {
-    color: var(--hover-gold);
-    text-decoration: underline;
-}
-
-/* Error Messages */
-.invalid-feedback {
-    color: #ff6b6b !important;
-    font-size: 0.9rem;
-    margin-top: 0.375rem;
-    display: block;
-}
-
-.alert-danger {
-    background: rgba(255, 107, 107, 0.15);
-    border: 1px solid #ff6b6b;
-    border-radius: 12px;
-    color: #ff6b6b;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .register-card {
-        padding: 2rem 1.5rem;
-        border-radius: 20px;
-    }
-    
-    .register-title {
-        font-size: 1.75rem;
-    }
-    
-    .register-subtitle {
-        font-size: 1rem;
-    }
-    
-    .register-logo {
-        width: 80px;
-    }
-    
-    .register-btn {
-        font-size: 1.1rem;
-        padding: 0.875rem 1.5rem !important;
-    }
-    
-    h5 {
-        font-size: 1.15rem;
-    }
-    
-    .register-form .form-control,
-    .register-form .form-select {
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .register-card {
-        padding: 1.5rem 1rem;
-        border-radius: 16px;
-    }
-    
-    .register-title {
-        font-size: 1.5rem;
-    }
-    
-    .register-subtitle {
-        font-size: 0.95rem;
-    }
-    
-    .register-logo {
-        width: 70px;
-    }
-    
-    .register-btn {
-        font-size: 1rem;
-    }
-    
-    h5 {
-        font-size: 1.05rem;
-    }
-}
-</style>
 {% endblock content %}
