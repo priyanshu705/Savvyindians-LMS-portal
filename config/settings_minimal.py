@@ -23,7 +23,15 @@ ALLOWED_HOSTS = [
     "testserver",
     ".vercel.app",
     ".savvyindians.com",
+    ".onrender.com",  # Add Render domain
     "*",  # For serverless flexibility
+]
+
+# CSRF Trusted Origins for production
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+    "https://*.savvyindians.com",
+    "https://*.onrender.com",  # Add Render domain
 ]
 
 # Custom user model
@@ -94,13 +102,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database configuration
-# Use DATABASE_URL if available, otherwise fall back to the Render PostgreSQL URL
-# (provided by the user). In production Render will supply DATABASE_URL via env vars,
-# but providing the full URL here allows a quick deploy if the env var isn't set.
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://savvyindians_lms_db_user:9Ih96HwA3017hhCodMMo9zU2lyFQuTAR@dpg-d3v4c70dl3ps73fi4png-a.oregon-postgres.render.com/savvyindians_lms_db",
-)
+# Use DATABASE_URL from environment (Render will provide this)
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
 if DATABASE_URL:
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=0)}
@@ -225,3 +228,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Use Bootstrap 5 templates if available
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap5"]
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Production Security Settings (applied when DEBUG=False)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
