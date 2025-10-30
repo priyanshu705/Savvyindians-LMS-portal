@@ -1,0 +1,214 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* SavvyIndians Black & Gold Theme for Admin Login */
+    body.login {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .login #container {
+        background: #000000;
+        border: 2px solid #ffd700;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        padding: 40px;
+        max-width: 450px;
+        width: 90%;
+    }
+    
+    .login #content {
+        padding: 0;
+    }
+    
+    .login #header {
+        background: transparent;
+        padding: 0 0 30px 0;
+        text-align: center;
+        border-bottom: 2px solid #ffd700;
+        margin-bottom: 30px;
+    }
+    
+    .login #header h1 {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .login #header h1 a {
+        color: #ffd700;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-decoration: none;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    
+    .login #content-main {
+        width: 100%;
+    }
+    
+    .login form {
+        margin: 0;
+    }
+    
+    .login .form-row {
+        margin-bottom: 20px;
+    }
+    
+    .login label {
+        display: block;
+        color: #ffd700;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+    
+    .login input[type="text"],
+    .login input[type="password"] {
+        width: 100%;
+        padding: 12px 15px;
+        background: #ffffff !important;
+        border: 2px solid #ffd700;
+        border-radius: 8px;
+        color: #000000 !important;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .login input[type="text"]:focus,
+    .login input[type="password"]:focus {
+        outline: none;
+        border-color: #ffd700;
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        background: #ffffff !important;
+    }
+    
+    .login .submit-row {
+        margin-top: 30px;
+        padding: 0;
+        text-align: center;
+    }
+    
+    .login input[type="submit"] {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #000000;
+        border: none;
+        padding: 14px 40px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .login input[type="submit"]:hover {
+        background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
+    }
+    
+    .login input[type="submit"]:active {
+        transform: translateY(0);
+    }
+    
+    .login .errornote {
+        background: #ff4444;
+        color: #ffffff;
+        border: 2px solid #cc0000;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-size: 1em;
+    }
+    
+    .login .help {
+        color: #cccccc;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+    
+    /* Password reset link styling */
+    .login .password-reset-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #ffd700;
+        text-decoration: none;
+        font-size: 0.95em;
+        transition: all 0.3s ease;
+    }
+    
+    .login .password-reset-link:hover {
+        color: #ffed4e;
+        text-decoration: underline;
+    }
+    
+    /* Info icon styling */
+    .login #header .info-icon {
+        color: #ffd700;
+        margin-left: 10px;
+        font-size: 0.8em;
+        vertical-align: super;
+    }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+{% if form.errors and not form.non_field_errors %}
+<p class="errornote">
+{% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+</p>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<p class="errornote">
+    {{ error }}
+</p>
+{% endfor %}
+{% endif %}
+
+<div id="content-main">
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <div class="form-row">
+            {{ form.username.errors }}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="form-row">
+            {{ form.password.errors }}
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+        <div class="password-reset-link">
+            <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
+        </div>
+        {% endif %}
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Log in' %}">
+        </div>
+    </form>
+</div>
+{% endblock %}

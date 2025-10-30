@@ -24,8 +24,8 @@ print("""
    python manage.py createsuperuser
 
 5. Enter details when prompted:
-   - Username: admin
-   - Email: admin@savvyindians.com
+   - Username: SavvyIndians
+   - Email: gy068644@gmail.com
    - Password: [choose a strong password]
    - Password (again): [confirm]
 
