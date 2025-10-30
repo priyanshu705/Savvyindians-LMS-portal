@@ -6,111 +6,266 @@
 {% block content %}
 
 <div class="container py-5">
-	
-  <div class="blue-gradient text-light p-3 mb-5">
-	  <h1 class="lead my-0">
-		<i class="fas fa-lock mr-2"></i>{% trans 'Create Your Account' %}
-	  </h1>
+  <!-- Header Section -->
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold" style="color: var(--primary-gold) !important;">
+      <i class="fas fa-user-plus me-3"></i>{% trans 'Create Your Account' %}
+    </h1>
+    <p class="lead" style="color: var(--text-secondary);">
+      {% trans 'Join SavvyIndians LMS and start your learning journey today!' %}
+    </p>
   </div>
 
-  <form action="" method="POST" id="login-form">
-	  {% csrf_token %}
-	  <div class="row">
-		  <div class="col-lg-6">
-			<h1 class="lead p-2 bg-light">{% trans 'Login Form' %}</h1>
-			<div class="mb-3">
-				<label for="username_id" class="form-label">{{ form.username.label }}</label>
-				{{ form.username }}
-				<div id="message-wrapper"></div>
-			</div>
-			<div class="mb-3">
-				<label for="email_id" class="form-label">{{ form.email.label }}</label>
-				{{ form.email }}
-			</div>
-			<div class="mb-3">
-				<label for="password1_id" class="form-label">{{ form.password1.label }}</label>
-				{{ form.password1 }}
-			</div>
-			<div class="mb-3">
-				<label for="password2_id" class="form-label">{{ form.password2.label }}</label>
-				{{ form.password2 }}
-			</div>
-		  </div>
-		  <div class="col-lg-6">
-			<h1 class="lead p-2 bg-light">{% trans 'Personal Info' %}</h1>
-			<div class="mb-3">
-				<label for="address_id" class="form-label">{{ form.address.label }}</label>
-				{{ form.address }}
-			</div>
-			<div class="mb-3">
-				<label for="phone_id" class="form-label">{{ form.phone.label }}</label>
-				{{ form.phone }}
-			</div>
-			<div class="mb-3">
-				<label for="first_name_id" class="form-label">{{ form.first_name.label }}</label>
-				{{ form.first_name }}
-			</div>
-			<div class="mb-3">
-				<label for="last_name_id" class="form-label">{{ form.last_name.label }}</label>
-				{{ form.last_name }}
-			</div>
-			<div class="mb-3">
-				<label for="gender_id" class="form-label">{{ form.gender.label }}</label>
-				{{ form.gender }}
-			</div>
-			<div class="mb-3">
-				<label for="level_id" class="form-label">{{ form.level.label }}</label>
-				{{ form.level }}
-			</div>
-			<div class="mb-3">
-				<label for="program_id" class="form-label">{{ form.program.label }}</label>
-				{{ form.program }}
-			</div>
-		  </div>
-	  </div>
+  <!-- Registration Form Card -->
+  <div class="card" style="background: var(--card-bg) !important; border: 2px solid var(--border-color) !important; border-radius: 16px; margin-bottom: 2rem;">
+    <div class="card-body" style="padding: 2.5rem;">
+      <form action="" method="POST" id="register-form">
+        {% csrf_token %}
+        
+        <div class="row">
+          <!-- Left Column - Login Credentials -->
+          <div class="col-lg-6 mb-4">
+            <div class="section-header mb-4 pb-3" style="border-bottom: 2px solid var(--primary-gold);">
+              <h4 style="color: var(--primary-gold) !important; font-weight: 700;">
+                <i class="fas fa-key me-2"></i>{% trans 'Login Credentials' %}
+              </h4>
+            </div>
+            
+            <div class="mb-4">
+              <label for="username_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-user me-2" style="color: var(--primary-gold);"></i>{{ form.username.label }}
+              </label>
+              {{ form.username }}
+              <div id="message-wrapper"></div>
+              {% if form.username.errors %}
+                <small class="text-danger">{{ form.username.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="email_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-envelope me-2" style="color: var(--primary-gold);"></i>{{ form.email.label }}
+              </label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <small class="text-danger">{{ form.email.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="password1_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-lock me-2" style="color: var(--primary-gold);"></i>{{ form.password1.label }}
+              </label>
+              {{ form.password1 }}
+              {% if form.password1.errors %}
+                <small class="text-danger">{{ form.password1.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="password2_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-lock me-2" style="color: var(--primary-gold);"></i>{{ form.password2.label }}
+              </label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}
+                <small class="text-danger">{{ form.password2.errors|first }}</small>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Right Column - Personal Information -->
+          <div class="col-lg-6 mb-4">
+            <div class="section-header mb-4 pb-3" style="border-bottom: 2px solid var(--primary-gold);">
+              <h4 style="color: var(--primary-gold) !important; font-weight: 700;">
+                <i class="fas fa-id-card me-2"></i>{% trans 'Personal Information' %}
+              </h4>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label for="first_name_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                  <i class="fas fa-user me-2" style="color: var(--primary-gold);"></i>{{ form.first_name.label }}
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                  <small class="text-danger">{{ form.first_name.errors|first }}</small>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <label for="last_name_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                  <i class="fas fa-user me-2" style="color: var(--primary-gold);"></i>{{ form.last_name.label }}
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                  <small class="text-danger">{{ form.last_name.errors|first }}</small>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label for="phone_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-phone me-2" style="color: var(--primary-gold);"></i>{{ form.phone.label }}
+              </label>
+              {{ form.phone }}
+              {% if form.phone.errors %}
+                <small class="text-danger">{{ form.phone.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="address_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-map-marker-alt me-2" style="color: var(--primary-gold);"></i>{{ form.address.label }}
+              </label>
+              {{ form.address }}
+              {% if form.address.errors %}
+                <small class="text-danger">{{ form.address.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="gender_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-venus-mars me-2" style="color: var(--primary-gold);"></i>{{ form.gender.label }}
+              </label>
+              {{ form.gender }}
+              {% if form.gender.errors %}
+                <small class="text-danger">{{ form.gender.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="level_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-graduation-cap me-2" style="color: var(--primary-gold);"></i>{{ form.level.label }}
+              </label>
+              {{ form.level }}
+              {% if form.level.errors %}
+                <small class="text-danger">{{ form.level.errors|first }}</small>
+              {% endif %}
+            </div>
+            
+            <div class="mb-4">
+              <label for="program_id" class="form-label" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-book me-2" style="color: var(--primary-gold);"></i>{{ form.program.label }}
+              </label>
+              {{ form.program }}
+              {% if form.program.errors %}
+                <small class="text-danger">{{ form.program.errors|first }}</small>
+              {% endif %}
+            </div>
+          </div>
+        </div>
 
-    {% if form.errors %}
-          <p class="text-danger my-2"><i class="fas fa-exclamation-circle"></i>{% trans 'Invalid ID & Password.' %}</p><br>
-    {% endif %}
+        <!-- Form-wide errors -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.1) !important; border: 1px solid var(--danger) !important; border-radius: 8px; padding: 0.75rem; margin-bottom: 1.5rem;">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            {{ form.non_field_errors|first }}
+          </div>
+        {% endif %}
 
-    <button type="submit" class="btn btn-primary" id="login-btn"><i class="fas fa-sign-in-alt"></i><small>{% trans 'SIGN UP' %}</small></button>
-  </form>
-  <br>
-  <span> {% trans 'Already Registered ?' %} </span><a href="{% url 'login' %}" class="link">{% trans 'Login' %}</a>
+        <!-- Submit Button -->
+        <div class="d-grid gap-2">
+          <button type="submit" 
+                  class="btn btn-primary btn-lg" 
+                  id="register-btn"
+                  style="background: var(--primary-gold) !important; border: 2px solid var(--primary-gold) !important; color: var(--primary-black) !important; font-weight: 700; padding: 1rem 1.5rem; border-radius: 12px; font-size: 18px;">
+            <i class="fas fa-user-plus me-2"></i>{% trans 'CREATE ACCOUNT' %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login Link -->
+  <div class="text-center" style="padding: 1.5rem;">
+    <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 0;">
+      {% trans 'Already have an account?' %} 
+      <a href="{% url 'login' %}" 
+         class="link" 
+         style="color: var(--primary-gold) !important; text-decoration: none; font-weight: 700; margin-left: 0.5rem;">
+        <i class="fas fa-sign-in-alt me-1"></i>{% trans 'Sign In' %}
+      </a>
+    </p>
+  </div>
 </div>
 {% endblock content %}
 
 {% block js %}
-
 <script>
-  const loginFormEl = document.getElementById('login-form');
-  const loginBtnEl = document.getElementById('login-btn');
+  // Registration form submit handler
+  const registerFormEl = document.getElementById('register-form');
+  const registerBtnEl = document.getElementById('register-btn');
 
-  loginFormEl.addEventListener('submit', () => {
-    loginBtnEl.innerHTML = '<i class="fas fa-sign-in-alt"></i> Signining you in . . .';
-    loginBtnEl.classList.add("disabled");
-  })
+  registerFormEl.addEventListener('submit', () => {
+    registerBtnEl.innerHTML = `
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      <i class="fas fa-user-plus me-2"></i>Creating your account...
+    `;
+    registerBtnEl.classList.add("disabled");
+  });
 
+  // Real-time username validation
   $("#username_id").on("input", function () {
-    username = $(this).val();
+    const username = $(this).val();
+    
+    if (username.length < 3) {
+      $('#message-wrapper').html('');
+      return;
+    }
 
     $.ajax({
       url: "/accounts/ajax/validate-username/",
-      data: {
-        username: username
-      },
+      data: { username: username },
       dataType: 'json',
       success: function (data) {
         if (data.is_taken) {
-          console.log(data.is_taken);
-          $('#message-wrapper').html(`<p class="my-2 text-danger"><span class="bg-error p-2"><b>${username}</b> already taken :( try another one </span></p>`)
+          $('#message-wrapper').html(`
+            <div class="alert alert-danger py-2 px-3 mt-2" style="background: rgba(220, 53, 69, 0.1) !important; border: 1px solid var(--danger) !important; border-radius: 8px;">
+              <small style="color: var(--danger) !important;">
+                <i class="fas fa-times-circle me-1"></i>
+                <strong>${username}</strong> is already taken. Please choose another one.
+              </small>
+            </div>
+          `);
+        } else {
+          $('#message-wrapper').html(`
+            <div class="alert alert-success py-2 px-3 mt-2" style="background: rgba(40, 167, 69, 0.1) !important; border: 1px solid var(--success) !important; border-radius: 8px;">
+              <small style="color: var(--success) !important;">
+                <i class="fas fa-check-circle me-1"></i>
+                <strong>${username}</strong> is available!
+              </small>
+            </div>
+          `);
         }
-        else {
-          $('#message-wrapper').html(`<p class="my-2 text-success"><span class="bg-correct p-2"><b>${username}</b> is valid </span></p>`)
-        }
+      },
+      error: function() {
+        $('#message-wrapper').html('');
       }
+    });
+  });
 
-    })
-  })
+  // Password strength indicator (optional enhancement)
+  $("#password1_id").on("input", function() {
+    const password = $(this).val();
+    if (password.length < 8 && password.length > 0) {
+      $(this).css('border-color', '#ffc107');
+    } else if (password.length >= 8) {
+      $(this).css('border-color', 'var(--primary-gold)');
+    }
+  });
+
+  // Password match validation
+  $("#password2_id").on("input", function() {
+    const password1 = $("#password1_id").val();
+    const password2 = $(this).val();
+    
+    if (password2.length > 0) {
+      if (password1 === password2) {
+        $(this).css('border-color', 'var(--primary-gold)');
+      } else {
+        $(this).css('border-color', '#dc3545');
+      }
+    }
+  });
 </script>
 {% endblock %}
