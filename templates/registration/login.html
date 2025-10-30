@@ -4,67 +4,127 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<div class="col-md-4 mx-auto mt-5">
-  <div class="card">
-    <div class="form-title">
-      <i class="fas fa-lock me-2"></i>
-      {% trans 'Sign in' %}
-    </div>
-    <div class="card-body">
-        <form action="" method="POST" id="login-form">{% csrf_token %}
-          <div class="form-group mb-3">
-              <label class="mb-2" for="username_id"><i class="fas fa-address-card me-2"></i>{% trans 'ID Number' %}</label>
-              <input type="text" name="username" id="username_id" class="form-control" required>
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5 col-lg-4">
+      <div class="card" style="background: var(--card-bg) !important; border: 2px solid var(--border-color) !important; border-radius: 16px;">
+        <div class="card-header text-center" style="background: var(--secondary-black) !important; border-bottom: 2px solid var(--primary-gold) !important; padding: 1.5rem;">
+          <h3 style="color: var(--primary-gold) !important; font-weight: 700; margin: 0;">
+            <i class="fas fa-lock me-2"></i>{% trans 'Sign In' %}
+          </h3>
+          <p style="color: var(--text-secondary); margin-top: 0.5rem; margin-bottom: 0; font-size: 0.9rem;">
+            {% trans 'Welcome back! Please login to your account.' %}
+          </p>
+        </div>
+        <div class="card-body" style="padding: 2rem;">
+          <form action="" method="POST" id="login-form">{% csrf_token %}
+            <div class="form-group mb-4">
+              <label class="mb-2" for="username_id" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-user me-2" style="color: var(--primary-gold);"></i>{% trans 'ID Number' %}
+              </label>
+              <input type="text" 
+                     name="username" 
+                     id="username_id" 
+                     class="form-control" 
+                     placeholder="{% trans 'Enter your ID number' %}"
+                     style="background: #ffffff !important; color: #000000 !important; border: 2px solid var(--border-color) !important; border-radius: 12px; padding: 0.75rem 1rem; font-size: 15px;"
+                     required>
               <div id="message-wrapper"></div>
+            </div>
+            
+            <div class="form-group mb-4">
+              <label class="mb-2" for="password_id" style="color: var(--text-primary) !important; font-weight: 600;">
+                <i class="fas fa-key me-2" style="color: var(--primary-gold);"></i>{% trans 'Password' %}
+              </label>
+              <input type="password" 
+                     name="password" 
+                     id="password_id" 
+                     class="form-control" 
+                     placeholder="{% trans 'Enter your password' %}"
+                     style="background: #ffffff !important; color: #000000 !important; border: 2px solid var(--border-color) !important; border-radius: 12px; padding: 0.75rem 1rem; font-size: 15px;"
+                     required>
+            </div>
+            
+            {% if form.errors %}
+              <div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.1) !important; border: 1px solid var(--danger) !important; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem;">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span style="color: var(--danger) !important;">{% trans 'Invalid ID & Password.' %}</span>
+              </div>
+            {% endif %}
+        
+            <button type="submit" 
+                    class="btn btn-primary w-100 mb-3" 
+                    id="login-btn"
+                    style="background: var(--primary-gold) !important; border: 2px solid var(--primary-gold) !important; color: var(--primary-black) !important; font-weight: 700; padding: 0.875rem 1.5rem; border-radius: 12px; font-size: 16px;">
+              <i class="fas fa-sign-in-alt me-2"></i>{% trans 'SIGN IN' %}
+            </button>
+          </form>
+          
+          <div class="text-center" style="border-top: 1px solid var(--border-color); padding-top: 1.25rem; margin-top: 1.25rem;">
+            <a href="{% url 'password_reset' %}" 
+               class="link" 
+               style="color: var(--primary-gold) !important; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+              <i class="fas fa-question-circle me-1"></i>{% trans 'Forgot password?' %}
+            </a>
           </div>
-          <div class="form-group mb-3">
-              <label class="mb-2" for="password_id"><i class="fas fa-key me-2"></i>{% trans 'Password' %}</label>
-              <input type="password" name="password" id="password_id" class="form-control" required>
-          </div>
-          {% if form.errors %}
-                <span class="text-danger"><i class="fas fa-exclamation-circle"></i> {% trans 'Invalid ID & Password.' %}</span><br>
-          {% endif %}
-      
-          <button type="submit" class="btn btn-primary" id="login-btn"><i class="fas fa-sign-in-alt"></i><small>{% trans 'SIGN IN' %}</small></button>
-        </form>
-        <br>
-        <div class="login-bottom">
-          <a href="{% url 'password_reset' %}" class="link">{% trans 'Forgot password ?' %}</a>
         </div>
       </div>
+    </div>
   </div>
 </div>
 {% endblock content %}
 
 {% block js %}
-
 <script>
+  // Login form submit handler
   $('#login-form').submit(function (e) {
-    // e.preventDefault();
-    $('#login-btn').addClass('disabled')
-    $('#login-btn').html(`<i class="fas fa-sign-in-alt"></i> Signining you in . . .`)
-  })
+    $('#login-btn').addClass('disabled');
+    $('#login-btn').html(`
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      <i class="fas fa-sign-in-alt me-2"></i>Signing you in...
+    `);
+  });
 
-  $("#username").on("input", function () {
-    username = $(this).val();
+  // Username validation (optional - can be removed if not needed during login)
+  $("#username_id").on("input", function () {
+    const username = $(this).val();
+    
+    if (username.length < 3) {
+      $('#message-wrapper').html('');
+      return;
+    }
 
     $.ajax({
       url: "/accounts/ajax/validate-username/",
-      data: {
-        username: username
-      },
+      data: { username: username },
       dataType: 'json',
       success: function (data) {
         if (data.is_taken) {
-          console.log(data.is_taken);
-          $('#message-wrapper').html(`<p class="my-2 text-danger"><span class="bg-error p-2"><b>${username}</b> already taken :( try another one </span></p>`)
-        }
-        else {
-          $('#message-wrapper').html(`<p class="my-2 text-success"><span class="bg-correct p-2"><b>${username}</b> is valid </span></p>`)
+          $('#message-wrapper').html(`
+            <p class="my-2" style="margin-top: 0.5rem;">
+              <small style="color: var(--success) !important;">
+                <i class="fas fa-check-circle me-1"></i>
+                <b>${username}</b> is registered
+              </small>
+            </p>
+          `);
+        } else {
+          $('#message-wrapper').html(`
+            <p class="my-2" style="margin-top: 0.5rem;">
+              <small style="color: var(--warning) !important;">
+                <i class="fas fa-info-circle me-1"></i>
+                <b>${username}</b> not found in our records
+              </small>
+            </p>
+          `);
         }
       }
+    });
+  });
 
-    })
-  })
+  // Clear validation message when typing in password field
+  $('#password_id').focus(function() {
+    $('#message-wrapper').html('');
+  });
 </script>
 {% endblock %}
