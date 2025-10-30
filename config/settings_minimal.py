@@ -143,9 +143,10 @@ if DATABASE_URL:
     # Add database-specific options
     engine = DATABASES["default"]["ENGINE"]
     if "postgresql" in engine or "psycopg2" in engine:
-        # PostgreSQL configuration
+        # PostgreSQL configuration - use prefer for Render compatibility
         DATABASES["default"]["OPTIONS"] = {
-            "sslmode": "require",
+            "sslmode": "prefer",
+            "connect_timeout": 10,
         }
         print(f"✓ Using PostgreSQL database: {DATABASES['default']['NAME']}", file=sys.stderr)
     elif "mysql" in engine:
