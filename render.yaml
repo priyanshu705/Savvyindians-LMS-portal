@@ -16,20 +16,20 @@ services:
       echo "🔄 Collecting static files..."
       python manage.py collectstatic --noinput --clear
       echo "✓ Static files collected!"
-      echo "🔐 Ensuring superuser exists..."
-      python manage.py ensure_superuser
-      echo "✓ Superuser check complete!"
+      echo "🔐 Creating/checking superuser..."
+      python manage.py create_admin
+      echo "✓ Superuser ready!"
       echo "🚀 Starting Gunicorn server..."
       gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
     # Run database migrations and collectstatic as a release step so
     # the staticfiles manifest is created and migrations run before the
     # web service starts. `DJANGO_SETTINGS_MODULE` is provided in envVars.
     releaseCommand: |
-      echo "Running release: migrate, collectstatic, and ensure superuser"
+      echo "Running release: migrate, collectstatic, and create admin"
       echo "DATABASE_URL check: ${DATABASE_URL:0:20}..."
       python manage.py migrate --noinput
       python manage.py collectstatic --noinput --clear
-      python manage.py ensure_superuser
+      python manage.py create_admin
       echo "Release command completed successfully"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
