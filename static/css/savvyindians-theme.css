@@ -256,11 +256,21 @@ textarea::placeholder {
 
 .form-label,
 label {
-    color: #000000 !important;
+    color: var(--text-primary) !important;
     font-weight: 600 !important;
     margin-bottom: 0.5rem !important;
     display: block !important;
     font-size: 14px !important;
+}
+
+/* Labels on white/light backgrounds should be dark */
+.bg-white .form-label,
+.bg-white label,
+.bg-light .form-label,
+.bg-light label,
+.card.bg-white .form-label,
+.card.bg-white label {
+    color: #000000 !important;
 }
 
 /* Form text and help text */
@@ -1163,4 +1173,77 @@ h1, h2, h3, h4, h5, h6 {
 .empty-state-text {
     color: var(--text-secondary) !important;
     font-size: 0.9rem;
+}
+
+/* ========================================
+   FORM VISIBILITY FIX
+   Force input fields to always be readable
+   ======================================== */
+   
+/* Ensure all text inputs have white background and dark text */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea,
+select,
+.form-control,
+.form-select {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+/* Ensure focused inputs remain readable */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+textarea:focus,
+select:focus,
+.form-control:focus,
+.form-select:focus {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+/* Autocomplete/autofill states */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #000000 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* Django form error styling */
+.errorlist {
+    color: var(--danger) !important;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+.errorlist li {
+    color: var(--danger) !important;
 }
