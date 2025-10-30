@@ -21,42 +21,91 @@
                     {% csrf_token %}
 
                     <div class="form-group-modern">
-                        <label class="form-label-modern" for="id_login">{% trans 'Email or Username' %}</label>
-                        {{ form.login }}
+                        <label class="form-label-modern" for="id_login" style="color: var(--primary-gold) !important; text-transform: uppercase; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem; display: block;">
+                            {% trans 'EMAIL OR USERNAME' %}
+                        </label>
+                        <input type="text" 
+                               name="login" 
+                               id="id_login" 
+                               class="form-control" 
+                               placeholder="{% trans 'Enter your email or username' %}"
+                               style="background: #ffffff !important; color: #000000 !important; border: 2px solid var(--border-color) !important; border-radius: 12px; padding: 1rem 1.5rem; font-size: 1rem; width: 100%;"
+                               required>
                         {% if form.login.errors %}
-                            <div class="invalid-feedback d-block">{{ form.login.errors.0 }}</div>
+                            <div class="invalid-feedback d-block" style="color: var(--danger) !important; margin-top: 0.5rem;">
+                                {{ form.login.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
 
                     <div class="form-group-modern">
-                        <label class="form-label-modern" for="id_password">{% trans 'Password' %}</label>
-                        {{ form.password }}
+                        <label class="form-label-modern" for="id_password" style="color: var(--primary-gold) !important; text-transform: uppercase; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem; display: block;">
+                            {% trans 'PASSWORD' %}
+                        </label>
+                        <input type="password" 
+                               name="password" 
+                               id="id_password" 
+                               class="form-control" 
+                               placeholder="{% trans 'Enter your password' %}"
+                               style="background: #ffffff !important; color: #000000 !important; border: 2px solid var(--border-color) !important; border-radius: 12px; padding: 1rem 1.5rem; font-size: 1rem; width: 100%;"
+                               required>
                         {% if form.password.errors %}
-                            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+                            <div class="invalid-feedback d-block" style="color: var(--danger) !important; margin-top: 0.5rem;">
+                                {{ form.password.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            {{ form.remember }} <label for="id_remember" class="text-muted">{% trans 'Remember me' %}</label>
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   name="remember" 
+                                   id="id_remember" 
+                                   class="form-check-input"
+                                   style="background-color: #ffffff !important; border: 2px solid var(--border-color) !important; width: 18px; height: 18px;">
+                            <label for="id_remember" class="form-check-label" style="color: var(--text-secondary) !important; margin-left: 0.5rem; font-size: 0.95rem;">
+                                {% trans 'Remember me' %}
+                            </label>
                         </div>
                         <div>
-                            <a href="{% url 'password_reset' %}" class="text-gold">{% trans 'Forgot password?' %}</a>
+                            <a href="{% url 'password_reset' %}" class="text-gold" style="color: var(--primary-gold) !important; text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+                                {% trans 'Forgot password?' %}
+                            </a>
                         </div>
                     </div>
 
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger mb-3">{{ form.non_field_errors.0 }}</div>
+                        <div class="alert alert-danger mb-3" style="background: rgba(220, 53, 69, 0.1) !important; border: 1px solid var(--danger) !important; border-radius: 8px; padding: 0.75rem;">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span style="color: var(--danger) !important;">{{ form.non_field_errors.0 }}</span>
+                        </div>
                     {% endif %}
 
-                    <button type="submit" class="btn-modern-gold w-100 mb-3">{% trans 'Sign In' %}</button>
+                    <button type="submit" 
+                            class="w-100 mb-3" 
+                            id="signin-btn"
+                            style="background: var(--primary-gold) !important; border: 2px solid var(--primary-gold) !important; color: var(--primary-black) !important; font-weight: 700; padding: 1rem 1.5rem; border-radius: 12px; font-size: 16px; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer;">
+                        <i class="fas fa-sign-in-alt me-2"></i>{% trans 'SIGN IN' %}
+                    </button>
 
-                    <div class="text-center mb-2 text-muted">{% trans 'or continue with' %}</div>
+                    <div class="text-center mb-3" style="color: var(--text-secondary) !important; font-size: 0.9rem;">
+                        {% trans 'or continue with' %}
+                    </div>
 
-                    <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn-outline-modern w-100 mb-2 text-center d-inline-block">{% trans 'Continue with Google' %}</a>
+                    <a href="{% provider_login_url 'google' method='oauth2' %}" 
+                       class="w-100 mb-2 text-center d-inline-block" 
+                       style="background: transparent !important; border: 2px solid var(--primary-gold) !important; color: var(--primary-gold) !important; font-weight: 600; padding: 0.875rem 1.5rem; border-radius: 12px; text-decoration: none; display: block; transition: all 0.3s ease;">
+                        <i class="fab fa-google me-2"></i>{% trans 'Continue with Google' %}
+                    </a>
 
-                    <div class="text-center mt-3">
-                        <p class="text-muted">{% trans "Don't have an account?" %} <a href="{% url 'student_register' %}" class="text-gold">{% trans 'Register here' %}</a></p>
+                    <div class="text-center mt-4">
+                        <p style="color: var(--text-secondary) !important; margin: 0; font-size: 0.95rem;">
+                            {% trans "Don't have an account?" %} 
+                            <a href="{% url 'student_register' %}" 
+                               style="color: var(--primary-gold) !important; text-decoration: none; font-weight: 700; margin-left: 0.25rem;">
+                                {% trans 'Register here' %}
+                            </a>
+                        </p>
                     </div>
                 </form>
             </div>
@@ -65,3 +114,44 @@
 </div>
 
 {% endblock content %}
+
+{% block extra_js %}
+<script>
+    // Form submit handler with loading state
+    document.getElementById('student-login-modern').addEventListener('submit', function() {
+        const btn = document.getElementById('signin-btn');
+        btn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <i class="fas fa-sign-in-alt me-2"></i>Signing you in...
+        `;
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+    });
+
+    // Enhance button hover effects
+    const signinBtn = document.getElementById('signin-btn');
+    signinBtn.addEventListener('mouseenter', function() {
+        if (!this.disabled) {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 10px 30px rgba(255, 215, 0, 0.3)';
+        }
+    });
+    signinBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = 'none';
+    });
+
+    // Input focus effects
+    const inputs = document.querySelectorAll('#student-login-modern input[type="text"], #student-login-modern input[type="password"]');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.borderColor = 'var(--primary-gold)';
+            this.style.boxShadow = '0 0 0 3px rgba(255, 215, 0, 0.1)';
+        });
+        input.addEventListener('blur', function() {
+            this.style.borderColor = 'var(--border-color)';
+            this.style.boxShadow = 'none';
+        });
+    });
+</script>
+{% endblock extra_js %}
