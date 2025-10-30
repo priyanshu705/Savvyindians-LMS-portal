@@ -1,0 +1,18 @@
+# Railway/Render Deployment Requirements (PostgreSQL)
+# Use this for cloud deployments with PostgreSQL
+
+django==4.2.16
+python-decouple==3.8
+whitenoise==6.6.0
+django-allauth==0.57.0
+dj-database-url==2.1.0
+psycopg2-binary==2.9.9
+Pillow==11.3.0
+gunicorn==21.2.0
+django-crispy-forms==2.1
+crispy-bootstrap5==2023.10
+django-filter==23.3
+django-model-utils==4.3.1
+PyJWT==2.8.0
+setuptools>=68.0.0
+reportlab==3.6.12
