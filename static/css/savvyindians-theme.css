@@ -293,36 +293,68 @@ small {
     padding: 0.75rem 1rem !important;
 }
 
-/* Select dropdowns */
+/* Select dropdowns - FORCE WHITE BACKGROUND */
 .form-select,
-select {
+select,
+select.form-control,
+.form-control[type="select"],
+input[type="select"] {
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
     background-repeat: no-repeat !important;
     background-position: right 0.75rem center !important;
     background-size: 16px 12px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Override any dark/black backgrounds on select elements */
+select[style*="background: black"],
+select[style*="background-color: black"],
+select[style*="background: #000"],
+.form-select[style*="background: black"],
+.form-select[style*="background-color: black"] {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .form-select:focus,
 select:focus {
+    background: #ffffff !important;
     background-color: #ffffff !important;
     color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
     border-color: var(--primary-gold) !important;
 }
 
 /* Select options - ensure dropdown items are visible */
 .form-select option,
-select option {
+select option,
+option {
     background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
     padding: 0.5rem !important;
 }
 
 .form-select option:hover,
-select option:hover {
+select option:hover,
+option:hover {
     background: #f0f0f0 !important;
+    background-color: #f0f0f0 !important;
+    color: #000000 !important;
+}
+
+.form-select option:checked,
+select option:checked,
+option:checked {
+    background: var(--primary-gold) !important;
     color: #000000 !important;
 }
 
