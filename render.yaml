@@ -1,11 +1,10 @@
 services:
   - type: web
     name: savvyindians-lms
-    env: python
-    region: oregon
-    plan: free
+    runtime: python
     buildCommand: |
-      pip install --upgrade pip
+      python --version
+      pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
     # Use Gunicorn to serve the Django WSGI application. Bind to the port
     # provided by Render via the $PORT env var and use a few workers.
