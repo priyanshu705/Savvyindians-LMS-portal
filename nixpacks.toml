@@ -3,14 +3,15 @@ nixPkgs = ["python310", "postgresql"]
 
 [phases.install]
 cmds = [
-  "pip install --upgrade pip",
-  "pip install -r requirements-railway.txt"
+  "python -m venv --copies /opt/venv",
+  ". /opt/venv/bin/activate && pip install --upgrade pip",
+  ". /opt/venv/bin/activate && pip install -r requirements-railway.txt"
 ]
 
 [phases.build]
 cmds = [
-  "python manage.py collectstatic --noinput"
+  ". /opt/venv/bin/activate && python manage.py collectstatic --noinput"
 ]
 
 [start]
-cmd = "python manage.py migrate && python manage.py ensure_superuser && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4"
+cmd = ". /opt/venv/bin/activate && python manage.py migrate && python manage.py ensure_superuser && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4"
