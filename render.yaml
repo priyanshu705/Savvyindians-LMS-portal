@@ -2,10 +2,10 @@ services:
   - type: web
     name: savvyindians-lms
     env: python
+    region: oregon
+    plan: free
     buildCommand: |
       pip install --upgrade pip
-      python -m pip show setuptools || true
-      python -m pip show gunicorn || true
       pip install -r requirements.txt
     # Use Gunicorn to serve the Django WSGI application. Bind to the port
     # provided by Render via the $PORT env var and use a few workers.
@@ -36,7 +36,7 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_minimal
       - key: PYTHON_VERSION
-        value: 3.10.12
+        value: 3.10.14
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
