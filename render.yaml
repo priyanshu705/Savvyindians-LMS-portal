@@ -43,5 +43,5 @@ services:
         value: "False"
       - key: WEB_CONCURRENCY
         value: 4
-      # Add your external PostgreSQL DATABASE_URL in Render Dashboard
-      # Example from Neon: postgresql://user:pass@host.neon.tech/dbname?sslmode=require
+      - key: DATABASE_URL
+        sync: false
