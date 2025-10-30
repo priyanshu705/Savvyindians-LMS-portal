@@ -199,9 +199,17 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Use WhiteNoise WITHOUT manifest to avoid build errors
-# This will still serve static files efficiently
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+# WhiteNoise configuration for Render
+# Use basic storage without compression or manifest to avoid database queries
+if os.environ.get('RENDER'):
+    # On Render, use WhiteNoise but disable manifest/compression to avoid DB issues
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
+else:
+    # Local development
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Media files
 MEDIA_URL = "/media/"
