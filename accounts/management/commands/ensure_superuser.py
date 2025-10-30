@@ -13,9 +13,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Get credentials from environment or use defaults
-        username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
-        email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@savvyindians.com')
-        password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin@SavvyIndians2025!')
+        username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'SavvyIndians')
+        email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'gy068644@gmail.com')
+        password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'Savvy@2024#Admin')
         
         self.stdout.write(self.style.SUCCESS(f'🔍 Checking for superuser: {username}'))
         

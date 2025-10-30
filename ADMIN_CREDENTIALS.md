@@ -53,7 +53,7 @@ DJANGO_SUPERUSER_PASSWORD=your_secure_password
 
 ## 🚀 How It Works
 
-The superuser is automatically created during deployment by the `create_admin` management command. This command:
+The superuser is automatically created during deployment by the `ensure_superuser` management command. This command:
 
 1. Checks if a superuser already exists
 2. If not, creates one with the credentials above
