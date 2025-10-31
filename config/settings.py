@@ -159,17 +159,23 @@ DATABASE_URL = config("DATABASE_URL", default=None)
 
 if DATABASE_URL:
     # Production: Use PostgreSQL from Render
-    import dj_database_url
-    import os
+    # Manual configuration to handle SSL properly
+    import urllib.parse as urlparse
     
-    # Parse DATABASE_URL - dj_database_url automatically handles SSL for Render
+    url = urlparse.urlparse(DATABASE_URL)
+    
     DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": url.path[1:],  # Remove leading slash
+            "USER": url.username,
+            "PASSWORD": url.password,
+            "HOST": url.hostname,
+            "PORT": url.port or 5432,
+            "CONN_MAX_AGE": 0,  # Disable connection pooling
+            "OPTIONS": {},  # No SSL options - let psycopg2 handle it automatically
+        }
     }
-    
-    # Ensure fresh connections (no pooling)
-    DATABASES["default"]["CONN_MAX_AGE"] = 0
-    DATABASES["default"]["ATOMIC_REQUESTS"] = True
 else:
     # Local Development: Use MySQL
     DATABASES = {
