@@ -33,5 +33,9 @@ if os.environ.get('RENDER'):
         print("🔄 Collecting static files...", file=sys.stderr, flush=True)
         call_command('collectstatic', '--noinput', '--clear', verbosity=1)
         print("✓ Static files collected!", file=sys.stderr, flush=True)
+        
+        print("🔐 Creating/ensuring superuser exists...", file=sys.stderr, flush=True)
+        call_command('ensure_superuser')
+        print("✓ Superuser check completed!", file=sys.stderr, flush=True)
     except Exception as e:
-        print(f"⚠ Warning: Could not run migrations: {e}", file=sys.stderr, flush=True)
+        print(f"⚠ Warning: Startup tasks error: {e}", file=sys.stderr, flush=True)

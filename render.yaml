@@ -6,9 +6,8 @@ services:
       python --version
       pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
-    # Run startup tasks then start Gunicorn
-    startCommand: |
-      python scripts/startup.py && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
+    # Start Gunicorn (wsgi.py handles migrations, collectstatic, and superuser)
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_minimal
