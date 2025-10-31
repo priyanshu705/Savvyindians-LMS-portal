@@ -159,7 +159,7 @@ DATABASE_URL = config("DATABASE_URL", default=None)
 
 if DATABASE_URL:
     # Production: Use PostgreSQL from Render
-    # Manual configuration to handle SSL properly
+    # Manual configuration with explicit SSL handling
     import urllib.parse as urlparse
     
     url = urlparse.urlparse(DATABASE_URL)
@@ -172,8 +172,12 @@ if DATABASE_URL:
             "PASSWORD": url.password,
             "HOST": url.hostname,
             "PORT": url.port or 5432,
-            "CONN_MAX_AGE": 0,  # Disable connection pooling
-            "OPTIONS": {},  # No SSL options - let psycopg2 handle it automatically
+            "CONN_MAX_AGE": 0,  # Disable connection pooling to avoid SSL EOF errors
+            "OPTIONS": {
+                # Explicitly configure SSL for Render PostgreSQL
+                "sslmode": "require",  # Force SSL connection
+                "connect_timeout": 10,  # 10 second timeout
+            },
         }
     }
 else:
