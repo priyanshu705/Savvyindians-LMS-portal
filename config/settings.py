@@ -165,13 +165,15 @@ if DATABASE_URL:
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=True,
         )
     }
     # Fix SSL connection issues with Render PostgreSQL
+    # Use 'prefer' mode instead of 'require' to avoid SSL handshake errors
     DATABASES["default"]["OPTIONS"] = {
-        "sslmode": "require",
+        "sslmode": "prefer",
     }
+    # Disable persistent connections if SSL issues persist
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
 else:
     # Local Development: Use MySQL
     DATABASES = {
