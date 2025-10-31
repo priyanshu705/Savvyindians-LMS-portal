@@ -563,7 +563,7 @@ def student_login(request):
                 request.session.set_expiry(60 * 60 * 8)  # 8 hours
 
             login(request, user)
-            messages.success(request, _("Welcome back, {}!".format(user.get_full_name)))
+            messages.success(request, _("Welcome back, {}!".format(user.get_full_name())))
 
             # Redirect to next URL or default student dashboard
             next_url = request.GET.get("next")
@@ -572,7 +572,21 @@ def student_login(request):
             else:
                 return redirect("user_course_list")
         else:
-            messages.error(request, _("Please correct the errors below."))
+            # Show specific error messages
+            if form.errors:
+                # Show field-specific errors
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{error}")
+            
+            # Show non-field errors (from clean() method)
+            if form.non_field_errors():
+                for error in form.non_field_errors():
+                    messages.error(request, error)
+            
+            # If no specific errors shown, show generic message
+            if not form.errors and not form.non_field_errors():
+                messages.error(request, _("Login failed. Please check your email and password."))
     else:
         form = StudentLoginForm()
 

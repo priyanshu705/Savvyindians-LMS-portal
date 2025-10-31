@@ -645,15 +645,24 @@ class StudentLoginForm(AuthenticationForm):
             except Exception as e:
                 # Log the actual error for debugging
                 import logging
+                import traceback
 
                 logger = logging.getLogger(__name__)
                 logger.error(f"Login error for {username_or_phone}: {str(e)}")
+                logger.error(f"Traceback: {traceback.format_exc()}")
 
-                # Show user-friendly error with hint about the actual problem
-                raise forms.ValidationError(
-                    _("Login failed. Error: %(error)s") % {"error": str(e)},
-                    code="login_error",
-                )
+                # Show user-friendly error with detailed info for debugging
+                error_msg = str(e)
+                if "does not exist" in error_msg.lower():
+                    raise forms.ValidationError(
+                        _("Account not found. Please register first."),
+                        code="user_not_found",
+                    )
+                else:
+                    raise forms.ValidationError(
+                        _("Login failed: %(error)s. Please try again or contact support.") % {"error": error_msg[:200]},
+                        code="login_error",
+                    )
 
         return self.cleaned_data
 
