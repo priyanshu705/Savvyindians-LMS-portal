@@ -6,31 +6,10 @@ services:
       python --version
       pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
-    # Use Gunicorn to serve the Django WSGI application. Bind to the port
-    # provided by Render via the $PORT env var and use a few workers.
-    # Run migrations and collectstatic BEFORE starting gunicorn
+    # Run startup tasks then start Gunicorn
     startCommand: |
-      echo "🔄 Running migrations on Render startup..."
-      python manage.py migrate --noinput
-      echo "✓ Migrations completed successfully!"
-      echo "🔄 Collecting static files..."
-      python manage.py collectstatic --noinput --clear
-      echo "✓ Static files collected!"
-      echo "🔐 Ensuring superuser exists..."
-      python manage.py ensure_superuser
-      echo "✓ Superuser check complete!"
-      echo "🚀 Starting Gunicorn server..."
+      bash scripts/render_startup.sh
       gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
-    # Run database migrations and collectstatic as a release step so
-    # the staticfiles manifest is created and migrations run before the
-    # web service starts. `DJANGO_SETTINGS_MODULE` is provided in envVars.
-    releaseCommand: |
-      echo "Running release: migrate, collectstatic, and ensure superuser"
-      echo "DATABASE_URL check: ${DATABASE_URL:0:20}..."
-      python manage.py migrate --noinput
-      python manage.py collectstatic --noinput --clear
-      python manage.py ensure_superuser
-      echo "Release command completed successfully"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_minimal
