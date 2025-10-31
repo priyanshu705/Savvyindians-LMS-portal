@@ -174,8 +174,8 @@ if DATABASE_URL:
             "PORT": url.port or 5432,
             "CONN_MAX_AGE": 0,  # Disable connection pooling to avoid SSL EOF errors
             "OPTIONS": {
-                # Explicitly configure SSL for Render PostgreSQL
-                "sslmode": "require",  # Force SSL connection
+                # Try permissive SSL mode for Render PostgreSQL
+                "sslmode": "allow",  # Allow SSL but don't require it
                 "connect_timeout": 10,  # 10 second timeout
             },
         }
