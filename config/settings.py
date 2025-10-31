@@ -172,16 +172,11 @@ if DATABASE_URL:
             "PASSWORD": url.password,
             "HOST": url.hostname,
             "PORT": url.port or 5432,
-            "CONN_MAX_AGE": 0,  # Disable connection pooling to avoid SSL EOF errors
-            "CONN_HEALTH_CHECKS": False,  # Disable health checks
+            "CONN_MAX_AGE": 600,  # Connection pooling (10 minutes)
             "OPTIONS": {
-                # Disable SSL completely - Render internal network doesn't need it
-                "sslmode": "disable",  # No SSL
-                "connect_timeout": 10,  # 10 second timeout
-                "keepalives": 1,
-                "keepalives_idle": 30,
-                "keepalives_interval": 10,
-                "keepalives_count": 5,
+                # Supabase requires SSL in prefer mode
+                "sslmode": "prefer",  # Prefer SSL connection
+                "connect_timeout": 30,  # 30 second timeout for Supabase
             },
         }
     }
