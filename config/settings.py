@@ -163,26 +163,11 @@ if DATABASE_URL:
     
     # Parse DATABASE_URL and configure for Render's PostgreSQL
     DATABASES = {
-        "default": dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=0,  # Disable connection pooling to prevent SSL session reuse
-            conn_health_checks=False,  # Disable health checks
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=0,  # Disable connection pooling
         )
     }
-    
-    # Critical: Render PostgreSQL SSL Configuration
-    # The 'disable' mode bypasses SSL entirely to avoid handshake errors
-    # Note: This is acceptable on Render's internal network which is already secure
-    DATABASES["default"]["OPTIONS"] = {
-        "sslmode": "disable",  # Completely disable SSL
-        "connect_timeout": 10,
-    }
-    
-    # Alternative: If SSL is required, uncomment this and comment above
-    # DATABASES["default"]["OPTIONS"] = {
-    #     "sslmode": "require",
-    #     "sslrootcert": "/etc/ssl/certs/ca-certificates.crt",
-    # }
 else:
     # Local Development: Use MySQL
     DATABASES = {
