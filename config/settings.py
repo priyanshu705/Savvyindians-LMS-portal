@@ -160,14 +160,16 @@ DATABASE_URL = config("DATABASE_URL", default=None)
 if DATABASE_URL:
     # Production: Use PostgreSQL from Render
     import dj_database_url
+    import os
     
-    # Parse DATABASE_URL and configure for Render's PostgreSQL
+    # Parse DATABASE_URL - dj_database_url automatically handles SSL for Render
     DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=0,  # Disable connection pooling
-        )
+        "default": dj_database_url.parse(DATABASE_URL)
     }
+    
+    # Ensure fresh connections (no pooling)
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True
 else:
     # Local Development: Use MySQL
     DATABASES = {
