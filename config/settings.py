@@ -174,9 +174,9 @@ if DATABASE_URL:
             "PORT": url.port or 5432,
             "CONN_MAX_AGE": 600,  # Connection pooling (10 minutes)
             "OPTIONS": {
-                # Supabase requires SSL in prefer mode
-                "sslmode": "prefer",  # Prefer SSL connection
-                "connect_timeout": 30,  # 30 second timeout for Supabase
+                # DISABLE SSL - Supabase pooler has SSL compatibility issues with psycopg2
+                "sslmode": "disable",  # No SSL
+                "connect_timeout": 30,  # 30 second timeout
             },
         }
     }
