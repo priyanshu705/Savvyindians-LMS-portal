@@ -173,10 +173,15 @@ if DATABASE_URL:
             "HOST": url.hostname,
             "PORT": url.port or 5432,
             "CONN_MAX_AGE": 0,  # Disable connection pooling to avoid SSL EOF errors
+            "CONN_HEALTH_CHECKS": False,  # Disable health checks
             "OPTIONS": {
-                # Try permissive SSL mode for Render PostgreSQL
-                "sslmode": "allow",  # Allow SSL but don't require it
+                # Disable SSL completely - Render internal network doesn't need it
+                "sslmode": "disable",  # No SSL
                 "connect_timeout": 10,  # 10 second timeout
+                "keepalives": 1,
+                "keepalives_idle": 30,
+                "keepalives_interval": 10,
+                "keepalives_count": 5,
             },
         }
     }
