@@ -809,7 +809,6 @@ class StudentRegistrationForm(UserCreationForm):
             raise forms.ValidationError(_("This email address is already registered."))
         return email
 
-    @transaction.atomic
     def save(self, commit=True):
         # Create user object without saving to database yet
         user = User()

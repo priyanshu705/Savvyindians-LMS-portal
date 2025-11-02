@@ -666,9 +666,15 @@ def student_logout(request):
         if request.method == "GET":
             return render(request, "accounts/logout_confirm.html", context)
 
-        # If POST request, perform logout
-        elif request.method == "POST":
-            # Clear all sessions and logout
+                    # Import transaction for manual control
+                    from django.db import transaction
+            
+                    # Save user in a transaction and ensure it commits
+                    with transaction.atomic():
+                        user = form.save(commit=True)
+            
+                    # Transaction is complete, user is now in database
+                    # Refresh from database before login
             logout(request)
 
             # Add appropriate success message
