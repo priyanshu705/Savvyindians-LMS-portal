@@ -637,57 +637,60 @@ def student_register(request):
 
 
 def student_logout(request):
-    """Enhanced logout view for students with OAuth support"""
-    if request.user.is_authenticated:
-        user_name = (
-            request.user.get_full_name
-            if hasattr(request.user, "get_full_name")
-            else str(request.user)
-        )
+    """Enhanced logout view for students with OAuth support.
+    - GET: Show confirmation page
+    - POST: Perform logout and redirect
+    """
+    if not request.user.is_authenticated:
+        # Already logged out – go to home/login
+        return redirect("home")
 
-        # Check if user has OAuth social accounts
-        social_accounts = (
-            SocialAccount.objects.filter(user=request.user) if SocialAccount else []
-        )
-        has_google_account = (
-            social_accounts.filter(provider="google").exists()
-            if SocialAccount
-            else False
-        )
+    user_name = (
+        request.user.get_full_name
+        if hasattr(request.user, "get_full_name")
+        else str(request.user)
+    )
 
-        # Store user info for logout confirmation page
-        context = {
-            "user_name": user_name,
-            "has_google_account": has_google_account,
-            "social_accounts": social_accounts,
-        }
+    # Check if user has OAuth social accounts
+    social_accounts = (
+        SocialAccount.objects.filter(user=request.user) if SocialAccount else []
+    )
+    has_google_account = (
+        social_accounts.filter(provider="google").exists()
+        if SocialAccount
+        else False
+    )
 
-        # If GET request, show logout confirmation page
-        if request.method == "GET":
-            return render(request, "accounts/logout_confirm.html", context)
-            logout(request)
+    if request.method == "POST":
+        # Actually log the user out
+        logout(request)
 
-            # Add appropriate success message
-            if has_google_account:
-                messages.success(
-                    request,
-                    _(
-                        "You have been logged out successfully from both your student account and Google. See you next time, {}!"
-                    ).format(user_name),
-                )
-            else:
-                messages.success(
-                    request,
-                    _(
-                        "You have been logged out successfully. See you next time, {}!"
-                    ).format(user_name),
-                )
+        # Add appropriate success message
+        if has_google_account:
+            messages.success(
+                request,
+                _(
+                    "You have been logged out successfully from both your student account and Google. See you next time, {}!"
+                ).format(user_name),
+            )
+        else:
+            messages.success(
+                request,
+                _(
+                    "You have been logged out successfully. See you next time, {}!"
+                ).format(user_name),
+            )
 
-            # Redirect to home page after logout
-            return redirect("home")
+        # Redirect to login page for students
+        return redirect("student_login")
 
-    # If user is not authenticated, redirect to home page
-    return redirect("home")
+    # GET: Show confirmation screen
+    context = {
+        "user_name": user_name,
+        "has_google_account": has_google_account,
+        "social_accounts": social_accounts,
+    }
+    return render(request, "accounts/logout_confirm.html", context)
 
 
 @login_required
