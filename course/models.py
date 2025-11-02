@@ -427,8 +427,9 @@ class UploadVideo(models.Model):
 
             video_id = extract_youtube_video_id(self.youtube_url)
             if video_id:
-                # Use embed format with security parameters
-                return f"https://www.youtube.com/embed/{video_id}?rel=0&modestbranding=1&showinfo=0&fs=0&disablekb=1"
+                # Use embed format with compatible parameters
+                # Removed fs=0 and disablekb=1 to fix Error 153
+                return f"https://www.youtube.com/embed/{video_id}?rel=0&modestbranding=1"
         return None
 
     def get_youtube_video_id(self):
