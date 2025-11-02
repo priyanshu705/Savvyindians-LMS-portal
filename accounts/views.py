@@ -563,7 +563,7 @@ def student_login(request):
                 request.session.set_expiry(60 * 60 * 8)  # 8 hours
 
             login(request, user)
-            messages.success(request, _("Welcome back, {}!".format(user.get_full_name())))
+            messages.success(request, _("Welcome back, {}!".format(user.get_full_name)))
 
             # Redirect to next URL or default student dashboard
             next_url = request.GET.get("next")
@@ -620,7 +620,7 @@ def student_register(request):
                 request,
                 _(
                     "Welcome to the bootcamp, {}! Your account has been created successfully."
-                ).format(user.get_full_name() or user.email),
+                    ).format(user.get_full_name or user.email),
             )
             # Redirect to course list/dashboard after successful registration
             return redirect("user_course_list")
