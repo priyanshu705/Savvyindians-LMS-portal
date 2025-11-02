@@ -67,13 +67,14 @@
 <div class="col-md-10 mx-auto d-block">
     <div class="video-container video-download-protection">
         {% if video.is_youtube_video and video.youtube_url %}
-            <!-- YouTube Video Embed (compatible permissions) -->
+            <!-- YouTube Video Embed (Error 153 fixed: no sandbox, no fs=0) -->
             <iframe 
                 src="{{ video.get_youtube_embed_url }}"
                 title="{{ video.title }}"
-                style="border: none;"
+                frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
                 loading="lazy">
             </iframe>
         {% elif video.video %}

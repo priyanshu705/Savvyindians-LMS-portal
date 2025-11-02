@@ -81,12 +81,10 @@ def get_youtube_embed_url(video_id, autoplay=False, controls=True, modestbrandin
         params.append("modestbranding=1")
 
     # Additional security parameters
+    # Removed fs=0 and disablekb=1 to fix YouTube Error 153
     params.extend(
         [
             "rel=0",  # Don't show related videos
-            "showinfo=0",  # Don't show video title and uploader
-            "fs=0",  # Disable fullscreen button
-            "disablekb=1",  # Disable keyboard controls
             "iv_load_policy=3",  # Hide video annotations
         ]
     )
