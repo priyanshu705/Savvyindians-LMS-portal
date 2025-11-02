@@ -23,13 +23,7 @@
                     <div class="user-info mb-4">
                         <div class="user-card">
                             <div class="user-avatar">
-                                {% if user.picture %}
-                                    <img src="{{ user.picture.url }}" alt="User profile" class="avatar-img">
-                                {% else %}
-                                    <div class="avatar-placeholder">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                {% endif %}
+                                <img src="{{ user.get_picture }}" alt="User profile" class="avatar-img">
                             </div>
                             <div class="user-details">
                                 <h4>{{ user_name }}</h4>

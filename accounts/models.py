@@ -137,14 +137,22 @@ class User(AbstractUser):
         return role
 
     def get_picture(self):
+        """Return a safe URL for the user's avatar.
+        Prefer the uploaded picture if it exists; otherwise return a static fallback
+        that is always available in collected static files.
+        """
+        static_fallback = settings.STATIC_URL + "img/savvyindians-logo.png"
         try:
-            # If picture is not set or file is missing, return default
-            if not self.picture or not self.picture.storage.exists(self.picture.name):
-                return settings.MEDIA_URL + "default.png"
+            # If picture is not set or the file is missing, return static fallback
+            if not self.picture or not self.picture.name:
+                return static_fallback
+            if not self.picture.storage.exists(self.picture.name):
+                return static_fallback
+            # Use the uploaded picture URL
             return self.picture.url
         except Exception:
-            # Return default picture on any error (missing file, storage issues, etc.)
-            return settings.MEDIA_URL + "default.png"
+            # Return static fallback on any error (missing file, storage issues, etc.)
+            return static_fallback
 
     def get_absolute_url(self):
         return reverse("profile_single", kwargs={"id": self.id})

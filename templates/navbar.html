@@ -473,12 +473,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			{% include 'notifications/notification_dropdown.html' %}
 			<div class="dropdown user-dropdown">
 				<div class="avatar" data-bs-toggle="dropdown" aria-expanded="false">
-					<img src="{{ request.user.picture.url }}" alt="User Avatar">
+					<img src="{{ request.user.get_picture }}" alt="User Avatar">
 				</div>
 				<div class="dropdown-menu modern-dropdown" style="min-width: 16rem !important;">
 					<div class="dropdown-header-modern">
 						<div class="avatar avatar-md">
-							<img src="{{ request.user.picture.url }}" alt="User Avatar">
+							<img src="{{ request.user.get_picture }}" alt="User Avatar">
 						</div>
 						<p class="user-name">{{ request.user.get_full_name|default:request.user.username }}</p>
 						<p class="last-login">
