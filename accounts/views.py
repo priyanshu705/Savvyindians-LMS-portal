@@ -606,12 +606,12 @@ def student_register(request):
     if request.method == "POST":
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
-                # Save user with explicit commit to ensure database persistence
-                user = form.save(commit=True)
-            
-                # Refresh from database to ensure all fields are loaded
-                user.refresh_from_db()
-            
+            # Save user with explicit commit to ensure database persistence
+            user = form.save(commit=True)
+
+            # Refresh from database to ensure all fields are loaded
+            user.refresh_from_db()
+
             # Auto-login the user after successful registration
             from django.contrib.auth import login
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
@@ -665,16 +665,6 @@ def student_logout(request):
         # If GET request, show logout confirmation page
         if request.method == "GET":
             return render(request, "accounts/logout_confirm.html", context)
-
-                    # Import transaction for manual control
-                    from django.db import transaction
-            
-                    # Save user in a transaction and ensure it commits
-                    with transaction.atomic():
-                        user = form.save(commit=True)
-            
-                    # Transaction is complete, user is now in database
-                    # Refresh from database before login
             logout(request)
 
             # Add appropriate success message

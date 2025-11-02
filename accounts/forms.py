@@ -548,6 +548,9 @@ class StudentLoginForm(AuthenticationForm):
     )
 
     def clean(self):
+        import logging
+        logger = logging.getLogger(__name__)
+
         username_or_phone = self.cleaned_data.get("username")  # Can be email OR phone
         password = self.cleaned_data.get("password")
 
@@ -560,6 +563,7 @@ class StudentLoginForm(AuthenticationForm):
                 import re
 
                 if re.match(r"^[\d\s\+\-\(\)]+$", username_or_phone):
+                    logger.info("[StudentLogin] Attempt by phone: %s", username_or_phone)
                     # Looks like phone number - clean it (remove spaces, dashes, etc.)
                     cleaned_phone = re.sub(r"[\s\-\(\)]", "", username_or_phone)
 
@@ -571,6 +575,7 @@ class StudentLoginForm(AuthenticationForm):
                     ).first()
 
                     if not user:
+                        logger.warning("[StudentLogin] Phone not found: raw=%s cleaned=%s", username_or_phone, cleaned_phone)
                         raise forms.ValidationError(
                             _(
                                 "No account found with this phone number. Please check and try again."
@@ -579,9 +584,19 @@ class StudentLoginForm(AuthenticationForm):
                         )
                 else:
                     # Looks like email - case-insensitive search
-                    user = User.objects.filter(email__iexact=username_or_phone).first()
+                    logger.info("[StudentLogin] Attempt by email/username: %s", username_or_phone)
+                    user = User.objects.filter(email__iexact=(username_or_phone or "").strip()).first()
+                    logger.info("[StudentLogin] Email lookup exists=%s", bool(user))
+
+                    # Fallback to username match if email not found
+                    if not user:
+                        fallback_user = User.objects.filter(username__iexact=(username_or_phone or "").strip()).first()
+                        if fallback_user:
+                            logger.info("[StudentLogin] Fallback matched by username=%s", fallback_user.username)
+                            user = fallback_user
 
                     if not user:
+                        logger.warning("[StudentLogin] Email/Username not found: %s", username_or_phone)
                         raise forms.ValidationError(
                             _(
                                 "No account found with this email. Please register first or check your email address."
@@ -617,6 +632,7 @@ class StudentLoginForm(AuthenticationForm):
                         )
 
                 # Authenticate using the actual username (not email/phone!)
+                logger.info("[StudentLogin] Authenticating as username=%s", user.username)
                 self.user_cache = authenticate(
                     self.request,
                     username=user.username,  # Use the actual username from database
@@ -624,6 +640,7 @@ class StudentLoginForm(AuthenticationForm):
                 )
 
                 if self.user_cache is None:
+                    logger.warning("[StudentLogin] Invalid password for username=%s", user.username)
                     raise forms.ValidationError(
                         _(
                             "Invalid password. Please check your password and try again."
@@ -631,6 +648,7 @@ class StudentLoginForm(AuthenticationForm):
                         code="invalid_password",
                     )
                 else:
+                    logger.info("[StudentLogin] Authentication successful for username=%s", user.username)
                     self.confirm_login_allowed(self.user_cache)
 
             except forms.ValidationError:
@@ -810,6 +828,8 @@ class StudentRegistrationForm(UserCreationForm):
         return email
 
     def save(self, commit=True):
+        import logging
+        logger = logging.getLogger(__name__)
         # Create user object without saving to database yet
         user = User()
 
@@ -840,6 +860,10 @@ class StudentRegistrationForm(UserCreationForm):
         if commit:
             # Save the user with hashed password
             user.save()
+            try:
+                logger.info("[StudentRegister] Saved user id=%s email=%s username=%s is_student=%s", user.id, user.email, user.username, user.is_student)
+            except Exception:
+                pass
 
             # Create Student profile
             student = Student.objects.create(
@@ -848,5 +872,9 @@ class StudentRegistrationForm(UserCreationForm):
                 program=self.cleaned_data.get("program"),
             )
             student.save()
+            try:
+                logger.info("[StudentRegister] Created Student profile id=%s for user id=%s", student.id, user.id)
+            except Exception:
+                pass
 
         return user
