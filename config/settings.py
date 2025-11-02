@@ -158,8 +158,8 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASE_URL = config("DATABASE_URL", default=None)
 
 if DATABASE_URL:
-    # Production: Use PostgreSQL from Render
-    # Manual configuration with explicit SSL handling
+    # Production: Use PostgreSQL from Render (Supabase via PgBouncer)
+    # Manual configuration optimized for connection pooler
     import urllib.parse as urlparse
     
     url = urlparse.urlparse(DATABASE_URL)
@@ -172,11 +172,18 @@ if DATABASE_URL:
             "PASSWORD": url.password,
             "HOST": url.hostname,
             "PORT": url.port or 5432,
-            "CONN_MAX_AGE": 600,  # Connection pooling (10 minutes)
+            # CRITICAL: Set to 0 for PgBouncer compatibility
+            # PgBouncer doesn't support persistent connections well
+            "CONN_MAX_AGE": 0,  # Don't persist connections (required for pooler)
             "OPTIONS": {
-                # DISABLE SSL - Supabase pooler has SSL compatibility issues with psycopg2
-                "sslmode": "disable",  # No SSL
-                "connect_timeout": 30,  # 30 second timeout
+                # SSL configuration for Supabase
+                "sslmode": "require",  # Enable SSL for security
+                "connect_timeout": 10,  # Shorter timeout for pooler
+                # TCP keepalive settings to detect stale connections
+                "keepalives": 1,
+                "keepalives_idle": 30,
+                "keepalives_interval": 10,
+                "keepalives_count": 5,
             },
         }
     }

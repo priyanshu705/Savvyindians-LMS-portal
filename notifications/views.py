@@ -141,12 +141,25 @@ def mark_all_notifications_read(request):
 @require_GET
 def notification_count_api(request):
     """Get unread notification count for user"""
+    from django.db import connection
+    
+    try:
+        # Close stale connection before query to avoid EOF errors
+        connection.close_if_unusable_or_obsolete()
+        
+        unread_count = Notification.objects.filter(
+            recipient=request.user, is_read=False
+        ).count()
 
-    unread_count = Notification.objects.filter(
-        recipient=request.user, is_read=False
-    ).count()
-
-    return JsonResponse({"unread_count": unread_count})
+        return JsonResponse({"unread_count": unread_count})
+    except Exception as e:
+        # Log the error but return a safe response
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error fetching notification count: {e}")
+        
+        # Return 0 count to avoid breaking the UI
+        return JsonResponse({"unread_count": 0})
 
 
 @login_required
