@@ -67,12 +67,12 @@
 <div class="col-md-10 mx-auto d-block">
     <div class="video-container video-download-protection">
         {% if video.is_youtube_video and video.youtube_url %}
-            <!-- YouTube Video Embed with Download Protection -->
+            <!-- YouTube Video Embed (compatible permissions) -->
             <iframe 
                 src="{{ video.get_youtube_embed_url }}"
                 title="{{ video.title }}"
                 style="border: none;"
-                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
                 loading="lazy">
             </iframe>
@@ -397,17 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Additional protection for YouTube iframes
-    const iframe = videoContainer?.querySelector('iframe');
-    if (iframe) {
-        iframe.addEventListener('load', function() {
-            try {
-                iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-            } catch (e) {
-                console.log('Additional security measures applied');
-            }
-        });
-    }
+    // Note: Do not apply iframe sandbox to YouTube embeds; it can break the player (Error 153)
     
     // Initialize progress tracking only for students
     {% if request.user.is_student %}
