@@ -35,6 +35,11 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# Serve media files in production as a fallback (Render/Gunicorn doesn't serve MEDIA by default)
+# Note: For high-traffic production, move MEDIA to a CDN/S3. This is acceptable for MVP.
+if not settings.DEBUG and settings.MEDIA_URL and settings.MEDIA_ROOT:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
     # these url in browser to see how these error pages look like.
