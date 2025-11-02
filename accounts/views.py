@@ -606,7 +606,11 @@ def student_register(request):
     if request.method == "POST":
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+                # Save user with explicit commit to ensure database persistence
+                user = form.save(commit=True)
+            
+                # Refresh from database to ensure all fields are loaded
+                user.refresh_from_db()
             
             # Auto-login the user after successful registration
             from django.contrib.auth import login

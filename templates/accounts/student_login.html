@@ -21,19 +21,19 @@
                     {% csrf_token %}
 
                     <div class="form-group-modern">
-                        <label class="form-label-modern" for="id_username" style="color: var(--primary-gold) !important; text-transform: uppercase; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem; display: block;">
-                            {% trans 'EMAIL OR PHONE NUMBER' %}
+                        <label class="form-label-modern" for="id_login" style="color: var(--primary-gold) !important; text-transform: uppercase; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem; display: block;">
+                            {% trans 'EMAIL OR USERNAME' %}
                         </label>
                         <input type="text" 
-                               name="username" 
-                               id="id_username" 
+                               name="login" 
+                               id="id_login" 
                                class="form-control" 
-                               placeholder="{% trans 'Enter your email or phone number' %}"
+                               placeholder="{% trans 'Enter your email or username' %}"
                                style="background: #ffffff !important; color: #000000 !important; border: 2px solid var(--border-color) !important; border-radius: 12px; padding: 1rem 1.5rem; font-size: 1rem; width: 100%;"
                                required>
-                        {% if form.username.errors %}
+                        {% if form.login.errors %}
                             <div class="invalid-feedback d-block" style="color: var(--danger) !important; margin-top: 0.5rem;">
-                                {{ form.username.errors.0 }}
+                                {{ form.login.errors.0 }}
                             </div>
                         {% endif %}
                     </div>
