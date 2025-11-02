@@ -607,13 +607,19 @@ def student_register(request):
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            # Auto-login the user after successful registration
+            from django.contrib.auth import login
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
             messages.success(
                 request,
                 _(
-                    "Welcome to the bootcamp! You can now login with your email: {}"
-                ).format(user.email),
+                    "Welcome to the bootcamp, {}! Your account has been created successfully."
+                ).format(user.get_full_name() or user.email),
             )
-            return redirect("student_login")
+            # Redirect to course list/dashboard after successful registration
+            return redirect("user_course_list")
         else:
             messages.error(request, _("Please correct the errors below."))
     else:
