@@ -361,7 +361,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Redirect URLs after social login
-LOGIN_REDIRECT_URL = "/course/user_course_list/"  # Redirect to student dashboard
+LOGIN_REDIRECT_URL = "/programs/my_courses/"  # Redirect to student dashboard
 LOGOUT_REDIRECT_URL = "/accounts/student/login/"  # Standard Django logout redirect
 ACCOUNT_LOGOUT_REDIRECT_URL = (
     "/accounts/student/login/"  # Django Allauth logout redirect
