@@ -287,9 +287,12 @@ EMAIL_USE_SSL = False
 
 # Default sender addresses
 DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default=(EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "")
+    "DEFAULT_FROM_EMAIL", default=(EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "noreply@savvyindians.com")
 )
 SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+
+# Ensure proper email display name
+DEFAULT_FROM_EMAIL_DISPLAY = f"SavvyIndians LMS <{DEFAULT_FROM_EMAIL}>"
 
 # Crispy Forms Configuration
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

@@ -17,12 +17,16 @@ class CustomPasswordResetForm(PasswordResetForm):
              use_https=False, token_generator=None, from_email=None,
              request=None, html_email_template_name=None, extra_email_context=None):
         """
-        Override save to inject correct domain and protocol from request
+        Override save to inject correct domain, protocol, and FROM email from request
         """
         # Get domain and protocol from request instead of Sites framework
         if request:
             domain_override = request.get_host()
             use_https = request.is_secure()
+        
+        # Use the configured DEFAULT_FROM_EMAIL (which is gy068644@gmail.com in production)
+        if from_email is None:
+            from_email = settings.DEFAULT_FROM_EMAIL
         
         # Add custom email context
         if extra_email_context is None:
