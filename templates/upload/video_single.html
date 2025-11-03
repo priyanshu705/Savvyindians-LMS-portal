@@ -39,6 +39,19 @@
         border: none;
     }
     
+    /* Hide YouTube share button overlay (top-right area) */
+    .video-container::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 100px;
+        height: 50px;
+        background: transparent;
+        z-index: 10;
+        pointer-events: none;
+    }
+    
     .video-download-protection {
         position: relative;
         pointer-events: auto;
@@ -82,49 +95,13 @@
         -ms-user-select: none;
     }
     
-    /* DRM Protection: Screen Recording Warning */
-    .screen-record-warning {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(220, 53, 69, 0.95);
-        color: white;
-        padding: 30px;
-        border-radius: 10px;
-        z-index: 99999;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        display: none;
-        max-width: 500px;
-    }
-    
-    .screen-record-warning.active {
-        display: block;
-        animation: pulse 1s infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-    }
-    
-    /* DRM Protection: Blur effect on recording detection */
-    .video-container.recording-detected {
-        filter: blur(20px);
-        pointer-events: none;
-    }
+
     
 
 </style>
 
 <div class="col-md-10 mx-auto d-block">
-    <!-- DRM Protection: Screen Recording Detection Warning -->
-    <div class="screen-record-warning" id="recordingWarning">
-        <h3><i class="fas fa-exclamation-triangle"></i> {% trans 'Screen Recording Detected!' %}</h3>
-        <p>{% trans 'This content is protected. Screen recording is strictly prohibited and violates our terms of service.' %}</p>
-        <p><strong>{% trans 'Your account information has been logged.' %}</strong></p>
-    </div>
+
     
     <div class="video-container video-download-protection" id="videoContainer">
         <!-- DRM Protection: User Watermark -->
@@ -137,12 +114,12 @@
         </div>
         
         {% if video.is_youtube_video and video.youtube_url %}
-            <!-- YouTube Video Embed (Error 153 fixed: no sandbox, no fs=0) -->
+            <!-- YouTube Video Embed (Share button disabled) -->
             <iframe 
                 src="{{ video.get_youtube_embed_url }}"
                 title="{{ video.title }}"
                 frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
                 referrerpolicy="strict-origin-when-cross-origin"
                 loading="lazy">
