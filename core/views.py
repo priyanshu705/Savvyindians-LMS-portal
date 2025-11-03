@@ -341,25 +341,6 @@ def self_test_view(request):
     }
     return render(request, "health/self_test.html", context)
 
-            new_session = request.POST.get("session")
-            form = SemesterForm(request.POST, instance=semester)
-            if form.is_valid():
-                set_session = Session.objects.get(pk=new_session)
-                set_session.is_current_session = True
-                set_session.save()
-                form.save()
-                messages.success(request, "Semester updated successfully !")
-                return redirect("semester_list")
-        else:
-            form = SemesterForm(request.POST, instance=semester)
-            if form.is_valid():
-                form.save()
-                return redirect("semester_list")
-
-    else:
-        form = SemesterForm(instance=semester)
-    return render(request, "core/semester_update.html", {"form": form})
-
 
 @login_required
 @lecturer_required
