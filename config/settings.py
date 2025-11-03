@@ -120,6 +120,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EXTRA_THIRD_PARTY_APPS + PROJE
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "config.security.CSPMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",  # Disabled for development
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

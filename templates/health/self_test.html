@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Self-Test (Staff Only)</title>
+  <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+  <style>
+    body { max-width: 920px; margin: 2rem auto; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+    .ok { color: #0a7a28; font-weight: 600; }
+    .fail { color: #b00020; font-weight: 600; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; background: #fff; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn { display:inline-block; padding:.5rem .9rem; border:1px solid #2c6fbb; background:#2c6fbb; color:#fff; border-radius:6px; text-decoration:none; }
+    .btn:hover { background:#225896; }
+    .muted { color:#666; font-size:.9rem; }
+    code { background: #f4f4f4; padding: 0 4px; border-radius: 4px; }
+  </style>
+  <link rel="icon" href="{% static 'admin/img/icon-yes.svg' %}">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+</head>
+<body>
+  <h1>Self-Test (Staff Only)</h1>
+  <p class="muted">This page validates email sending and static/media availability. You must be logged in as staff.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Static Files</h2>
+      {% if static_ok %}
+        <p class="ok">✓ Static files available</p>
+        <p class="muted">Example resolved: <code>{{ static_path }}</code></p>
+        <p class="muted">CSS test: the page uses <code>admin/css/base.css</code>.</p>
+      {% else %}
+        <p class="fail">✗ Static files not found via finders</p>
+        <p class="muted">Check <code>STATIC_URL</code>, <code>STATIC_ROOT</code>, and collectstatic.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Media Directory</h2>
+      {% if media_root_exists %}
+        <p class="ok">✓ MEDIA_ROOT exists</p>
+        <p class="muted"><code>{{ media_root }}</code></p>
+        {% if media_hint %}
+          <p class="muted">Found subdirs:</p>
+          <ul class="muted">
+          {% for d in media_hint %}
+            <li><code>{{ d }}</code></li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% else %}
+        <p class="fail">✗ MEDIA_ROOT missing or not configured</p>
+        <p class="muted">Set <code>MEDIA_ROOT</code> and ensure server serves <code>MEDIA_URL</code>.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Email Sending</h2>
+    <p class="muted">Sender: <code>{{ email_sender|default:'(unset)' }}</code> &nbsp; | &nbsp; Recipient: <code>{{ email_recipient|default:'(your user has no email)'}} </code></p>
+    {% if email_result == True %}
+      <p class="ok">✓ Test email sent successfully.</p>
+    {% elif email_result == False %}
+      <p class="fail">✗ Email sending failed</p>
+      {% if email_error %}<pre class="muted">{{ email_error }}</pre>{% endif %}
+    {% else %}
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="send_email" />
+        <button type="submit" class="btn">Send Test Email to Your Address</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <p class="muted">Tip: In production, set <code>SECURE_SSL_REDIRECT=True</code>, <code>DEBUG=False</code>, and configure email envs.</p>
+</body>
+</html>

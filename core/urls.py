@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    self_test_view,
     dashboard_view,
     delete_post,
     edit_post,
@@ -19,6 +20,7 @@ from .views import (
 urlpatterns = [
     # Bootcamp Homepage
     path("", home_view, name="home"),
+    path("health/self-test/", self_test_view, name="self_test"),
     path("dashboard/", dashboard_view, name="dashboard"),
     # Session Management (for bootcamp batches)
     path("session/", session_list_view, name="session_list"),

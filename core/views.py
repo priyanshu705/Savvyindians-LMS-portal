@@ -1,6 +1,11 @@
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.staticfiles import finders
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.conf import settings
+from django.core.mail import send_mail
+import os
 
 from accounts.decorators import admin_required, lecturer_required
 from accounts.models import Student, User
@@ -285,6 +290,57 @@ def semester_update_view(request, pk):
             unset_session = Session.objects.get(is_current_session=True)
             unset_session.is_current_session = False
             unset_session.save()
+
+
+# ########################################################
+# Staff Self-Test Page (Email + Static + Media)
+# ########################################################
+@staff_member_required
+def self_test_view(request):
+    """Staff-only page to validate email sending and static/media availability."""
+    static_path = finders.find("admin/css/base.css")
+    static_ok = bool(static_path)
+
+    media_root_exists = os.path.isdir(settings.MEDIA_ROOT) if settings.MEDIA_ROOT else False
+    # Check a couple of common subfolders if present (non-fatal)
+    media_subdirs = [
+        os.path.join(settings.MEDIA_ROOT, "profile_pictures") if settings.MEDIA_ROOT else None,
+        os.path.join(settings.MEDIA_ROOT, "registration_form") if settings.MEDIA_ROOT else None,
+    ]
+    media_hint = [d for d in media_subdirs if d and os.path.isdir(d)]
+
+    sent_ok = None
+    error_msg = None
+    if request.method == "POST" and request.POST.get("action") == "send_email":
+        recipient = request.user.email or settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL
+        try:
+            send_mail(
+                subject="Self-Test: Email Connectivity",
+                message="This is a self-test email from the LMS portal.",
+                from_email=settings.DEFAULT_FROM_EMAIL or settings.EMAIL_HOST_USER,
+                recipient_list=[recipient],
+                fail_silently=False,
+            )
+            sent_ok = True
+            messages.success(request, f"Test email sent to {recipient}")
+        except Exception as e:
+            sent_ok = False
+            error_msg = str(e)
+            messages.error(request, f"Email sending failed: {e}")
+
+    context = {
+        "static_ok": static_ok,
+        "static_path": static_path,
+        "media_root": settings.MEDIA_ROOT,
+        "media_root_exists": media_root_exists,
+        "media_hint": media_hint,
+        "email_sender": settings.DEFAULT_FROM_EMAIL or settings.EMAIL_HOST_USER,
+        "email_recipient": request.user.email,
+        "email_result": sent_ok,
+        "email_error": error_msg,
+    }
+    return render(request, "health/self_test.html", context)
+
             new_session = request.POST.get("session")
             form = SemesterForm(request.POST, instance=semester)
             if form.is_valid():
