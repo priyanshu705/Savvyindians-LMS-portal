@@ -81,3 +81,13 @@ selenium_test_scroll.py
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Lint and tooling caches
+.ruff_cache/
+
+# Python version managers
+.python-version
+.tool-versions
+
+# SQLite databases
+*.sqlite3

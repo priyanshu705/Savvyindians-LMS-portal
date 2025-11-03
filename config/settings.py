@@ -14,6 +14,7 @@ import os
 import sys
 
 from decouple import config
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,12 +23,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config(
-    "SECRET_KEY", default="bFp3Us&2LTCD+x9M_dC68sSnD41&SRl$7!)om!!1Zr_tV_hs2e"
-)
+_DEFAULT_SECRET_FALLBACK = "bFp3Us&2LTCD+x9M_dC68sSnD41&SRl$7!)om!!1Zr_tV_hs2e"
+SECRET_KEY = config("SECRET_KEY", default=_DEFAULT_SECRET_FALLBACK)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
+
+# Fail fast if running in production without a proper SECRET_KEY
+if not DEBUG and SECRET_KEY == _DEFAULT_SECRET_FALLBACK:
+    raise ImproperlyConfigured(
+        "SECRET_KEY must be set via environment variable in production."
+    )
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -47,6 +53,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.savvyindians.com",
     "https://*.pythonanywhere.com",
     "https://priyanshu705.pythonanywhere.com",
+    "https://*.onrender.com",
 ]
 
 # Add wildcard for development
@@ -275,6 +282,12 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_FROM_ADDRESS = config("EMAIL_FROM_ADDRESS", default="")
 EMAIL_USE_SSL = False
+
+# Default sender addresses
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default=(EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "")
+)
+SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 
 # Crispy Forms Configuration
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
