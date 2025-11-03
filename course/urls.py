@@ -27,6 +27,7 @@ from .views import (
     update_video_progress,
     get_video_progress,
     student_progress_dashboard,
+    log_drm_event,
 )
 
 urlpatterns = [
@@ -113,4 +114,6 @@ urlpatterns = [
         student_progress_dashboard,
         name="student_progress_dashboard",
     ),
+    # DRM Protection API
+    path("api/video/drm-log/", log_drm_event, name="log_drm_event"),
 ]

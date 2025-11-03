@@ -769,3 +769,83 @@ def student_progress_dashboard(request):
     except Exception as e:
         messages.error(request, f"Error loading progress dashboard: {str(e)}")
         return redirect("user_course_list")
+
+
+@require_http_methods(["POST"])
+def log_drm_event(request):
+    """API endpoint to log DRM protection events and violations"""
+    try:
+        import json
+
+        # Get the client's IP address
+        def get_client_ip(request):
+            x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(",")[0]
+            else:
+                ip = request.META.get("REMOTE_ADDR")
+            return ip
+
+        # Parse data from request
+        log_type = request.POST.get("log_type", "access")
+        data_json = request.POST.get("data", "{}")
+
+        try:
+            data = json.loads(data_json)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+        # Extract video_id
+        video_id = data.get("video_id")
+        if not video_id:
+            return JsonResponse({"error": "video_id is required"}, status=400)
+
+        try:
+            video = UploadVideo.objects.get(id=video_id)
+        except UploadVideo.DoesNotExist:
+            return JsonResponse({"error": "Video not found"}, status=404)
+
+        # Map violation types
+        violation_type_map = {
+            "DevTools opened": "devtools_open",
+            "Screen recording detected": "screen_recording",
+            "Screen recording attempt detected": "screen_recording",
+            "Video source tampering attempt": "video_tampering",
+        }
+
+        violation_type = None
+        if log_type == "violation":
+            raw_violation_type = data.get("violation_type", "other")
+            violation_type = violation_type_map.get(
+                raw_violation_type, "other"
+            )  # Default to 'other' if not found
+
+        # Create DRM log entry
+        from .models import VideoDRMLog
+
+        drm_log = VideoDRMLog.objects.create(
+            video=video,
+            user=request.user if request.user.is_authenticated else None,
+            log_type=log_type,
+            violation_type=violation_type,
+            ip_address=get_client_ip(request),
+            user_agent=data.get("user_agent", ""),
+            screen_resolution=data.get("screen_resolution", ""),
+            platform=data.get("platform", ""),
+            url=data.get("url", ""),
+        )
+
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "DRM event logged successfully",
+                "log_id": drm_log.id,
+            }
+        )
+
+    except Exception as e:
+        import traceback
+
+        print(f"DRM logging error: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({"error": str(e)}, status=500)

@@ -62,10 +62,103 @@
         -ms-user-select: none;
         user-select: none;
     }
+    
+    /* DRM Protection: Watermark Overlay */
+    .video-watermark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: rgba(255, 255, 255, 0.7);
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-family: monospace;
+        z-index: 9999;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    
+    /* DRM Protection: Screen Recording Warning */
+    .screen-record-warning {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(220, 53, 69, 0.95);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        z-index: 99999;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        display: none;
+        max-width: 500px;
+    }
+    
+    .screen-record-warning.active {
+        display: block;
+        animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    /* DRM Protection: Blur effect on recording detection */
+    .video-container.recording-detected {
+        filter: blur(20px);
+        pointer-events: none;
+    }
+    
+    /* DRM Protection: DevTools Detection Warning */
+    .devtools-warning {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 193, 7, 0.95);
+        color: #000;
+        padding: 15px;
+        text-align: center;
+        z-index: 99999;
+        display: none;
+        font-weight: bold;
+    }
+    
+    .devtools-warning.active {
+        display: block;
+    }
 </style>
 
 <div class="col-md-10 mx-auto d-block">
-    <div class="video-container video-download-protection">
+    <!-- DRM Protection: Screen Recording Detection Warning -->
+    <div class="screen-record-warning" id="recordingWarning">
+        <h3><i class="fas fa-exclamation-triangle"></i> {% trans 'Screen Recording Detected!' %}</h3>
+        <p>{% trans 'This content is protected. Screen recording is strictly prohibited and violates our terms of service.' %}</p>
+        <p><strong>{% trans 'Your account information has been logged.' %}</strong></p>
+    </div>
+    
+    <!-- DRM Protection: DevTools Detection Warning -->
+    <div class="devtools-warning" id="devtoolsWarning">
+        <i class="fas fa-shield-alt"></i> 
+        {% trans 'Developer tools detected! This video is protected content. Please close developer tools to continue watching.' %}
+    </div>
+    
+    <div class="video-container video-download-protection" id="videoContainer">
+        <!-- DRM Protection: User Watermark -->
+        <div class="video-watermark" id="videoWatermark">
+            {% if request.user.is_authenticated %}
+                {{ request.user.email|default:request.user.username }} • ID: {{ request.user.id }}
+            {% else %}
+                {% trans 'Licensed Content' %}
+            {% endif %}
+        </div>
+        
         {% if video.is_youtube_video and video.youtube_url %}
             <!-- YouTube Video Embed (Error 153 fixed: no sandbox, no fs=0) -->
             <iframe 
@@ -83,7 +176,8 @@
                 controls 
                 controlsList="nodownload"
                 disablePictureInPicture
-                preload="metadata">
+                preload="metadata"
+                id="protectedVideo">
                 <source src="{{ video.video.url }}" type="video/mp4">
                 <!-- Add subtitle track if available -->
                 {% comment %}
@@ -151,6 +245,346 @@
 </div>
 
 <script>
+// ========================================
+// DRM PROTECTION SYSTEM
+// ========================================
+// This system prevents:
+// 1. Screen recording
+// 2. Video downloading
+// 3. Right-click context menu
+// 4. Keyboard shortcuts (PrintScreen, etc.)
+// 5. Browser DevTools access
+// 6. Video sharing attempts
+// ========================================
+
+class DRMProtectionSystem {
+    constructor() {
+        this.isDevToolsOpen = false;
+        this.recordingDetected = false;
+        this.videoContainer = document.getElementById('videoContainer');
+        this.recordingWarning = document.getElementById('recordingWarning');
+        this.devtoolsWarning = document.getElementById('devtoolsWarning');
+        this.watermark = document.getElementById('videoWatermark');
+        
+        this.init();
+    }
+    
+    init() {
+        this.disableRightClick();
+        this.disableKeyboardShortcuts();
+        this.detectDevTools();
+        this.detectScreenRecording();
+        this.protectVideo();
+        this.disableTextSelection();
+        this.preventInspect();
+        this.randomizeWatermark();
+        this.logAccess();
+    }
+    
+    // 1. Disable Right-Click Context Menu
+    disableRightClick() {
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            this.showAlert('Right-click is disabled for this protected content.');
+            return false;
+        });
+    }
+    
+    // 2. Disable Keyboard Shortcuts
+    disableKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Disable PrintScreen
+            if (e.key === 'PrintScreen') {
+                e.preventDefault();
+                this.showRecordingWarning();
+                return false;
+            }
+            
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'U') ||
+                (e.ctrlKey && e.key === 'S')
+            ) {
+                e.preventDefault();
+                this.showAlert('Keyboard shortcuts are disabled for this protected content.');
+                return false;
+            }
+            
+            // Disable Ctrl+Shift+K (Firefox Console)
+            if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Disable Meta+Option+I (Mac DevTools)
+            if (e.metaKey && e.altKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Disable keyup for PrintScreen
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                e.preventDefault();
+                navigator.clipboard.writeText('');
+                this.showRecordingWarning();
+            }
+        });
+    }
+    
+    // 3. Detect and Block DevTools
+    detectDevTools() {
+        // Method 1: Check window size difference
+        const checkDevTools = () => {
+            const threshold = 160;
+            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+            
+            if (widthThreshold || heightThreshold) {
+                if (!this.isDevToolsOpen) {
+                    this.isDevToolsOpen = true;
+                    this.handleDevToolsOpen();
+                }
+            } else {
+                if (this.isDevToolsOpen) {
+                    this.isDevToolsOpen = false;
+                    this.handleDevToolsClose();
+                }
+            }
+        };
+        
+        // Method 2: Console detection
+        const devToolsCheck = /./;
+        devToolsCheck.toString = () => {
+            this.isDevToolsOpen = true;
+            this.handleDevToolsOpen();
+            return 'DevTools detected';
+        };
+        
+        // Check every 500ms
+        setInterval(checkDevTools, 500);
+        
+        // Trigger console detection
+        setInterval(() => {
+            console.log('%c', devToolsCheck);
+            console.clear();
+        }, 1000);
+    }
+    
+    handleDevToolsOpen() {
+        this.devtoolsWarning.classList.add('active');
+        
+        // Pause video if playing
+        const video = document.getElementById('protectedVideo');
+        if (video && !video.paused) {
+            video.pause();
+        }
+        
+        // Blur video container
+        this.videoContainer.style.filter = 'blur(10px)';
+        
+        // Log violation
+        this.logViolation('DevTools opened');
+    }
+    
+    handleDevToolsClose() {
+        this.devtoolsWarning.classList.remove('active');
+        this.videoContainer.style.filter = '';
+    }
+    
+    // 4. Detect Screen Recording
+    detectScreenRecording() {
+        // Method 1: Check for screen capture API
+        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+            const originalGetDisplayMedia = navigator.mediaDevices.getDisplayMedia;
+            
+            navigator.mediaDevices.getDisplayMedia = async function(...args) {
+                this.showRecordingWarning();
+                this.logViolation('Screen recording attempt detected');
+                throw new Error('Screen recording is not allowed for this content');
+            }.bind(this);
+        }
+        
+        // Method 2: Detect window blur/focus changes (possible recording software)
+        let blurCount = 0;
+        window.addEventListener('blur', () => {
+            blurCount++;
+            if (blurCount > 3) {
+                // Possible screen recording software is running
+                this.showRecordingWarning();
+            }
+        });
+        
+        // Method 3: Check for common recording software processes (limited in browser)
+        // This is more of a deterrent through UI warnings
+        
+        // Method 4: Document visibility change detection
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                const video = document.getElementById('protectedVideo');
+                if (video && !video.paused) {
+                    // Pause video when tab is not visible
+                    video.pause();
+                }
+            }
+        });
+    }
+    
+    showRecordingWarning() {
+        this.recordingWarning.classList.add('active');
+        this.videoContainer.classList.add('recording-detected');
+        
+        // Pause video
+        const video = document.getElementById('protectedVideo');
+        if (video) {
+            video.pause();
+        }
+        
+        // Log violation
+        this.logViolation('Screen recording detected');
+        
+        // Keep warning visible for 5 seconds
+        setTimeout(() => {
+            this.recordingWarning.classList.remove('active');
+            this.videoContainer.classList.remove('recording-detected');
+        }, 5000);
+    }
+    
+    // 5. Protect Video Element
+    protectVideo() {
+        const video = document.getElementById('protectedVideo');
+        if (!video) return;
+        
+        // Disable drag and drop
+        video.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disable copy
+        video.addEventListener('copy', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Monitor video source changes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+                    this.logViolation('Video source tampering attempt');
+                }
+            });
+        });
+        
+        observer.observe(video, {
+            attributes: true,
+            attributeFilter: ['src']
+        });
+    }
+    
+    // 6. Disable Text Selection
+    disableTextSelection() {
+        document.addEventListener('selectstart', (e) => {
+            if (e.target.closest('.video-container')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+    
+    // 7. Prevent Inspect Element
+    preventInspect() {
+        document.addEventListener('mousedown', (e) => {
+            // Detect inspect element attempts
+            if (e.button === 2) { // Right-click
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+    
+    // 8. Randomize Watermark Position
+    randomizeWatermark() {
+        if (!this.watermark) return;
+        
+        const positions = [
+            { top: '10px', right: '10px', bottom: 'auto', left: 'auto' },
+            { top: '10px', right: 'auto', bottom: 'auto', left: '10px' },
+            { top: 'auto', right: '10px', bottom: '10px', left: 'auto' },
+            { top: 'auto', right: 'auto', bottom: '10px', left: '10px' },
+            { top: '50%', right: '10px', bottom: 'auto', left: 'auto' },
+            { top: '50%', right: 'auto', bottom: 'auto', left: '10px' }
+        ];
+        
+        // Change watermark position every 30 seconds
+        setInterval(() => {
+            const position = positions[Math.floor(Math.random() * positions.length)];
+            Object.assign(this.watermark.style, position);
+        }, 30000);
+    }
+    
+    // 9. Log Access and Violations
+    logAccess() {
+        const accessData = {
+            video_id: VIDEO_ID,
+            user_id: '{{ request.user.id }}',
+            timestamp: new Date().toISOString(),
+            user_agent: navigator.userAgent,
+            screen_resolution: `${screen.width}x${screen.height}`,
+            platform: navigator.platform
+        };
+        
+        // Send access log to server
+        this.sendLog('access', accessData);
+    }
+    
+    logViolation(violationType) {
+        const violationData = {
+            video_id: VIDEO_ID,
+            user_id: '{{ request.user.id }}',
+            violation_type: violationType,
+            timestamp: new Date().toISOString(),
+            user_agent: navigator.userAgent,
+            url: window.location.href
+        };
+        
+        // Send violation log to server
+        this.sendLog('violation', violationData);
+        
+        console.warn('DRM Violation:', violationType);
+    }
+    
+    sendLog(logType, data) {
+        // Send log to server using sendBeacon (reliable even on page unload)
+        if (navigator.sendBeacon) {
+            const formData = new FormData();
+            formData.append('log_type', logType);
+            formData.append('data', JSON.stringify(data));
+            
+            navigator.sendBeacon('/course/api/video/drm-log/', formData);
+        }
+    }
+    
+    showAlert(message) {
+        // Create temporary alert
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-warning position-fixed';
+        alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
+        alert.innerHTML = `<i class="fas fa-shield-alt"></i> ${message}`;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    }
+}
+
+// Initialize DRM Protection System
+let drmProtection = null;
+
 // Video Progress Tracking System
 let progressTracker = null;
 let lastProgressUpdate = 0;
@@ -387,8 +821,11 @@ class VideoProgressTracker {
     }
 }
 
-// Initialize progress tracking when page loads
+// Initialize DRM Protection and Progress Tracking when page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DRM Protection System
+    drmProtection = new DRMProtectionSystem();
+    
     // Original download protection code
     const videoContainer = document.querySelector('.video-container');
     if (videoContainer) {
@@ -404,6 +841,27 @@ document.addEventListener('DOMContentLoaded', function() {
     {% if request.user.is_student %}
     progressTracker = new VideoProgressTracker(VIDEO_ID);
     {% endif %}
+    
+    // Additional protection: Disable video download on HTML5 video
+    const video = document.getElementById('protectedVideo');
+    if (video) {
+        video.addEventListener('loadedmetadata', function() {
+            // Remove download attribute if present
+            video.removeAttribute('download');
+        });
+        
+        // Prevent video from being dragged
+        video.ondragstart = function() { return false; };
+        
+        // Monitor for attempts to open video in new tab
+        video.addEventListener('click', function(e) {
+            if (e.ctrlKey || e.metaKey || e.button === 1) {
+                e.preventDefault();
+                drmProtection.showAlert('Opening video in new tab is not allowed.');
+                return false;
+            }
+        });
+    }
 });
 
 // Ensure progress is saved when user leaves the page

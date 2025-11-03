@@ -596,3 +596,77 @@ def log_video_progress(sender, instance, created, **kwargs):
                 f"Student '{instance.student.username}' completed watching '{instance.video.title}'."
             )
         )
+
+
+class VideoDRMLog(models.Model):
+    """Log DRM protection events and violations"""
+
+    LOG_TYPE_CHOICES = (
+        ("access", _("Video Access")),
+        ("violation", _("DRM Violation")),
+    )
+
+    VIOLATION_TYPE_CHOICES = (
+        ("screen_recording", _("Screen Recording Detected")),
+        ("devtools_open", _("Developer Tools Opened")),
+        ("right_click", _("Right-Click Attempt")),
+        ("keyboard_shortcut", _("Keyboard Shortcut Blocked")),
+        ("video_tampering", _("Video Source Tampering")),
+        ("download_attempt", _("Download Attempt")),
+        ("inspect_element", _("Inspect Element Attempt")),
+        ("other", _("Other Violation")),
+    )
+
+    # Foreign keys
+    video = models.ForeignKey(
+        UploadVideo, on_delete=models.CASCADE, related_name="drm_logs"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="drm_logs",
+    )
+
+    # Log details
+    log_type = models.CharField(max_length=20, choices=LOG_TYPE_CHOICES)
+    violation_type = models.CharField(
+        max_length=50, choices=VIOLATION_TYPE_CHOICES, null=True, blank=True
+    )
+
+    # Technical details
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    screen_resolution = models.CharField(max_length=50, blank=True)
+    platform = models.CharField(max_length=100, blank=True)
+    url = models.URLField(max_length=500, blank=True)
+
+    # Timestamps
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=["-timestamp"]),
+            models.Index(fields=["log_type", "-timestamp"]),
+            models.Index(fields=["user", "-timestamp"]),
+        ]
+
+    def __str__(self):
+        user_info = self.user.username if self.user else "Anonymous"
+        if self.log_type == "violation":
+            return f"DRM Violation: {user_info} - {self.violation_type} on {self.video.title}"
+        return f"Video Access: {user_info} - {self.video.title}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Create activity log for violations
+        if self.log_type == "violation":
+            user_info = self.user.username if self.user else "Unknown user"
+            ActivityLog.objects.create(
+                message=_(
+                    f"DRM Violation: {user_info} attempted {self.violation_type} on video '{self.video.title}'"
+                )
+            )

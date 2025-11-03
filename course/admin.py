@@ -1,7 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Course, CourseAllocation, Program, Upload, UploadVideo
+from .models import (
+    Course,
+    CourseAllocation,
+    Program,
+    Upload,
+    UploadVideo,
+    VideoProgress,
+    VideoDRMLog,
+)
 
 
 class ProgramAdmin(admin.ModelAdmin):
@@ -128,12 +136,121 @@ class UploadVideoAdmin(admin.ModelAdmin):
     video_thumbnail_preview.short_description = "Thumbnail Preview"
 
 
+class VideoProgressAdmin(admin.ModelAdmin):
+    list_display = [
+        "student",
+        "video",
+        "completion_percentage",
+        "is_completed",
+        "last_watched",
+    ]
+    list_filter = ["is_completed", "last_watched"]
+    search_fields = ["student__username", "video__title"]
+    readonly_fields = [
+        "completion_percentage",
+        "first_watched",
+        "last_watched",
+        "completed_at",
+    ]
+
+    fieldsets = (
+        ("Student & Video", {"fields": ("student", "video")}),
+        (
+            "Progress Details",
+            {
+                "fields": (
+                    "watch_time",
+                    "total_duration",
+                    "last_position",
+                    "completion_percentage",
+                    "is_completed",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {"fields": ("first_watched", "last_watched", "completed_at")},
+        ),
+    )
+
+
+class VideoDRMLogAdmin(admin.ModelAdmin):
+    list_display = [
+        "timestamp",
+        "log_type",
+        "user",
+        "video",
+        "violation_type",
+        "ip_address",
+        "colored_log_type",
+    ]
+    list_filter = ["log_type", "violation_type", "timestamp"]
+    search_fields = ["user__username", "video__title", "ip_address", "user_agent"]
+    readonly_fields = [
+        "timestamp",
+        "log_type",
+        "violation_type",
+        "user",
+        "video",
+        "ip_address",
+        "user_agent",
+        "screen_resolution",
+        "platform",
+        "url",
+    ]
+
+    fieldsets = (
+        ("Log Information", {"fields": ("log_type", "violation_type", "timestamp")}),
+        ("User & Video", {"fields": ("user", "video")}),
+        (
+            "Technical Details",
+            {
+                "fields": (
+                    "ip_address",
+                    "user_agent",
+                    "screen_resolution",
+                    "platform",
+                    "url",
+                )
+            },
+        ),
+    )
+
+    def colored_log_type(self, obj):
+        """Display log type with color coding"""
+        if obj.log_type == "violation":
+            color = "#dc3545"  # Red
+            icon = "⚠️"
+        else:
+            color = "#28a745"  # Green
+            icon = "✓"
+
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{} {}</span>',
+            color,
+            icon,
+            obj.get_log_type_display(),
+        )
+
+    colored_log_type.short_description = "Log Type"
+
+    def has_add_permission(self, request):
+        """Prevent manual addition of logs through admin"""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Make logs read-only"""
+        return False
+
+
 # Register bootcamp-related models only
 admin.site.register(Program, ProgramAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseAllocation)
 admin.site.register(Upload, UploadAdmin)
 admin.site.register(UploadVideo, UploadVideoAdmin)
+admin.site.register(VideoProgress, VideoProgressAdmin)
+admin.site.register(VideoDRMLog, VideoDRMLogAdmin)
 
 # Unregister translation models if modeltranslation was previously used
 try:
