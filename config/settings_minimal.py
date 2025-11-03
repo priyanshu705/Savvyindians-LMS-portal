@@ -240,6 +240,7 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_FROM_ADDRESS = os.environ.get("EMAIL_FROM_ADDRESS", os.environ.get("EMAIL_HOST_USER", "noreply@savvyindians.com"))
 EMAIL_USE_SSL = False
+EMAIL_TIMEOUT = 10  # 10 second timeout for SMTP connections
 
 # Default sender addresses (uses EMAIL_HOST_USER if EMAIL_FROM_ADDRESS not set)
 DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "noreply@savvyindians.com"
