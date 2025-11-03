@@ -347,8 +347,13 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# Compatibility with deployments using a User model that still has a `username` field
+# In that case, keep it non-required and let allauth auto-generate it when needed.
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_USER_MODEL_EMAIL_FIELD = "email"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
 
 # Social account settings
 SOCIALACCOUNT_AUTO_SIGNUP = True
