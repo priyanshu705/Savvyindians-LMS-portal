@@ -148,6 +148,7 @@ TEMPLATES = [
                 # 'django.template.context_processors.media',
                 # 'django.template.context_processors.static',
                 # 'django.template.context_processors.tz',
+                "config.context_processors.site_info",  # Provides site_name, site_domain, site_protocol
             ],
         },
     },
@@ -336,6 +337,13 @@ LOGGING = {
 # Django Allauth Configuration
 # ------------------------------------------------------------------------------
 SITE_ID = 1
+
+# Configure site domain for password reset emails
+# In production, Django Sites framework needs the correct domain
+if not DEBUG:
+    # These will be auto-configured by a post-deploy hook or manual update
+    # For now, we'll use the request domain dynamically in password reset
+    pass
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
