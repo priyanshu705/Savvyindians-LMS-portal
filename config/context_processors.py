@@ -17,6 +17,6 @@ def site_info(request):
     
     return {
         'site_name': 'SavvyIndians LMS',
-        'site_domain': domain,
-        'site_protocol': protocol,
+        'domain': domain,  # Override Django's default domain from Sites framework
+        'protocol': protocol,  # Override Django's default protocol
     }
