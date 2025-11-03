@@ -137,17 +137,22 @@ import sys
 if DATABASE_URL:
     print(f"✓ DATABASE_URL found: {DATABASE_URL[:50]}...", file=sys.stderr)
     
-    # Parse DATABASE_URL - supports PostgreSQL, MySQL, and SQLite
-    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+    # Parse DATABASE_URL - Use shorter conn_max_age for PgBouncer compatibility
+    # PgBouncer connections timeout quickly, so we need to refresh them more often
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=60)}
     
     # Add database-specific options
     engine = DATABASES["default"]["ENGINE"]
     if "postgresql" in engine or "psycopg2" in engine:
-        # PostgreSQL configuration - use prefer for Render compatibility
+        # PostgreSQL configuration optimized for PgBouncer (Supabase)
         DATABASES["default"]["OPTIONS"] = {
             "sslmode": "prefer",
             "connect_timeout": 10,
+            # Disable server-side cursors for PgBouncer compatibility
+            "options": "-c statement_timeout=30000",  # 30 second query timeout
         }
+        # Disable persistent connections in production to avoid PgBouncer issues
+        DATABASES["default"]["CONN_MAX_AGE"] = 0 if os.environ.get('RENDER') else 60
         print(f"✓ Using PostgreSQL database: {DATABASES['default']['NAME']}", file=sys.stderr)
     elif "mysql" in engine:
         # MySQL configuration
