@@ -223,9 +223,19 @@ LOGOUT_REDIRECT_URL = "/"
 STUDENT_ID_PREFIX = os.environ.get("STUDENT_ID_PREFIX", "STD")
 LECTURER_ID_PREFIX = os.environ.get("LECTURER_ID_PREFIX", "LECT")
 
-# Email defaults used in tests to avoid background thread errors
-EMAIL_FROM_ADDRESS = os.environ.get("EMAIL_FROM_ADDRESS", "no-reply@example.com")
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.locmem.EmailBackend")
+# Email configuration for production
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_FROM_ADDRESS = os.environ.get("EMAIL_FROM_ADDRESS", os.environ.get("EMAIL_HOST_USER", "noreply@savvyindians.com"))
+EMAIL_USE_SSL = False
+
+# Default sender addresses (uses EMAIL_HOST_USER if EMAIL_FROM_ADDRESS not set)
+DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "noreply@savvyindians.com"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Sites framework (required by allauth)
 SITE_ID = 1
