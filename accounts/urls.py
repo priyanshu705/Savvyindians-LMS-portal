@@ -1,6 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
+from .password_reset_views import CustomPasswordResetView
 from .views import render_lecturer_pdf_list  # new
 from .views import render_student_pdf_list  # new
 from .views import (
@@ -32,10 +33,10 @@ from .views import (
 
 
 urlpatterns = [
-    # Password Reset URLs with custom templates
+    # Password Reset URLs with custom view to fix domain issue
     path(
         "password_reset/",
-        auth_views.PasswordResetView.as_view(
+        CustomPasswordResetView.as_view(
             template_name="registration/password_reset.html"
         ),
         name="password_reset",
