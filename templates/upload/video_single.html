@@ -115,24 +115,7 @@
         pointer-events: none;
     }
     
-    /* DRM Protection: DevTools Detection Warning */
-    .devtools-warning {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(255, 193, 7, 0.95);
-        color: #000;
-        padding: 15px;
-        text-align: center;
-        z-index: 99999;
-        display: none;
-        font-weight: bold;
-    }
-    
-    .devtools-warning.active {
-        display: block;
-    }
+
 </style>
 
 <div class="col-md-10 mx-auto d-block">
@@ -141,12 +124,6 @@
         <h3><i class="fas fa-exclamation-triangle"></i> {% trans 'Screen Recording Detected!' %}</h3>
         <p>{% trans 'This content is protected. Screen recording is strictly prohibited and violates our terms of service.' %}</p>
         <p><strong>{% trans 'Your account information has been logged.' %}</strong></p>
-    </div>
-    
-    <!-- DRM Protection: DevTools Detection Warning -->
-    <div class="devtools-warning" id="devtoolsWarning">
-        <i class="fas fa-shield-alt"></i> 
-        {% trans 'Developer tools detected! This video is protected content. Please close developer tools to continue watching.' %}
     </div>
     
     <div class="video-container video-download-protection" id="videoContainer">
@@ -259,11 +236,9 @@
 
 class DRMProtectionSystem {
     constructor() {
-        this.isDevToolsOpen = false;
         this.recordingDetected = false;
         this.videoContainer = document.getElementById('videoContainer');
         this.recordingWarning = document.getElementById('recordingWarning');
-        this.devtoolsWarning = document.getElementById('devtoolsWarning');
         this.watermark = document.getElementById('videoWatermark');
         
         this.init();
@@ -272,7 +247,6 @@ class DRMProtectionSystem {
     init() {
         this.disableRightClick();
         this.disableKeyboardShortcuts();
-        this.detectDevTools();
         this.detectScreenRecording();
         this.protectVideo();
         this.disableTextSelection();
@@ -290,37 +264,13 @@ class DRMProtectionSystem {
         });
     }
     
-    // 2. Disable Keyboard Shortcuts
+    // 2. Disable Keyboard Shortcuts (Only PrintScreen for screen recording)
     disableKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             // Disable PrintScreen
             if (e.key === 'PrintScreen') {
                 e.preventDefault();
                 this.showRecordingWarning();
-                return false;
-            }
-            
-            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-            if (
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && e.key === 'U') ||
-                (e.ctrlKey && e.key === 'S')
-            ) {
-                e.preventDefault();
-                this.showAlert('Keyboard shortcuts are disabled for this protected content.');
-                return false;
-            }
-            
-            // Disable Ctrl+Shift+K (Firefox Console)
-            if (e.ctrlKey && e.shiftKey && e.key === 'K') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Disable Meta+Option+I (Mac DevTools)
-            if (e.metaKey && e.altKey && e.key === 'I') {
-                e.preventDefault();
                 return false;
             }
         });
@@ -335,67 +285,7 @@ class DRMProtectionSystem {
         });
     }
     
-    // 3. Detect and Block DevTools
-    detectDevTools() {
-        // Method 1: Check window size difference
-        const checkDevTools = () => {
-            const threshold = 160;
-            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-            
-            if (widthThreshold || heightThreshold) {
-                if (!this.isDevToolsOpen) {
-                    this.isDevToolsOpen = true;
-                    this.handleDevToolsOpen();
-                }
-            } else {
-                if (this.isDevToolsOpen) {
-                    this.isDevToolsOpen = false;
-                    this.handleDevToolsClose();
-                }
-            }
-        };
-        
-        // Method 2: Console detection
-        const devToolsCheck = /./;
-        devToolsCheck.toString = () => {
-            this.isDevToolsOpen = true;
-            this.handleDevToolsOpen();
-            return 'DevTools detected';
-        };
-        
-        // Check every 500ms
-        setInterval(checkDevTools, 500);
-        
-        // Trigger console detection
-        setInterval(() => {
-            console.log('%c', devToolsCheck);
-            console.clear();
-        }, 1000);
-    }
-    
-    handleDevToolsOpen() {
-        this.devtoolsWarning.classList.add('active');
-        
-        // Pause video if playing
-        const video = document.getElementById('protectedVideo');
-        if (video && !video.paused) {
-            video.pause();
-        }
-        
-        // Blur video container
-        this.videoContainer.style.filter = 'blur(10px)';
-        
-        // Log violation
-        this.logViolation('DevTools opened');
-    }
-    
-    handleDevToolsClose() {
-        this.devtoolsWarning.classList.remove('active');
-        this.videoContainer.style.filter = '';
-    }
-    
-    // 4. Detect Screen Recording
+    // 3. Detect Screen Recording
     detectScreenRecording() {
         // Method 1: Check for screen capture API
         if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
@@ -453,7 +343,7 @@ class DRMProtectionSystem {
         }, 5000);
     }
     
-    // 5. Protect Video Element
+    // 4. Protect Video Element
     protectVideo() {
         const video = document.getElementById('protectedVideo');
         if (!video) return;
@@ -485,7 +375,7 @@ class DRMProtectionSystem {
         });
     }
     
-    // 6. Disable Text Selection
+    // 5. Disable Text Selection
     disableTextSelection() {
         document.addEventListener('selectstart', (e) => {
             if (e.target.closest('.video-container')) {
@@ -495,7 +385,7 @@ class DRMProtectionSystem {
         });
     }
     
-    // 7. Prevent Inspect Element
+    // 6. Prevent Inspect Element
     preventInspect() {
         document.addEventListener('mousedown', (e) => {
             // Detect inspect element attempts
@@ -506,7 +396,7 @@ class DRMProtectionSystem {
         });
     }
     
-    // 8. Randomize Watermark Position
+    // 7. Randomize Watermark Position
     randomizeWatermark() {
         if (!this.watermark) return;
         
@@ -526,7 +416,7 @@ class DRMProtectionSystem {
         }, 30000);
     }
     
-    // 9. Log Access and Violations
+    // 8. Log Access and Violations
     logAccess() {
         const accessData = {
             video_id: VIDEO_ID,
